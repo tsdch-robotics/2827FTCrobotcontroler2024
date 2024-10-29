@@ -3,7 +3,7 @@
 
     Copyright (c) 2024 SparkFun Electronics
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -25,7 +25,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-@Disabled
 public class SensorSparkFunOTOS extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
@@ -65,7 +64,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             // Log the position to the telemetry
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("Heading radians", pos.h);
 
             // Update the telemetry on the driver station
             telemetry.update();
@@ -84,7 +83,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // myOtos.setLinearUnit(DistanceUnit.METER);
         myOtos.setLinearUnit(DistanceUnit.INCH);
         // myOtos.setAngularUnit(AnguleUnit.RADIANS);
-        myOtos.setAngularUnit(AngleUnit.DEGREES);
+        myOtos.setAngularUnit(AngleUnit.RADIANS);
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
