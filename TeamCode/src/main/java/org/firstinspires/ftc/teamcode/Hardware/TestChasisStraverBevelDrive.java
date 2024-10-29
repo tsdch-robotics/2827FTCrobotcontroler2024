@@ -122,6 +122,20 @@ public class TestChasisStraverBevelDrive extends LinearOpMode {
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
 
+            if (gamepad1.a){
+                leftFrontPower  =  -1;
+                rightFrontPower =  -1;
+                leftBackPower   =  1;
+                rightBackPower  =  1;
+            }
+
+            if (gamepad1.b){
+                leftFrontPower  =  1;
+                rightFrontPower =  1;
+                leftBackPower   =  - 1;
+                rightBackPower  =  -1;
+            }
+
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
