@@ -5,11 +5,14 @@
 */
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -24,15 +27,44 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
+@Config
 @TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
 public class SensorSparkFunOTOS extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
+
+    public static double testttt = 1;
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
+
+
+    double finalX = 0;
+    double finalY = 0;
+
+
+    double currentDriveX = 0;
+    double currentDriveY = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+
+
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // All the configuration for the OTOS is done in this helper method, check it out!
         configureOtos();
@@ -45,6 +77,9 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             // Get the latest position, which includes the x and y coordinates, plus the
             // heading angle
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+            double oldx = pos.x;// - currentDriveX;//essentially reseting to 0, 0
+            double oldy = pos.y;// - currentDriveY;
+            double oldheading = pos.h;
 
             // Reset the tracking if the user requests it
             if (gamepad1.y) {
@@ -55,6 +90,117 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             if (gamepad1.x) {
                 myOtos.calibrateImu();
             }
+//beginning drive code
+            double max;
+
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial   =  gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  -gamepad1.left_stick_x;
+            double yaw     =  -gamepad1.right_stick_x;
+
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+      /*  if (gamepad1.a){
+            leftFrontPower  =  -1;
+            rightFrontPower =  -1;
+            leftBackPower   =  1;
+            rightBackPower  =  1;
+        }
+
+        if (gamepad1.b){
+            leftFrontPower  =  1;
+            rightFrontPower =  1;
+            leftBackPower   =  - 1;
+            rightBackPower  =  -1;
+        }*/
+
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+
+            if (max > 1.0) {
+                leftFrontPower  /= max;
+                rightFrontPower /= max;
+                leftBackPower   /= max;
+                rightBackPower  /= max;
+            }
+
+            // This is test code:
+            //
+            // Uncomment the following code to test your motor directions.
+            // Each button should make the corresponding motor run FORWARD.
+            //   1) First get all the motors to take to correct positions on the robot
+            //      by adjusting your Robot Configuration if necessary.
+            //   2) Then make sure they run in the correct direction by modifying the
+            //      the setDirection() calls above.
+            // Once the correct motors move in the correct direction re-comment this code.
+
+            /*
+            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            */
+
+            // Send calculated power to wheels
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
+
+
+
+
+
+           /* try {
+                Thread.sleep(10); // Delay for 1 second (1000 milliseconds)
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+
+
+            pos = myOtos.getPosition();
+           // currentDriveX = pos.x;
+            //currentDriveY = pos.y;
+
+            double deltaX = pos.x - oldx;
+            double deltaY = pos.y - oldy;
+            double avgHeading = (pos.h + oldheading) / 2;
+
+            //double instantaneousDist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY,2 ));
+
+            //double actualXchange = /*Math.signum(deltaX) * */(instantaneousDist * Math.cos(avgHeading));//but this doesn't say which direction it is in
+            //double actualYchange = /*Math.signum(deltaY) * */(instantaneousDist * Math.sin(avgHeading));
+
+            double actualXchange = deltaX * Math.cos(avgHeading) - deltaY * Math.sin(avgHeading);
+            double actualYchange = deltaX * Math.sin(avgHeading) + deltaY * Math.cos(avgHeading);
+
+            finalX = finalX + actualXchange;
+            finalY = finalY + actualYchange;
+
+            //double test = Math.sin(90);
+            double test2 = Math.cos(3.1415);
+
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+
+            //telemetry.addData("Test1", test);
+            telemetry.addData("Test2", deltaX);
+
+          //  telemetry.addData("instantaneous dist", instantaneousDist);
+
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+//end ofdrive code
 
             // Inform user of available controls
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
@@ -62,12 +208,14 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine();
 
             // Log the position to the telemetry
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("X coordinate", finalX);
+            telemetry.addData("Y coordinate", finalY);
             telemetry.addData("Heading radians", pos.h);
 
             // Update the telemetry on the driver station
             telemetry.update();
+
+
         }
     }
 
@@ -115,8 +263,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        myOtos.setLinearScalar(1.0);
-        myOtos.setAngularScalar(1.0);//set first
+        myOtos.setLinearScalar(1.07503047767);
+        myOtos.setAngularScalar(0.988319);//set first
 
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
@@ -146,6 +294,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         myOtos.getVersionInfo(hwVersion, fwVersion);
+
+
 
         telemetry.addLine("OTOS configured! Press start to get position data!");
         telemetry.addLine();

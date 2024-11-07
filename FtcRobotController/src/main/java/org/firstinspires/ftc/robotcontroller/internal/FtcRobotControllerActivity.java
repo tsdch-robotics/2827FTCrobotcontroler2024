@@ -61,6 +61,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.ftccommon.ClassManagerFactory;
@@ -129,6 +130,7 @@ import org.threeten.bp.YearMonth;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.FileNotFoundException;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -316,6 +318,7 @@ public class FtcRobotControllerActivity extends Activity
       preferencesHelper.writeBooleanPrefIfDifferent(getString(R.string.pref_warn_about_obsolete_software), true);
       preferencesHelper.writeBooleanPrefIfDifferent(getString(R.string.pref_warn_about_mismatched_app_versions), true);
       preferencesHelper.writeBooleanPrefIfDifferent(getString(R.string.pref_warn_about_incorrect_clocks), true);
+
     }
 
     entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
@@ -409,6 +412,10 @@ public class FtcRobotControllerActivity extends Activity
     checkPreferredChannel();
 
     AnnotatedHooksClassFilter.getInstance().callOnCreateMethods(this);
+
+   // FtcDashboard.start();
+
+
   }
 
   protected UpdateUI createUpdateUI() {
