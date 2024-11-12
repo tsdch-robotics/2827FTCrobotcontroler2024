@@ -5,7 +5,10 @@
 */
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -34,7 +37,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     SparkFunOTOS myOtos;
 
 
-    public static double testttt = 1;
+    public static double testttt = 1;//example of ftc dash
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -52,6 +55,19 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());//gets telemetry object from linear opmode (overrides the telemetry variable)
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("x", 3.7);
+        packet.put("status", "alive");
+        packet.fieldOverlay()
+                .setFill("blue")
+                .fillRect(-20,-20,40,40);
+        dashboard.sendTelemetryPacket(packet);
+
+
         // Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
@@ -74,6 +90,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+        //    packet.fieldOverlay()
+           //         .fillCircle(xposition, yposition, 5)
+
+
+
+
             // Get the latest position, which includes the x and y coordinates, plus the
             // heading angle
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
