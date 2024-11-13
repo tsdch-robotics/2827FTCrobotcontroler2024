@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -45,10 +46,12 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private Servo servo = null;
 
-    double finalX = 0;
-    double finalY = 0;
+    double finalX = -50;
+    double finalY = -50;
 
+    double avgHeading = 0;
 
     double currentDriveX = 0;
     double currentDriveY = 0;
@@ -59,13 +62,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());//gets telemetry object from linear opmode (overrides the telemetry variable)
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("x", 3.7);
-        packet.put("status", "alive");
-        packet.fieldOverlay()
-                .setFill("blue")
-                .fillRect(-20,-20,40,40);
-        dashboard.sendTelemetryPacket(packet);
+       // TelemetryPacket packet = new TelemetryPacket();
+        //packet.put("x", 3.7);
+        //packet.put("status", "alive");
+       // packet.fieldOverlay()
+              //  .setFill("red")
+              //  .fillCircle(finalX, finalY, 10);
+        //dashboard.sendTelemetryPacket(packet);
 
 
         // Get a reference to the sensor
@@ -76,6 +79,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+
+        servo = hardwareMap.get(Servo.class, "servo");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -91,11 +96,39 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-        //    packet.fieldOverlay()
-           //         .fillCircle(xposition, yposition, 5)
+            if (gamepad1.b){
+                servo.setPosition(0);
+            }
+            if (gamepad1.a){
+                servo.setPosition(1);
+            }
+
+            double radius = gamepad1.left_stick_x;
+            telemetry.addData("radius", radius);//71.7
+
+            double TelemX = 1 * -finalX;
+            double TelemY = 1 * -finalY;//1.966527
+
+
+            double[] xcordHead = {TelemX-3, TelemX + 3, TelemX + 15*Math.cos(avgHeading), TelemX + 15*Math.cos(avgHeading)};
+            double[] ycordHead = {TelemY, TelemY, TelemY + 15*Math.sin(avgHeading), TelemY + 15*Math.sin(avgHeading)};
 
 
 
+
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.fieldOverlay()
+
+
+                    .setFill("red")
+                    .fillCircle(TelemX,TelemY, 4)
+                    .fillPolygon(xcordHead, ycordHead);
+
+                    //.fillPolygon(1, 1, 1, 1);
+
+            dashboard.sendTelemetryPacket(packet);
+
+            //10 * Math.cos(avgHeading)
 
             // Get the latest position, which includes the x and y coordinates, plus the
             // heading angle
@@ -196,7 +229,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
             double deltaX = pos.x - oldx;
             double deltaY = pos.y - oldy;
-            double avgHeading = (pos.h + oldheading) / 2;
+            avgHeading = (pos.h + oldheading) / 2;
 
             //double instantaneousDist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY,2 ));
 
@@ -218,7 +251,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
 
             //telemetry.addData("Test1", test);
-            telemetry.addData("Test2", deltaX);
+            telemetry.addData("Test2", test2);
 
           //  telemetry.addData("instantaneous dist", instantaneousDist);
 
@@ -237,6 +270,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
             // Update the telemetry on the driver station
             telemetry.update();
+
+
+
+
+
+
+
 
 
         }
