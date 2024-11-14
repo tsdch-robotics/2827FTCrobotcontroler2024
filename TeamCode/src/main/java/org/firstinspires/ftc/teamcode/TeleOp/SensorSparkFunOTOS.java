@@ -231,13 +231,14 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double deltaY = pos.y - oldy;
             avgHeading = (pos.h + oldheading) / 2;
 
+
             //double instantaneousDist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY,2 ));
 
             //double actualXchange = /*Math.signum(deltaX) * */(instantaneousDist * Math.cos(avgHeading));//but this doesn't say which direction it is in
             //double actualYchange = /*Math.signum(deltaY) * */(instantaneousDist * Math.sin(avgHeading));
 
-            double actualXchange = deltaX * Math.cos(avgHeading) - deltaY * Math.sin(avgHeading);
-            double actualYchange = deltaX * Math.sin(avgHeading) + deltaY * Math.cos(avgHeading);
+            double actualXchange = deltaX * Math.cos(pos.h) - deltaY * Math.sin(pos.h);
+            double actualYchange = deltaX * Math.sin(pos.h) + deltaY * Math.cos(pos.h);
 
             finalX = finalX + actualXchange;
             finalY = finalY + actualYchange;
