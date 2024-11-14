@@ -119,7 +119,6 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         myOtos.setLinearScalar(1.0);
         myOtos.setAngularScalar(1.0);//set first
 
-
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
         // will be lost after a power cycle; the OTOS performs a quick calibration

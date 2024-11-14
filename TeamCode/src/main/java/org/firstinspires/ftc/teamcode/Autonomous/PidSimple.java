@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -27,8 +27,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-public class SensorSparkFunOTOS extends LinearOpMode {
+@TeleOp(name = "PidSimple", group = "Autonomous")
+public class PidSimple extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
