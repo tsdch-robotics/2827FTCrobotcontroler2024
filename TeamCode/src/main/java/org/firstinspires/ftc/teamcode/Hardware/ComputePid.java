@@ -65,7 +65,7 @@ public class ComputePid {
         previousTime = currentTime;
 
         // Return the output (e.g., motor power or other control signal)
-        //return output;
+        return output;
     }
 
 

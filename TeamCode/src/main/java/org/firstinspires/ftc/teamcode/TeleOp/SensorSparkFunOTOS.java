@@ -41,8 +41,13 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private Servo servo = null;
 
-    double finalX = -50;
-    double finalY = -50;
+    double finalX = 0;
+    double finalY = 0;
+    double originY = -50;
+    double originX = -50;
+
+
+
     double avgHeading = 0;
     double currentDriveX = 0;
     double currentDriveY = 0;
@@ -96,7 +101,6 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             packet.fieldOverlay()
                     .setFill("cyan")
                     .fillCircle(TelemX, TelemY, 6)
-                    .fillPolygon(xcordHead, ycordHead)
                     .fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 5);
 
             dashboard.sendTelemetryPacket(packet);
@@ -144,16 +148,16 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            pos = myOtos.getPosition();
+           /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
             double deltaY = pos.y - oldy;
             double newHeading = pos.h;
-
+*//*
             if (newHeading != Math.abs(newHeading)){//negatinve
                 newHeading = newHeading + 2*3.14159265;
-            }
+            }*/
 
-            avgHeading = (newHeading + oldheading) / 2;
+          //  avgHeading = (newHeading + oldheading) / 2;
 
             // Adjusting position calculation to maintain accuracy when heading changes drastically
             //double adjustedHeading = Math.abs(pos.h) > Math.PI ? pos.h - (Math.signum(pos.h) * 2 * Math.PI) : pos.h;
@@ -161,8 +165,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             /*double actualXchange = deltaX * Math.cos(avgHeading) - deltaY * Math.sin(avgHeading);
             double actualYchange = deltaX * Math.sin(avgHeading) + deltaY * Math.cos(avgHeading);*/
 
-            finalX = finalX + deltaX;
-            finalY = finalY + deltaY;
+            //finalX = finalX + deltaX;
+           // finalY = finalY + deltaY;
+            finalX = pos.x + originX;
+            finalY = pos.y + originY;
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -171,7 +177,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
-            telemetry.addData("Heading radians", avgHeading);
+            telemetry.addData("Heading radians", pos.h);
             telemetry.update();
         }
     }
@@ -186,7 +192,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         myOtos.setOffset(offset);
 
-        myOtos.setLinearScalar(1.07503047767);
+        myOtos.setLinearScalar(1);
         myOtos.setAngularScalar(0.988319);
 
         myOtos.calibrateImu();
