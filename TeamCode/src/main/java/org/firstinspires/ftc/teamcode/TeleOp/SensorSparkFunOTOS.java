@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -52,6 +52,26 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     double currentDriveX = 0;
     double currentDriveY = 0;
 
+
+    public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
+
+    private double previousError = 0;
+    private double integralSum = 0;
+    public static double yawTarget = (0);   // Desired target value
+    public static double targetX;
+    public static double targetY;
+
+
+
+
+    private double previousTime = 0; // Time from previous iteration
+    private double yawOutput = 0;
+    private double vxOutput = 0;
+    private double vyOutput = 0;
+
+    ComputePid PID = new ComputePid();
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -80,6 +100,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+
+
+
             if (gamepad1.b) {
                 servo.setPosition(0);
             }
@@ -110,8 +134,10 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double oldy = pos.y;
             double oldheading = pos.h;
 
-            if (oldheading != Math.abs(oldheading)){//negatinve
-                oldheading = oldheading + 2*3.14159265;
+
+            avgHeading = pos.h;
+            if (avgHeading != Math.abs(avgHeading)){//negatinve
+                avgHeading = avgHeading + 2*3.14159265;
             }
 
             if (gamepad1.y) {
@@ -123,9 +149,19 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             }
 
             double max;
-            double axial = gamepad1.left_stick_y;
-            double lateral = -gamepad1.left_stick_x;
-            double yaw = -gamepad1.right_stick_x;
+            //double axial = gamepad1.left_stick_y;
+            //double lateral = -gamepad1.left_stick_x;
+            double axial = -vyOutput;
+            double lateral = -vxOutput;
+            //double yaw = -gamepad1.right_stick_x;
+
+            //if (gamepad1.left_bumper){
+            //    target = pos.h;
+            //}
+            //if(!gamepad1.right_bumper){
+            double yaw = yawOutput;
+            //}
+
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -170,6 +206,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             finalX = pos.x + originX;
             finalY = pos.y + originY;
 
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
@@ -177,8 +214,41 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
-            telemetry.addData("Heading radians", pos.h);
+            telemetry.addData("Heading radians", avgHeading);
             telemetry.update();
+/*
+//heading pid testing
+            double thisTime = getRuntime();
+            // Calculate the error
+            double error = Math.toRadians(target) - pos.h;
+
+            // Calculate the time difference
+            double deltaTime = thisTime - previousTime;
+            if (deltaTime == 0) deltaTime = 0.001; // Prevent division by zero
+
+            // Proportional term
+            double proportionalTerm = yawKp * error;
+
+            // Integral term (sum of previous errors)
+            integralSum += error * deltaTime;
+            double integralTerm = yawKi * integralSum;
+
+            // Derivative term (rate of change of error)
+            double derivativeTerm = yawKd * (error - previousError) / deltaTime;
+
+            // Combine terms to get the final output
+            output = proportionalTerm + integralTerm + derivativeTerm;
+
+            // Store current error and time for next iteration
+            previousError = error;
+            previousTime = thisTime;
+
+            // Return the output (e.g., motor power or other control signal)
+*/
+            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
+            vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
+
         }
     }
 
