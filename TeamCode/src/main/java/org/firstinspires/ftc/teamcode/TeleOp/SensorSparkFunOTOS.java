@@ -134,7 +134,6 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double oldy = pos.y;
             double oldheading = pos.h;
 
-
             avgHeading = pos.h;
             if (avgHeading != Math.abs(avgHeading)){//negatinve
                 avgHeading = avgHeading + 2*3.14159265;
@@ -151,8 +150,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double max;
             //double axial = gamepad1.left_stick_y;
             //double lateral = -gamepad1.left_stick_x;
-            double axial = -vyOutput;
-            double lateral = -vxOutput;
+            double axial = -vyOutput * Math.sin(avgHeading) + -vyOutput * Math.cos(avgHeading);;
+            double lateral = -vxOutput * Math.cos(avgHeading) - -vyOutput * Math.sin(avgHeading);
             //double yaw = -gamepad1.right_stick_x;
 
             //if (gamepad1.left_bumper){
@@ -162,6 +161,22 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double yaw = yawOutput;
             //}
 
+            //lateral = lateral * Math.cos(avgHeading) - axial * Math.sin(avgHeading);
+            //axial = lateral * Math.sin(avgHeading) + axial * Math.cos(avgHeading);
+
+
+           /* if (lateral >= .2 || axial >= .2){
+                yaw = 0;
+            }*/
+
+            if(gamepad1.left_trigger > .1){
+                yaw = 0;
+            }
+
+            if (gamepad1.right_trigger > .1){
+                lateral = 0;
+                axial = 0;
+            }
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
