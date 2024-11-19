@@ -6,8 +6,8 @@ import com.acmerobotics.dashboard.config.Config;
 public class ComputePid {
 
     public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
-    public static double vxKp = 0, vxKi = 0, vxKd = 0;
-    public static double vyKp = 0, vyKi = 0, vyKd = 0;
+    public static double vxKp = 0.1, vxKi = 0, vxKd = 0;
+    public static double vyKp = 0.1, vyKi = 0, vyKd = 0;
 
     public double yawPreviousError = 0;
     public double yawIntegralSum = 0;
@@ -21,6 +21,9 @@ public class ComputePid {
     public double vyPreviousError = 0;
     public double vyIntegralSum = 0;
     public double vyPreviousTime = 0; // Time from previous iteration
+
+
+    public static double maxPower = 1;
 
 
     //takes postion, heading, wheel data
@@ -55,6 +58,18 @@ public class ComputePid {
         vxPreviousError = error;
         vxPreviousTime = currentTime;
 
+
+
+
+        //normalize outputs
+        if (output > maxPower){
+            output = maxPower;
+        }
+        if (output < -maxPower){
+            output = -maxPower;
+        }
+
+
         // Return the output (e.g., motor power or other control signal)
         return output;
 
@@ -84,6 +99,16 @@ public class ComputePid {
         // Store current error and time for next iteration
         vyPreviousError = error;
         vyPreviousTime = currentTime;
+
+
+        //normalize outputs
+        if (output > maxPower){
+            output = maxPower;
+        }
+        if (output < -maxPower){
+            output = -maxPower;
+        }
+
 
         // Return the output (e.g., motor power or other control signal)
         return output;
@@ -128,6 +153,15 @@ public class ComputePid {
         yawPreviousTime = currentTime;
 
         // Return the output (e.g., motor power or other control signal)
+
+        //normalize outputs
+        if (output > maxPower){
+            output = maxPower;
+        }
+        if (output < -maxPower){
+            output = -maxPower;
+        }
+
         return output;
     }
 

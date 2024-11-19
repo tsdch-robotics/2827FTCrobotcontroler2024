@@ -46,9 +46,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     double originY = -50;
     double originX = -50;
 
-
-
-    double avgHeading = 0;
+    double normalHeading = 0;
     double currentDriveX = 0;
     double currentDriveY = 0;
 
@@ -58,11 +56,11 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     private double previousError = 0;
     private double integralSum = 0;
     public static double yawTarget = (0);   // Desired target value
-    public static double targetX;
-    public static double targetY;
+    public static double targetX = -50;
+    public static double targetY = -50;
 
-
-
+    double localXTarget = 0;
+    double localYTarget = 0;
 
     private double previousTime = 0; // Time from previous iteration
     private double yawOutput = 0;
@@ -101,42 +99,51 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-
-
-
+            double run = getRuntime();
             if (gamepad1.b) {
-                servo.setPosition(0);
+                targetX = -50;
+                targetY = -50;
+                yawTarget = 0;
             }
             if (gamepad1.a) {
-                servo.setPosition(1);
+                targetX = -20;
+                targetY = -45;
+                yawTarget = 90;
+            }
+            if (gamepad1.left_bumper){
+                targetX = -55;
+                targetY = -20;
+                yawTarget = -90;
             }
 
-            double radius = gamepad1.left_stick_x;
-            telemetry.addData("radius", radius);
+            double TelemX = -finalX;
+            double TelemY = -finalY;//bc for some reason this works
 
-            double TelemX = 1 * -finalX;
-            double TelemY = 1 * -finalY;
-
-            double adjH = avgHeading - (3.14159265/2);
-            double[] xcordHead = {TelemX - 3, TelemX + 3, TelemX + 15 * Math.cos(avgHeading), TelemX + 15 * Math.cos(avgHeading)};
-            double[] ycordHead = {TelemY, TelemY, TelemY + 15 * Math.sin(avgHeading), TelemY + 15 * Math.sin(avgHeading)};
+            double adjH = normalHeading - (3.14159265/2);
+            double[] xcordHead = {TelemX - 3, TelemX + 3, TelemX + 15 * Math.cos(normalHeading), TelemX + 15 * Math.cos(normalHeading)};
+            double[] ycordHead = {TelemY, TelemY, TelemY + 15 * Math.sin(normalHeading), TelemY + 15 * Math.sin(normalHeading)};
 
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay()
                     .setFill("cyan")
                     .fillCircle(TelemX, TelemY, 6)
-                    .fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 5);
+                    .fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 5)
+                    .setFill("red")
+                    .fillCircle(-targetX, -targetY, 5);
+                    //.setFill("green")//to show power outputs
+                    //.fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 2);
 
             dashboard.sendTelemetryPacket(packet);
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            double oldx = pos.x;
-            double oldy = pos.y;
-            double oldheading = pos.h;
+            double xpos = pos.x;
+            double ypos = pos.y;
+            double heading = pos.h;
+            //potential problem: taking more than one reading throughout the program
 
-            avgHeading = pos.h;
-            if (avgHeading != Math.abs(avgHeading)){//negatinve
-                avgHeading = avgHeading + 2*3.14159265;
+            normalHeading = heading;
+            if (normalHeading != Math.abs(normalHeading)){//negatinve
+                normalHeading = normalHeading + 2*3.14159265;
             }
 
             if (gamepad1.y) {
@@ -148,26 +155,23 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             }
 
             double max;
-            //double axial = gamepad1.left_stick_y;
-            //double lateral = -gamepad1.left_stick_x;
-            double axial = -vyOutput * Math.sin(avgHeading) + -vyOutput * Math.cos(avgHeading);;
-            double lateral = -vxOutput * Math.cos(avgHeading) - -vyOutput * Math.sin(avgHeading);
-            //double yaw = -gamepad1.right_stick_x;
+            //double totalMovement = Math.sqrt(Math.pow(vxOutput, 2) + Math.pow(vyOutput, 2));
+            //double axial = -vyOutput * Math.sin(normalHeading) + -vyOutput * Math.cos(normalHeading);;
+            //double lateral = -vxOutput * Math.cos(normalHeading) - -vyOutput * Math.sin(normalHeading);
 
-            //if (gamepad1.left_bumper){
-            //    target = pos.h;
-            //}
-            //if(!gamepad1.right_bumper){
+            double axial = -vyOutput;//it must be negative
+            double lateral = -vxOutput;
+//-1 *0 + 0 *
+
+            //cos90 = 0
+            //
+            //so lateral is working but axial is not?
+
+
+            lateral = /*+*/(-vxOutput) * Math.cos(normalHeading) + (-vyOutput) * Math.sin(normalHeading);//rotate counter clockwise or clockwise???//x
+            axial = -(-vxOutput) * Math.sin(normalHeading) + /*+*/(-vyOutput) * Math.cos(normalHeading);//y
+
             double yaw = yawOutput;
-            //}
-
-            //lateral = lateral * Math.cos(avgHeading) - axial * Math.sin(avgHeading);
-            //axial = lateral * Math.sin(avgHeading) + axial * Math.cos(avgHeading);
-
-
-           /* if (lateral >= .2 || axial >= .2){
-                yaw = 0;
-            }*/
 
             if(gamepad1.left_trigger > .1){
                 yaw = 0;
@@ -178,6 +182,12 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 axial = 0;
             }
 
+          /*  if (totalMovement > 1.0) {
+                double scalingFactor = 1.0 / totalMovement;
+                axial *= scalingFactor;
+                axial *= scalingFactor;
+            }
+*/
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -208,19 +218,18 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 newHeading = newHeading + 2*3.14159265;
             }*/
 
-          //  avgHeading = (newHeading + oldheading) / 2;
+          //  normalHeading = (newHeading + oldheading) / 2;
 
             // Adjusting position calculation to maintain accuracy when heading changes drastically
             //double adjustedHeading = Math.abs(pos.h) > Math.PI ? pos.h - (Math.signum(pos.h) * 2 * Math.PI) : pos.h;
 
-            /*double actualXchange = deltaX * Math.cos(avgHeading) - deltaY * Math.sin(avgHeading);
-            double actualYchange = deltaX * Math.sin(avgHeading) + deltaY * Math.cos(avgHeading);*/
+            /*double actualXchange = deltaX * Math.cos(normalHeading) - deltaY * Math.sin(normalHeading);
+            double actualYchange = deltaX * Math.sin(normalHeading) + deltaY * Math.cos(normalHeading);*/
 
             //finalX = finalX + deltaX;
            // finalY = finalY + deltaY;
-            finalX = pos.x + originX;
-            finalY = pos.y + originY;
-
+            finalX = xpos + originX;
+            finalY = ypos + originY;
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -229,37 +238,17 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
-            telemetry.addData("Heading radians", avgHeading);
+            telemetry.addData("yawOutput", yawOutput);
+            telemetry.addData("vxOut", vxOutput);
+            telemetry.addData("vyOut", vyOutput);
+            telemetry.addData("axial", axial);
+            telemetry.addData("lateral", lateral);
+            telemetry.addData("Heading radians", normalHeading);
             telemetry.update();
-/*
-//heading pid testing
-            double thisTime = getRuntime();
-            // Calculate the error
-            double error = Math.toRadians(target) - pos.h;
 
-            // Calculate the time difference
-            double deltaTime = thisTime - previousTime;
-            if (deltaTime == 0) deltaTime = 0.001; // Prevent division by zero
+            localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
+            localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            // Proportional term
-            double proportionalTerm = yawKp * error;
-
-            // Integral term (sum of previous errors)
-            integralSum += error * deltaTime;
-            double integralTerm = yawKi * integralSum;
-
-            // Derivative term (rate of change of error)
-            double derivativeTerm = yawKd * (error - previousError) / deltaTime;
-
-            // Combine terms to get the final output
-            output = proportionalTerm + integralTerm + derivativeTerm;
-
-            // Store current error and time for next iteration
-            previousError = error;
-            previousTime = thisTime;
-
-            // Return the output (e.g., motor power or other control signal)
-*/
             yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
