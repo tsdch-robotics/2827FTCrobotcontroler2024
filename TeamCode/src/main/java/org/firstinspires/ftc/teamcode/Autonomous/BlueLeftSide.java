@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -27,8 +28,8 @@ import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@TeleOp(name = "Sensor: SparkFun OTOS", group = "Sensor")
-public class SensorSparkFunOTOS extends LinearOpMode {
+@Autonomous(name = "BlueLeftSide", group = "Autonomous")
+public class BlueLeftSide extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
@@ -97,24 +98,61 @@ public class SensorSparkFunOTOS extends LinearOpMode {
         waitForStart();
         resetRuntime();
 
+
+
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
+           /* if (inTargetBox){
+                nextTarget = true;
+            }*/
             double run = getRuntime();
-            if (run % 10 < .01) {
+            if (run > 0) {
                 targetX = -50;
                 targetY = -50;
                 yawTarget = 0;
             }
-            if ((run + 3) % 10 < .01) {
+            if (run > 3) {
                 targetX = -20;
                 targetY = -45;
                 yawTarget = 90;
             }
-            if ((run+7) % 10 < .01){
+            if (run > 5){
                 targetX = -55;
                 targetY = -20;
                 yawTarget = -90;
+            }
+            if (run > 8){
+                targetX = -55;
+                targetY = 35;
+                yawTarget = 0;
+            }
+            if (run > 12){
+                targetX = -55;
+                targetY = 50;
+                yawTarget = -90;
+            }
+
+            if (run > 15){
+                targetX = 45;
+                targetY = 50;
+                yawTarget = -90;
+            }
+
+            if (run > 19){
+                targetX = 45;
+                targetY = -50;
+                yawTarget = 90;
+            }
+            if (run > 24) {
+                targetX = -50;
+                targetY = -50;
+                yawTarget = 0;
+            }
+
+            if(finalX == targetX){//or if velocity = 0, need to compute from sensor
+               // inTargetBox
+
             }
 
             double TelemX = -finalX;
@@ -131,8 +169,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                     .fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 5)
                     .setFill("red")
                     .fillCircle(-targetX, -targetY, 5);
-                    //.setFill("green")//to show power outputs
-                    //.fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 2);
+            //.setFill("green")//to show power outputs
+            //.fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 2);
 
             dashboard.sendTelemetryPacket(packet);
 
@@ -160,9 +198,19 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             //double axial = -vyOutput * Math.sin(normalHeading) + -vyOutput * Math.cos(normalHeading);;
             //double lateral = -vxOutput * Math.cos(normalHeading) - -vyOutput * Math.sin(normalHeading);
 
-            double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  -gamepad1.left_stick_x;
-            double yaw     =  -gamepad1.right_stick_x;
+            double axial = -vyOutput;//it must be negative
+            double lateral = -vxOutput;
+//-1 *0 + 0 *
+
+            //cos90 = 0
+            //
+            //so lateral is working but axial is not?
+
+
+            lateral = /*+*/(-vxOutput) * Math.cos(normalHeading) + (-vyOutput) * Math.sin(normalHeading);//rotate counter clockwise or clockwise???//x
+            axial = -(-vxOutput) * Math.sin(normalHeading) + /*+*/(-vyOutput) * Math.cos(normalHeading);//y
+
+            double yaw = yawOutput;
 
             if(gamepad1.left_trigger > .1){
                 yaw = 0;
@@ -209,7 +257,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
                 newHeading = newHeading + 2*3.14159265;
             }*/
 
-          //  normalHeading = (newHeading + oldheading) / 2;
+            //  normalHeading = (newHeading + oldheading) / 2;
 
             // Adjusting position calculation to maintain accuracy when heading changes drastically
             //double adjustedHeading = Math.abs(pos.h) > Math.PI ? pos.h - (Math.signum(pos.h) * 2 * Math.PI) : pos.h;
@@ -218,7 +266,7 @@ public class SensorSparkFunOTOS extends LinearOpMode {
             double actualYchange = deltaX * Math.sin(normalHeading) + deltaY * Math.cos(normalHeading);*/
 
             //finalX = finalX + deltaX;
-           // finalY = finalY + deltaY;
+            // finalY = finalY + deltaY;
             finalX = xpos + originX;
             finalY = ypos + originY;
 
