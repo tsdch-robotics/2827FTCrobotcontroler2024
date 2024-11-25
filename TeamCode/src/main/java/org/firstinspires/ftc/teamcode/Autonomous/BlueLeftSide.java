@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,10 +17,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.opencv.core.Mat;
+//import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+
+import org.firstinspires.ftc.teamcode.Hardware.Action;
+
+
 
 import java.util.List;
+import java.util.ArrayList;
+
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -38,13 +50,30 @@ public class BlueLeftSide extends LinearOpMode {
 
     public boolean inTargetBox = false;
     public int actionNumber = 0;
-    Pose2D
-    Pose2d startPose = new Pose2d(10, 60, Math.toRadians(-90));//should be 9
-
-    targetAction = actions[actionNumber];
 
     // Create an instance of the sensor
+
     SparkFunOTOS myOtos;
+
+    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0);
+    Action act2 = new Action(new Pose2d(-5, -35, Math.toRadians(0)), 0);
+    Action act3 = new Action(new Pose2d(-5.1, -35, Math.toRadians(0)), 3);
+    Action act4 = new Action(new Pose2d(-10, -40, Math.toRadians(-90)), .2);
+    Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
+    Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);
+
+    List<Action> actions = new ArrayList<>();
+
+    double act1pause = 1;
+    double act2pause = 1;
+    double act3pause = 1;
+    double act4pause = 1;
+    double act5pause = 1;
+    double act6pause = 1;
+
+
+    List<Pose2d> pauses = new ArrayList<>();
+
 
     public static double testttt = 1; // Example of FTC dashboard variable
 
@@ -57,8 +86,8 @@ public class BlueLeftSide extends LinearOpMode {
 
     double finalX = 0;
     double finalY = 0;
-    double originY = -50;
-    double originX = -50;
+    double originY = -61;
+    double originX = -7;
 
     double normalHeading = 0;
     double currentDriveX = 0;
@@ -81,11 +110,42 @@ public class BlueLeftSide extends LinearOpMode {
     private double vxOutput = 0;
     private double vyOutput = 0;
 
+    public double heading = 0;
+
     ComputePid PID = new ComputePid();
 
 
+    double endTime = 0;
+    boolean AlreadyPausing = false;
+
+
+    //speed calculation params
+    double changeTime = 0;
+    double lastTime = 0;
+
+    double changeY = 0;
+    double lastY = 0;
+
+    double changeX = 0;
+    double lastX = 0;
+
+    double changeH = 0;
+    double lastH = 0;
+
+    double dydt = 0;
+    double dxdt = 0;
+    double dhdt = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        actions.add(act1);
+        actions.add(act2);
+        actions.add(act3);
+        actions.add(act4);
+        actions.add(act5);
+        actions.add(act6);
+
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -116,61 +176,41 @@ public class BlueLeftSide extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            if (inTargetBox){
-                //nextTarget = true;
+            double stopSpeed = 0.0001;
+            double noPauseLeft;
+
+            Action currentAction = actions.get(actionNumber); // Get the current action
+            Pose2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
+            double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
+
+            //chekcs to see if we are in target box and if speed is 0
+            if (Math.abs(finalX - targetX) < 1 & dxdt < stopSpeed){
+                if (Math.abs(finalY - targetY) < 1 & dydt < stopSpeed){
+                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */dhdt < 0.001){
+                        inTargetBox = true;
+                        gamepad1.rumble(3);
+                    }
+                }
+            }
+            //next we must complete the pause
+
+            //once in targetBox, it starts the pause
+            if(inTargetBox & !AlreadyPausing){
+                endTime = getRuntime() + waitTime;
+                AlreadyPausing = true;
+            }
+
+            if (inTargetBox & actionNumber < 5 & getRuntime() > endTime){
+                AlreadyPausing = false;
                 actionNumber += 1;
+                inTargetBox = false;
             }
 
-            targetAction = actions[actionNumber];
 
-            double run = getRuntime();
-            if (run > 0) {
-                targetX = -50;
-                targetY = -50;
-                yawTarget = 0;
-            }
-            if (run > 3) {
-                targetX = -20;
-                targetY = -45;
-                yawTarget = 90;
-            }
-            if (run > 5){
-                targetX = -55;
-                targetY = -20;
-                yawTarget = -90;
-            }
-            if (run > 8){
-                targetX = -55;
-                targetY = 35;
-                yawTarget = 0;
-            }
-            if (run > 12){
-                targetX = -55;
-                targetY = 50;
-                yawTarget = -90;
-            }
-
-            if (run > 15){
-                targetX = 45;
-                targetY = 50;
-                yawTarget = -90;
-            }
-
-            if (run > 19){
-                targetX = 45;
-                targetY = -50;
-                yawTarget = 90;
-            }
-            if (run > 24) {
-                targetX = -50;
-                targetY = -50;
-                yawTarget = 0;
-            }
-
-            if(finalX == targetX){//or if velocity = 0, need to compute from sensor
-               // inTargetBox
-
-            }
+            targetX = targetPose.position.x;
+            targetY = targetPose.position.y;
+            yawTarget = Math.toDegrees(targetPose.heading.log());
+            telemetry.addData("yawTarget", yawTarget);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
@@ -194,7 +234,7 @@ public class BlueLeftSide extends LinearOpMode {
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             double xpos = pos.x;
             double ypos = pos.y;
-            double heading = pos.h;
+            heading = pos.h;
             //potential problem: taking more than one reading throughout the program
 
             normalHeading = heading;
@@ -300,6 +340,9 @@ public class BlueLeftSide extends LinearOpMode {
             telemetry.addData("axial", axial);
             telemetry.addData("lateral", lateral);
             telemetry.addData("Heading radians", normalHeading);
+            telemetry.addData("xspeed inches/sec", dxdt);
+            telemetry.addData("yspeed inches/second", dydt);
+            telemetry.addData("angular velocity radians/second", dhdt);
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
@@ -308,6 +351,29 @@ public class BlueLeftSide extends LinearOpMode {
             yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
+
+
+            //speed calculations
+            changeTime = getRuntime() - lastTime;
+            lastTime = getRuntime();
+
+            SparkFunOTOS.Pose2D pos2 = myOtos.getPosition();
+            double xpos2 = pos2.x;
+            double ypos2 = pos2.y;
+            double heading2 = pos2.h;
+
+            changeY = pos2.y - lastY;
+            lastY = pos2.y;
+
+            changeX = pos2.x - lastX;
+            lastX = pos2.x;
+
+            changeH = pos2.h - lastH;
+            lastH = pos2.h;
+
+            dydt = changeY/changeTime;
+            dxdt = changeX/changeTime;
+            dhdt = changeH/changeTime;
 
         }
     }
