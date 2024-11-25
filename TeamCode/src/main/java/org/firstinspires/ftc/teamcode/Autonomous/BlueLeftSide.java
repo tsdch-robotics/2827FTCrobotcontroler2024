@@ -15,7 +15,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
+import java.util.List;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -30,6 +34,15 @@ import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 @Config
 @Autonomous(name = "BlueLeftSide", group = "Autonomous")
 public class BlueLeftSide extends LinearOpMode {
+
+
+    public boolean inTargetBox = false;
+    public int actionNumber = 0;
+    Pose2D
+    Pose2d startPose = new Pose2d(10, 60, Math.toRadians(-90));//should be 9
+
+    targetAction = actions[actionNumber];
+
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
@@ -103,9 +116,13 @@ public class BlueLeftSide extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-           /* if (inTargetBox){
-                nextTarget = true;
-            }*/
+            if (inTargetBox){
+                //nextTarget = true;
+                actionNumber += 1;
+            }
+
+            targetAction = actions[actionNumber];
+
             double run = getRuntime();
             if (run > 0) {
                 targetX = -50;
