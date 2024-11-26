@@ -20,12 +20,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
+import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.opencv.core.Mat;
 //import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.Hardware.Action;
+import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
+
 
 
 
@@ -48,6 +52,8 @@ import java.util.ArrayList;
 public class BlueLeftSide extends LinearOpMode {
 
 
+    VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
+
     public boolean inTargetBox = false;
     public int actionNumber = 0;
 
@@ -56,7 +62,7 @@ public class BlueLeftSide extends LinearOpMode {
     SparkFunOTOS myOtos;
 
     Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0);
-    Action act2 = new Action(new Pose2d(-5, -35, Math.toRadians(0)), 0);
+    Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 0);
     Action act3 = new Action(new Pose2d(-5.1, -35, Math.toRadians(0)), 3);
     Action act4 = new Action(new Pose2d(-10, -40, Math.toRadians(-90)), .2);
     Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
@@ -89,10 +95,12 @@ public class BlueLeftSide extends LinearOpMode {
     double originY = -61;
     double originX = -7;
 
+    Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
+
+
     double normalHeading = 0;
     double currentDriveX = 0;
     double currentDriveY = 0;
-
 
     public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
 
@@ -119,22 +127,6 @@ public class BlueLeftSide extends LinearOpMode {
     boolean AlreadyPausing = false;
 
 
-    //speed calculation params
-    double changeTime = 0;
-    double lastTime = 0;
-
-    double changeY = 0;
-    double lastY = 0;
-
-    double changeX = 0;
-    double lastX = 0;
-
-    double changeH = 0;
-    double lastH = 0;
-
-    double dydt = 0;
-    double dxdt = 0;
-    double dhdt = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -144,6 +136,7 @@ public class BlueLeftSide extends LinearOpMode {
         actions.add(act4);
         actions.add(act5);
         actions.add(act6);
+        actions.add(returnHome);
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -176,6 +169,9 @@ public class BlueLeftSide extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+
+
             double stopSpeed = 0.0001;
             double noPauseLeft;
 
@@ -184,9 +180,9 @@ public class BlueLeftSide extends LinearOpMode {
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 1 & dxdt < stopSpeed){
-                if (Math.abs(finalY - targetY) < 1 & dydt < stopSpeed){
-                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */dhdt < 0.001){
+            if (Math.abs(finalX - targetX) < 1 & velocities.getVx() < stopSpeed){
+                if (Math.abs(finalY - targetY) < 1 & velocities.getVy() < stopSpeed){
+                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.001){
                         inTargetBox = true;
                         gamepad1.rumble(3);
                     }
@@ -200,7 +196,7 @@ public class BlueLeftSide extends LinearOpMode {
                 AlreadyPausing = true;
             }
 
-            if (inTargetBox & actionNumber < 5 & getRuntime() > endTime){
+            if (inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime){
                 AlreadyPausing = false;
                 actionNumber += 1;
                 inTargetBox = false;
@@ -343,6 +339,10 @@ public class BlueLeftSide extends LinearOpMode {
             telemetry.addData("xspeed inches/sec", dxdt);
             telemetry.addData("yspeed inches/second", dydt);
             telemetry.addData("angular velocity radians/second", dhdt);
+
+            telemetry.addData("xacceleration inches/sec2", daxdt);
+            telemetry.addData("yacceleration inches/second2", daydt);
+            telemetry.addData("angular acceleration radians/second2", dahdt);
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
@@ -351,29 +351,6 @@ public class BlueLeftSide extends LinearOpMode {
             yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
-
-
-            //speed calculations
-            changeTime = getRuntime() - lastTime;
-            lastTime = getRuntime();
-
-            SparkFunOTOS.Pose2D pos2 = myOtos.getPosition();
-            double xpos2 = pos2.x;
-            double ypos2 = pos2.y;
-            double heading2 = pos2.h;
-
-            changeY = pos2.y - lastY;
-            lastY = pos2.y;
-
-            changeX = pos2.x - lastX;
-            lastX = pos2.x;
-
-            changeH = pos2.h - lastH;
-            lastH = pos2.h;
-
-            dydt = changeY/changeTime;
-            dxdt = changeX/changeTime;
-            dhdt = changeH/changeTime;
 
         }
     }
