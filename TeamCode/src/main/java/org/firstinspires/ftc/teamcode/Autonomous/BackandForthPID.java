@@ -48,14 +48,10 @@ import java.util.ArrayList;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@Autonomous(name = "BlueLeftSide", group = "Autonomous")
-public class BlueLeftSide extends LinearOpMode {
+@Autonomous(name = "BackandForthPID", group = "Autonomous")
+public class BackandForthPID extends LinearOpMode {
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
-
-
-
-    public static double scale = 0.8; // Example of FTC dashboard variable
 
     public boolean inTargetBox = false;
     public int actionNumber = 0;
@@ -64,15 +60,15 @@ public class BlueLeftSide extends LinearOpMode {
 
     SparkFunOTOS myOtos;
 
-    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0 /*, function1*/);
-    Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
-    Action act3 = new Action(new Pose2d(-5, -33, Math.toRadians(0)), 3);
+   //Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0 /*, function1*/);
+    /*Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
+    Action act3 = new Action(new Pose2d(-5, -35, Math.toRadians(0)), 3);
     Action act4 = new Action(new Pose2d(-10, -45, Math.toRadians(-90)), .2);
     Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
-    Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);
+    Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);*/
 
-   // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
-   // Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 2);
+    Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 4);
+    Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 4);
 
     List<Action> actions = new ArrayList<>();
 
@@ -87,7 +83,7 @@ public class BlueLeftSide extends LinearOpMode {
     List<Pose2d> pauses = new ArrayList<>();
 
 
-    public static double testttt = 1; // Example of FTC dashboard variable
+    public static double scale = 0.8; // Example of FTC dashboard variable
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -98,8 +94,8 @@ public class BlueLeftSide extends LinearOpMode {
 
     double finalX = 0;
     double finalY = 0;
-    double originY = -61;// -61;
-    double originX = -7;//-7;
+    double originY = -50;// -61;
+    double originX = -50;//-7;
 
     Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -128,29 +124,26 @@ public class BlueLeftSide extends LinearOpMode {
 
     ComputePid PID = new ComputePid();
 
-
     double endTime = 0;
     boolean AlreadyPausing = false;
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        /*actions.add(act1);
         actions.add(act1);
-        for (int i = 0; i < 20; i++) {
+        actions.add(act1);
+        for (int i = 0; i < 100; i++) {
             actions.add(act1);
             actions.add(act2);
-        }*/
+        }
 
-        actions.add(act1);
+        /*actions.add(act1);
         actions.add(act2);
         actions.add(act3);
         actions.add(act4);
         actions.add(act5);
         actions.add(act6);
-        actions.add(returnHome);
+        actions.add(returnHome);*/
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -374,7 +367,6 @@ public class BlueLeftSide extends LinearOpMode {
             yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
-
 
             yawOutput = yawOutput * scale;
             vxOutput = vxOutput * scale;

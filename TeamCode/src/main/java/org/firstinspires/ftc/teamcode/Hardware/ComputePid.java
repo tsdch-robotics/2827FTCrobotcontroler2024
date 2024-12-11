@@ -9,6 +9,19 @@ public class ComputePid {
     public static double vxKp = 0.1, vxKi = 0, vxKd = 0;
     public static double vyKp = 0.1, vyKi = 0, vyKd = 0;
 
+    public static double hsKp = 0.01, hsKi = 0.0, hsKd = 0.0;  // PID gains
+    public static double vsKp = 0.01, vsKi = 0.0, vsKd = 0.0;  // PID gains
+
+
+    public double hsPreviousError = 0;
+    public double hsIntegralSum = 0;
+    public double hsPreviousTime = 0; // Time from previous iteration
+
+
+    public double vsPreviousError = 0;
+    public double vsIntegralSum = 0;
+    public double vsPreviousTime = 0; // Time from previous iteration
+
     public double yawPreviousError = 0;
     public double yawIntegralSum = 0;
     public double yawPreviousTime = 0; // Time from previous iteration
@@ -17,19 +30,19 @@ public class ComputePid {
     public double vxIntegralSum = 0;
     public double vxPreviousTime = 0; // Time from previous iteration
 
-
     public double vyPreviousError = 0;
     public double vyIntegralSum = 0;
     public double vyPreviousTime = 0; // Time from previous iteration
 
-
     public static double maxPower = 1;
+
+    public static double Kf = 0.5;  // Feedforward constant, tune this value
+    public static double mass = 13.6078;  // Robot mass (in kg), set to your robot's mass
 
 
     //takes postion, heading, wheel data
 
     //calculates wheel power using a pid equation, returns the holonomic drive values
-
 
 
     public double vxPID(double currentX, double currentTime,double target){
@@ -51,14 +64,17 @@ public class ComputePid {
         // Derivative term (rate of change of error)
         double derivativeTerm = vxKd * (error - vxPreviousError) / deltaTime;
 
+
+        //feed forward kinamatics:
+
+       //double feedforwardTerm = Kf * (v_target + a_target * mass);
+
         // Combine terms to get the final output
         double output = proportionalTerm + integralTerm + derivativeTerm;
 
         // Store current error and time for next iteration
         vxPreviousError = error;
         vxPreviousTime = currentTime;
-
-
 
 
         //normalize outputs
@@ -151,6 +167,89 @@ public class ComputePid {
         // Store current error and time for next iteration
         yawPreviousError = error;
         yawPreviousTime = currentTime;
+
+        // Return the output (e.g., motor power or other control signal)
+
+        //normalize outputs
+        if (output > maxPower){
+            output = maxPower;
+        }
+        if (output < -maxPower){
+            output = -maxPower;
+        }
+
+        return output;
+    }
+
+
+
+    public double hsPID(double currentDist, double currentTime,double target) {
+
+        // Calculate the error
+        double error = target - currentDist;
+
+        // Calculate the time difference
+        double deltaTime = currentTime - hsPreviousTime;
+        if (deltaTime == 0) deltaTime = 0.001; // Prevent division by zero
+
+        // Proportional term
+        double proportionalTerm = hsKp * error;
+
+        // Integral term (sum of previous errors)
+        hsIntegralSum += error * deltaTime;
+        double integralTerm = hsKi * hsIntegralSum;
+
+        // Derivative term (rate of change of error)
+        double derivativeTerm = hsKd * (error - hsPreviousError) / deltaTime;
+
+        // Combine terms to get the final output
+        double output = proportionalTerm + integralTerm + derivativeTerm;
+
+        // Store current error and time for next iteration
+        hsPreviousError = error;
+        hsPreviousTime = currentTime;
+
+        // Return the output (e.g., motor power or other control signal)
+
+        //normalize outputs
+        if (output > maxPower){
+            output = maxPower;
+        }
+        if (output < -maxPower){
+            output = -maxPower;
+        }
+
+        return output;
+    }
+
+
+
+
+    public double vsPID(double currentDist, double currentTime,double target) {
+
+        // Calculate the error
+        double error = target - currentDist;
+
+        // Calculate the time difference
+        double deltaTime = currentTime - vsPreviousTime;
+        if (deltaTime == 0) deltaTime = 0.001; // Prevent division by zero
+
+        // Proportional term
+        double proportionalTerm = vsKp * error;
+
+        // Integral term (sum of previous errors)
+        vsIntegralSum += error * deltaTime;
+        double integralTerm = vsKi * vsIntegralSum;
+
+        // Derivative term (rate of change of error)
+        double derivativeTerm = vsKd * (error - vsPreviousError) / deltaTime;
+
+        // Combine terms to get the final output
+        double output = proportionalTerm + integralTerm + derivativeTerm;
+
+        // Store current error and time for next iteration
+        vsPreviousError = error;
+        vsPreviousTime = currentTime;
 
         // Return the output (e.g., motor power or other control signal)
 

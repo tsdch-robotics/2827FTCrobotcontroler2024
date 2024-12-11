@@ -34,40 +34,46 @@ public class VelocityAccelertaionSparkFun {
     double lastDxdt = 0;
     double lastDhdt = 0;
 
+    public static double fixedDeltaTime = 0.02;  // Fixed time step (50 Hz)
+    //private static double accelUpdateRate = 0.04;
 
     public VxVyAxAy getvelocity(double time, SparkFunOTOS myOtos){
 
-        //speed calculations
-        changeTime = time - lastTime;
-        lastTime = time;
+        //now using a fixed refresh rate (50Hz)
+        if (time - lastTime >= fixedDeltaTime) {
+            //speed calculations
+            changeTime = time - lastTime;
+            lastTime = time;
 
-        SparkFunOTOS.Pose2D pos2 = myOtos.getPosition();
-        double xpos2 = pos2.x;
-        double ypos2 = pos2.y;
-        double heading2 = pos2.h;
+            SparkFunOTOS.Pose2D pos2 = myOtos.getPosition();
+            double xpos2 = pos2.x;
+            double ypos2 = pos2.y;
+            double heading2 = pos2.h;
 
-        //prob convert to other class file
-        changeY = ypos2 - lastY;
-        lastY = ypos2;
+            //prob convert to other class file
+            changeY = ypos2 - lastY;
+            lastY = ypos2;
 
-        changeX = xpos2 - lastX;
-        lastX = xpos2;
+            changeX = xpos2 - lastX;
+            lastX = xpos2;
 
-        changeH = heading2 - lastH;
-        lastH = heading2;
+            changeH = heading2 - lastH;
+            lastH = heading2;
 
-        dydt = changeY/changeTime;
-        dxdt = changeX/changeTime;
-        dhdt = changeH/changeTime;
+            dydt = changeY/changeTime;
+            dxdt = changeX/changeTime;
+            dhdt = changeH/changeTime;
 
-        daydt = (dydt-lastDydt)/changeTime;
-        daxdt = (dxdt-lastDxdt)/changeTime;
-        dahdt = (dhdt-lastDhdt)/changeTime;
+            daydt = (dydt-lastDydt)/changeTime;
+            daxdt = (dxdt-lastDxdt)/changeTime;
+            dahdt = (dhdt-lastDhdt)/changeTime;
 
-        lastDydt = dydt;
-        lastDxdt = dxdt;
-        lastDhdt = dhdt;
 
+            lastDydt = dydt;
+            lastDxdt = dxdt;
+            lastDhdt = dhdt;
+
+        }
 
         VxVyAxAy velocities = new VxVyAxAy(dxdt,dydt,daxdt,daydt, dhdt, dahdt);
 

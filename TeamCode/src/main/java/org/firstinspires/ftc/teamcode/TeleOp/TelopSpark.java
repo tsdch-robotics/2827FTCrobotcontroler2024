@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
+import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
+import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
+import org.firstinspires.ftc.teamcode.R;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -29,17 +32,28 @@ import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 @Config
 @TeleOp(name = "TeleopSpark", group = "Sensor")
 public class TelopSpark extends LinearOpMode {
+
+    VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
+
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
-    public static double testttt = 1; // Example of FTC dashboard variable
+    public static double po2 = .55; // Example of FTC dashboard variable
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private Servo servo = null;
+
+    private DcMotor horizontalSlides = null;
+    private DcMotor verticalSlides = null;
+
+
+    private Servo ptoL = null;
+    private Servo ptoR = null;
+    private Servo hookL = null;
+    private Servo hookR = null;
 
     double finalX = 0;
     double finalY = 0;
@@ -70,8 +84,25 @@ public class TelopSpark extends LinearOpMode {
     ComputePid PID = new ComputePid();
 
 
+    boolean hanging = false;
+
+    double vsPower = 0;
+    double hsPower = 0;
+
+    double yaw = 0;
+
+
+    double hsOutput = 0;
+    public static double hsTarget = 50;
+
+    double vsOutput = 0;
+    public static double vsTarget = 50;
+
     @Override
     public void runOpMode() throws InterruptedException {
+
+
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -84,12 +115,35 @@ public class TelopSpark extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
 
-        servo = hardwareMap.get(Servo.class, "servo");
+
+        horizontalSlides = hardwareMap.get(DcMotor.class, "HS");
+        verticalSlides = hardwareMap.get(DcMotor.class, "VS");
+
+
+        ptoL = hardwareMap.get(Servo.class, "ptoL");
+        ptoR = hardwareMap.get(Servo.class, "ptoR");
+        hookL = hardwareMap.get(Servo.class, "hookL");
+        hookR = hardwareMap.get(Servo.class, "hookR");
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//important
+        verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
+
+        ptoL.setPosition(0.48);
+        ptoR.setPosition(0.48);
+
 
         configureOtos();
 
@@ -100,22 +154,50 @@ public class TelopSpark extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            double run = getRuntime();
-            if (run > 0) {
-                targetX = -50;
-                targetY = -50;
-                yawTarget = 0;
+            /*if(gamepad1.a){
+                ptoL.setPosition(0.48);
+                ptoR.setPosition(0.48);
+                hanging = false;
             }
-            if (run > 3) {
-                targetX = -20;
-                targetY = -45;
-                yawTarget = 90;
+
+            if(gamepad1.b){
+                ptoL.setPosition(0.59);
+                ptoR.setPosition(0.61);
+                hanging = true;
+            }*/
+
+            if(gamepad1.b){
+                hsTarget = 1700;
             }
-            if (run > 5){
-                targetX = -55;
-                targetY = -20;
-                yawTarget = -90;
+
+            if(gamepad1.a){
+                hsTarget = 0;
             }
+
+            if(gamepad1.left_bumper){
+                hsTarget = 800;
+            }
+
+            if(gamepad1.right_bumper){
+                vsTarget = 600;
+            }
+
+            if (gamepad1.y){
+                vsTarget = 1000;
+            }
+
+            if (gamepad1.x){
+                vsTarget = 0;
+            }
+
+
+/*
+            double signSlides = 1;
+            if (gamepad1.left_bumper){
+                signSlides = -1;
+            }*/
+
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
@@ -146,14 +228,15 @@ public class TelopSpark extends LinearOpMode {
             if (normalHeading != Math.abs(normalHeading)){//negatinve
                 normalHeading = normalHeading + 2*3.14159265;
             }
+//POSSIBLY KEEP INCASE A RESET IS NEEDED
 
-            if (gamepad1.y) {
+            /*if (gamepad1.y) {
                 myOtos.resetTracking();
             }
 
             if (gamepad1.x) {
                 myOtos.calibrateImu();
-            }
+            }*/
 
             double max;
             //double totalMovement = Math.sqrt(Math.pow(vxOutput, 2) + Math.pow(vyOutput, 2));
@@ -168,19 +251,17 @@ public class TelopSpark extends LinearOpMode {
             //
             //so lateral is working but axial is not?
 
+// POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
 
-            lateral = /*+*/(-vxOutput) * Math.cos(normalHeading) + (-vyOutput) * Math.sin(normalHeading);//rotate counter clockwise or clockwise???//x
-            axial = -(-vxOutput) * Math.sin(normalHeading) + /*+*/(-vyOutput) * Math.cos(normalHeading);//y
 
-            double yaw = yawOutput;
-
-            if(gamepad1.left_trigger > .1){
-                yaw = 0;
-            }
-
-            if (gamepad1.right_trigger > .1){
+            if(!hanging){
+                axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+                lateral =  -gamepad1.left_stick_x;
+                yaw     =  -gamepad1.right_stick_x;
+            }else{
+                axial = vsPower;
                 lateral = 0;
-                axial = 0;
+                yaw     = 0;
             }
 
           /*  if (totalMovement > 1.0) {
@@ -209,6 +290,30 @@ public class TelopSpark extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
+            double hspos = -horizontalSlides.getCurrentPosition();
+            double vspos = verticalSlides.getCurrentPosition();
+
+            //horizontalSlides.setPower(-gamepad1.left_trigger * signSlides);
+
+
+            /*
+            hsPower = -gamepad1.left_trigger * signSlides;
+            vsPower = gamepad1.right_trigger * signSlides;
+
+
+            if (hspos < 1700 & hsPower < 0){
+                horizontalSlides.setPower(hsPower);
+            }
+            else if (hspos > 40 & hsPower > 0){
+                horizontalSlides.setPower(hsPower);
+            }else{
+                horizontalSlides.setPower(0);
+            }*/
+
+            verticalSlides.setPower(vsOutput);
+            horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
+
 
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
@@ -245,6 +350,20 @@ public class TelopSpark extends LinearOpMode {
             telemetry.addData("axial", axial);
             telemetry.addData("lateral", lateral);
             telemetry.addData("Heading radians", normalHeading);
+
+
+            telemetry.addData("xspeed inches/sec", velocities.getVx());
+            telemetry.addData("yspeed inches/second", velocities.getVy());
+            telemetry.addData("angular velocity radians/second", velocities.getVh());
+
+            telemetry.addData("xacceleration inches/sec2", velocities.getAx());
+            telemetry.addData("yacceleration inches/second2", velocities.getAy());
+            telemetry.addData("angular acceleration radians/second2", velocities.getAh());
+
+            telemetry.addData("hs pos", hspos);
+            telemetry.addData("vs pos", vspos);
+
+
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
@@ -253,6 +372,9 @@ public class TelopSpark extends LinearOpMode {
             yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
+
+            hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
+            vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
 
         }
     }
