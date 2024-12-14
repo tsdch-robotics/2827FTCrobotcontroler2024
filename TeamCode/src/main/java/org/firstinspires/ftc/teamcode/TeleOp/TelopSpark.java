@@ -38,7 +38,7 @@ public class TelopSpark extends LinearOpMode {
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
-    public static double po2 = .55; // Example of FTC dashboard variable
+    public static double test1 = .55; // Example of FTC dashboard variable
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -50,10 +50,22 @@ public class TelopSpark extends LinearOpMode {
     private DcMotor verticalSlides = null;
 
 
+    private DcMotor intake = null;
+
+
     private Servo ptoL = null;
     private Servo ptoR = null;
     private Servo hookL = null;
     private Servo hookR = null;
+
+    private Servo armL = null;
+    private Servo armR = null;
+
+
+    private Servo liftL = null;
+    private Servo liftR = null;
+
+
 
     double finalX = 0;
     double finalY = 0;
@@ -120,11 +132,30 @@ public class TelopSpark extends LinearOpMode {
         verticalSlides = hardwareMap.get(DcMotor.class, "VS");
 
 
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+
+
         ptoL = hardwareMap.get(Servo.class, "ptoL");
         ptoR = hardwareMap.get(Servo.class, "ptoR");
         hookL = hardwareMap.get(Servo.class, "hookL");
         hookR = hardwareMap.get(Servo.class, "hookR");
 
+
+
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
+
+        armL.setDirection(Servo.Direction.REVERSE);
+        armR.setDirection(Servo.Direction.FORWARD);
+
+
+
+        liftL = hardwareMap.get(Servo.class, "liftL");
+        liftR = hardwareMap.get(Servo.class, "liftR");
+
+        liftL.setDirection(Servo.Direction.REVERSE);
+        liftR.setDirection(Servo.Direction.FORWARD);
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -145,6 +176,8 @@ public class TelopSpark extends LinearOpMode {
         ptoR.setPosition(0.48);
 
 
+
+
         configureOtos();
 
         // Wait for the start button to be pressed
@@ -153,6 +186,9 @@ public class TelopSpark extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+
+            intake.setPower(gamepad1.left_trigger);
 
             /*if(gamepad1.a){
                 ptoL.setPosition(0.48);
@@ -190,6 +226,30 @@ public class TelopSpark extends LinearOpMode {
                 vsTarget = 0;
             }
 
+
+
+
+            if(gamepad2.b){
+                armL.setPosition(test1);
+                armR.setPosition(test1);
+            }
+
+            if(gamepad2.a){
+                armL.setPosition(0);
+                armR.setPosition(0);
+            }
+
+
+
+            if(gamepad2.y){
+                liftL.setPosition(1);
+                liftR.setPosition(1);
+            }
+
+            if(gamepad2.x){
+                liftL.setPosition(0);
+                liftR.setPosition(0);
+            }
 
 /*
             double signSlides = 1;
