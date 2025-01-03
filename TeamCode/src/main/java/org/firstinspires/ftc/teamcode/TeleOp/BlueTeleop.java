@@ -41,6 +41,7 @@ public class BlueTeleop extends LinearOpMode {
 
     ColorSensor intakeColor;
     String currentColor = "none";
+    double waitUntil = 0;
 
     public static double test1 = .2; // Example of FTC dashboard variable
 
@@ -68,6 +69,7 @@ public class BlueTeleop extends LinearOpMode {
 
     private Servo liftL = null;
     private Servo liftR = null;
+    boolean raising = false;
 
     private CRServo flick = null;
 
@@ -219,10 +221,14 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             telemetry.addData("currentColor is", currentColor);
+            double colorChangeDelayServo = 0.9;
 
+            if(gamepad1.right_trigger > 0.1){
+                intake.setPower(-gamepad1.right_trigger);
 
-
-            intake.setPower(gamepad1.left_trigger);
+            }else{
+                intake.setPower(gamepad1.left_trigger);
+            }
 
             /*if(gamepad1.a){
                 ptoL.setPosition(0.48);
@@ -262,19 +268,30 @@ public class BlueTeleop extends LinearOpMode {
 
 
 
-            if(gamepad1.left_bumper){
-                liftL.setPosition(test1);
+            if(gamepad1.left_bumper || currentColor == "red"){
+                liftL.setPosition(test1);//down
                 liftR.setPosition(test1);
+                raising = false;
             }
 
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper || currentColor  == "yellow" || currentColor == "blue"){
                 liftL.setPosition(0);
                 liftR.setPosition(0);
+                raising = true;
+            }else{
+                raising = false;
             }
 
-            if(gamepad2.y){
+            if(currentColor == "red" || raising){
+                waitUntil = getRuntime() + colorChangeDelayServo;
+            }
+            if(gamepad2.y || getRuntime() < waitUntil){
                 flick.setPower(-1);
+            }else if (gamepad1.right_trigger > 0.1){
+                raising = false;//unecessary?
+                flick.setPower(1);
             }else{
+                raising = false;
                 flick.setPower(0);
             }
 
