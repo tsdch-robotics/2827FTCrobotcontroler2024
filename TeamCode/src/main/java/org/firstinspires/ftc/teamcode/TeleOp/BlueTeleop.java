@@ -8,16 +8,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
-import org.firstinspires.ftc.teamcode.R;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -30,15 +31,18 @@ import org.firstinspires.ftc.teamcode.R;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@TeleOp(name = "TeleopSpark", group = "Sensor")
-public class TelopSpark extends LinearOpMode {
+@TeleOp(name = "BlueTeleop", group = "Sensor")
+public class BlueTeleop extends LinearOpMode {
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
     // Create an instance of the sensor
     SparkFunOTOS myOtos;
 
-    public static double test1 = .55; // Example of FTC dashboard variable
+    ColorSensor intakeColor;
+    String currentColor = "none";
+
+    public static double test1 = .2; // Example of FTC dashboard variable
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -64,6 +68,8 @@ public class TelopSpark extends LinearOpMode {
 
     private Servo liftL = null;
     private Servo liftR = null;
+
+    private CRServo flick = null;
 
 
 
@@ -121,6 +127,7 @@ public class TelopSpark extends LinearOpMode {
 
         // Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
@@ -141,6 +148,8 @@ public class TelopSpark extends LinearOpMode {
         hookL = hardwareMap.get(Servo.class, "hookL");
         hookR = hardwareMap.get(Servo.class, "hookR");
 
+        flick = hardwareMap.get(CRServo.class, "flick");
+
 
 
         armL = hardwareMap.get(Servo.class, "armL");
@@ -150,12 +159,12 @@ public class TelopSpark extends LinearOpMode {
         armR.setDirection(Servo.Direction.FORWARD);
 
 
-
         liftL = hardwareMap.get(Servo.class, "liftL");
         liftR = hardwareMap.get(Servo.class, "liftR");
 
         liftL.setDirection(Servo.Direction.REVERSE);
         liftR.setDirection(Servo.Direction.FORWARD);
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -187,6 +196,31 @@ public class TelopSpark extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
+            int colorGreen = intakeColor.green();
+            int colorRed = intakeColor.red();
+            int colorBlue = intakeColor.blue();
+
+            //rgb I think
+            //telemetry.addData("colorRed", colorRed);
+            //telemetry.addData("colorGreen", colorGreen);
+            //telemetry.addData("colorBlue", colorBlue);
+
+            if (colorRed > 600){
+                if(colorGreen > 600){
+                    currentColor = "yellow";
+                }
+                else{
+                    currentColor = "red";
+                }
+            }else if(colorBlue > 600){
+                currentColor = "blue";
+            }else{
+                currentColor = "none";
+            }
+
+            telemetry.addData("currentColor is", currentColor);
+
+
 
             intake.setPower(gamepad1.left_trigger);
 
@@ -210,13 +244,13 @@ public class TelopSpark extends LinearOpMode {
                 hsTarget = 0;
             }
 
-            if(gamepad1.left_bumper){
+            /*if(gamepad1.left_bumper){
                 hsTarget = 800;
-            }
+            }*/
 
-            if(gamepad1.right_bumper){
+           /* if(gamepad1.right_bumper){
                 vsTarget = 600;
-            }
+            }*/
 
             if (gamepad1.y){
                 vsTarget = 1000;
@@ -228,20 +262,48 @@ public class TelopSpark extends LinearOpMode {
 
 
 
-
-            if(gamepad2.b){
-                armL.setPosition(test1);
-                armR.setPosition(test1);
+            if(gamepad1.left_bumper){
+                liftL.setPosition(test1);
+                liftR.setPosition(test1);
             }
 
-            if(gamepad2.a){
-                armL.setPosition(0);
-                armR.setPosition(0);
+            if(gamepad1.right_bumper){
+                liftL.setPosition(0);
+                liftR.setPosition(0);
             }
-
-
 
             if(gamepad2.y){
+                flick.setPower(-1);
+            }else{
+                flick.setPower(0);
+            }
+
+
+            /*if(gamepad2.x){
+                flick.setPower(1);
+                armL.setPosition(1);
+                armR.setPosition(1);
+                hookL.setPosition(1);
+                hookR.setPosition(1);
+                ptoL.setPosition(1);
+                ptoR.setPosition(1);
+                liftL.setPosition(1);
+                liftR.setPosition(1);
+            }
+            if(gamepad2.b){
+                flick.setPower(0);
+                armL.setPosition(0);
+                armR.setPosition(0);
+                hookL.setPosition(0);
+                hookR.setPosition(0);
+                ptoL.setPosition(0);
+                ptoR.setPosition(0);
+                liftL.setPosition(0);
+                liftR.setPosition(0);
+            }*/
+
+
+            /*if(gamepad2.y){
                 liftL.setPosition(1);
                 liftR.setPosition(1);
             }
@@ -249,7 +311,7 @@ public class TelopSpark extends LinearOpMode {
             if(gamepad2.x){
                 liftL.setPosition(0);
                 liftR.setPosition(0);
-            }
+            }*/
 
 /*
             double signSlides = 1;
