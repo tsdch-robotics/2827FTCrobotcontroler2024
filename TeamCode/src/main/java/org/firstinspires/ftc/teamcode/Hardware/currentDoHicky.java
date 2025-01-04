@@ -9,14 +9,16 @@ public class currentDoHicky {
     double shoulderPos;
     double wristLPos;
     double wristRPos;//intake is the front of the robot this year
+    boolean clawState;
 
-    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos) {
+    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos, boolean clawState) {
         this.HSpos = HSpos;
         this.VSpos = VSpos;
         this.intakeLiftPos = intakeLiftPos;
         this.shoulderPos = shoulderPos;
         this.wristLPos = wristLPos;
         this.wristRPos = wristRPos;
+        this.clawState = clawState;
     }
 
 
@@ -42,6 +44,10 @@ public class currentDoHicky {
 
     public double getwristRPos() {
         return wristRPos;
+    }
+
+    public boolean getClawState() {
+        return clawState;
     }
 
 

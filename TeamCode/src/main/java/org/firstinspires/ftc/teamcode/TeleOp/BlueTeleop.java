@@ -19,6 +19,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
+import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetIdea;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -33,6 +36,10 @@ import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 @Config
 @TeleOp(name = "BlueTeleop", group = "Sensor")
 public class BlueTeleop extends LinearOpMode {
+
+    doCoolThingies doCoolThingies = new doCoolThingies();//rename?
+    currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
+    targetIdea myEpicTarget = targetIdea.INIT;
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
@@ -121,7 +128,7 @@ public class BlueTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-
+        hearMeOutLetsDoThis = doCoolThingies.magicalMacro(horizontalSlides,verticalSlides, myEpicTarget);//testing our ability to update
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -198,6 +205,24 @@ public class BlueTeleop extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
+            //button a ->
+            //button y -> deposit potato
+
+            //official controls buttons
+            /*if(gamepad1.y){
+                myEpicTarget = targetIdea.DEPOSIT_POTATO;
+            }*/
+            if(gamepad1.y && myEpicTarget != targetIdea.DEPOSIT_POTATO){
+                myEpicTarget = targetIdea.DEPOSIT_POTATO;
+            }else if(gamepad1.y && myEpicTarget != targetIdea.STALKER){
+                myEpicTarget = targetIdea.STALKER;
+            }
+
+            hearMeOutLetsDoThis = doCoolThingies.magicalMacro(horizontalSlides,verticalSlides, myEpicTarget);
+
+            hsTarget = hearMeOutLetsDoThis.getHSpos();
+            vsTarget = hearMeOutLetsDoThis.getVSpos();
+
             int colorGreen = intakeColor.green();
             int colorRed = intakeColor.red();
             int colorBlue = intakeColor.blue();
@@ -241,30 +266,6 @@ public class BlueTeleop extends LinearOpMode {
                 ptoR.setPosition(0.61);
                 hanging = true;
             }*/
-
-            if(gamepad1.b){
-                hsTarget = 1700;
-            }
-
-            if(gamepad1.a){
-                hsTarget = 0;
-            }
-
-            /*if(gamepad1.left_bumper){
-                hsTarget = 800;
-            }*/
-
-           /* if(gamepad1.right_bumper){
-                vsTarget = 600;
-            }*/
-
-            if (gamepad1.y){
-                vsTarget = 1000;
-            }
-
-            if (gamepad1.x){
-                vsTarget = 0;
-            }
 
 
 

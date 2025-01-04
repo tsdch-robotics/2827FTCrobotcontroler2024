@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class doCoolThingies {
 
-    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0);//change this to your ideal init pos
+    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,false);//change this to your ideal init pos
 
     public enum targetIdea{
+        INIT,
         DEPOSIT_POTATO,
         PRE_SCORE_SPECIMEN,//when we under or over the bar right before
         SCORE_SPECIMEN,
@@ -21,7 +22,6 @@ public class doCoolThingies {
 
 
     public currentDoHicky magicalMacro(DcMotor HS, DcMotor VS,    targetIdea thisIdea){
-
 
         switch (thisIdea){
 
@@ -44,7 +44,7 @@ public class doCoolThingies {
                 ultimatePositions.shoulderPos = 0;
                 ultimatePositions.wristLPos = 0.5;
                 ultimatePositions.wristRPos = 0.5;
-                ultimatePositions.clawPos = true;//and declaring it prevents a user error
+                ultimatePositions.clawState = true;//and declaring it prevents a user error
                 //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
 
                 break;
@@ -67,7 +67,7 @@ public class doCoolThingies {
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
                 ultimatePositions.wristRPos = 0.5;
-                ultimatePositions.clawPos = false;
+                ultimatePositions.clawState = false;
                 break;
 
             case SNATCH_THAT_FISHY:
@@ -77,7 +77,7 @@ public class doCoolThingies {
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
                 ultimatePositions.wristRPos = 0.5;
-                ultimatePositions.clawPos = false;
+                ultimatePositions.clawState = false;
 
                 break;
 
@@ -88,14 +88,14 @@ public class doCoolThingies {
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
                 ultimatePositions.wristRPos = 0.5;
-                ultimatePositions.clawPos = true;
+                ultimatePositions.clawState = true;
                 //close claw
                 break;
 
 
             case GET_THE_HELL_OUTA_HERE_FORWARDS:
-                ultimatePositions.intakePower = -1;
-                ultimatePositions.littleWheelPower = -1;
+                //ultimatePositions.intakePower = -1;
+                //ultimatePositions.littleWheelPower = -1;
                 break;
 
         }
