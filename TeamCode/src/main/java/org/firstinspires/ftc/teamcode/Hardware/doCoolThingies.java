@@ -16,8 +16,8 @@ public class doCoolThingies {
         SQUEEZE_THE_CATCH,
         GET_THE_HELL_OUTA_HERE_FORWARDS,
         GET_THE_HELL_OUTA_HERE_BACKWARDS,
-        RAISE_AND_PULL//when we get a yellow or side color one
-
+        RAISE_AND_PULL,//when we get a yellow or side color one
+        COLLECT_SPECIMIN
     }
 
 
@@ -27,7 +27,7 @@ public class doCoolThingies {
 
             case DEPOSIT_POTATO:
 
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 1000;//update
                 ultimatePositions.shoulderPos = 1;
                 ultimatePositions.wristLPos = 0.5;
@@ -39,7 +39,7 @@ public class doCoolThingies {
 
             case PRE_SCORE_SPECIMEN:
 
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 800;//update
                 ultimatePositions.shoulderPos = 0;
                 ultimatePositions.wristLPos = 0.5;
@@ -51,7 +51,7 @@ public class doCoolThingies {
 
             case SCORE_SPECIMEN:
 
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 880;//update
                 ultimatePositions.shoulderPos = 0;
                 ultimatePositions.wristLPos = 0.5;
@@ -62,7 +62,7 @@ public class doCoolThingies {
                 break;
 
             case STALKER:
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 700;//update
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
@@ -72,7 +72,7 @@ public class doCoolThingies {
 
             case SNATCH_THAT_FISHY:
 
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 600;//update
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
@@ -83,7 +83,7 @@ public class doCoolThingies {
 
 
             case SQUEEZE_THE_CATCH:
-                ultimatePositions.HSpos = 0;
+                //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = 600;//update
                 ultimatePositions.shoulderPos = 0.5;
                 ultimatePositions.wristLPos = 0.5;
@@ -96,6 +96,17 @@ public class doCoolThingies {
             case GET_THE_HELL_OUTA_HERE_FORWARDS:
                 //ultimatePositions.intakePower = -1;
                 //ultimatePositions.littleWheelPower = -1;
+                break;
+
+            case COLLECT_SPECIMIN:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = 600;//update
+                ultimatePositions.shoulderPos = 0.5;
+                ultimatePositions.wristLPos = 0.5;
+                ultimatePositions.wristRPos = 0.5;
+                ultimatePositions.clawState = false;
+
                 break;
 
         }
