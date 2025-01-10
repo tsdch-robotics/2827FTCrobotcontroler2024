@@ -129,6 +129,8 @@ public class BlueTeleop extends LinearOpMode {
     double vsOutput = 0;
     public static double vsTarget = 50;
 
+    public static double clawTest = 0.5;
+
     boolean Ydelay = false;
 
     boolean Bdelay = false;
@@ -249,13 +251,16 @@ public class BlueTeleop extends LinearOpMode {
                 myEpicTarget = targetIdea.DEPOSIT_POTATO;
             }*/
 
-            if(gamepad1.y && myEpicTarget != targetIdea.DEPOSIT_POTATO && !Ydelay){
+            if(gamepad1.y && myEpicTarget != targetIdea.DEPOSIT_POTATO && myEpicTarget != targetIdea.STALKER &&!Ydelay){
                 myEpicTarget = targetIdea.DEPOSIT_POTATO;
                 Ydelay = true;
             }else if(gamepad1.y && myEpicTarget != targetIdea.STALKER && !Ydelay){
                 myEpicTarget = targetIdea.STALKER;
                 Ydelay = true;
-            }else{
+            }else if(gamepad1.y && myEpicTarget != targetIdea.SNATCH_THAT_FISHY && !Ydelay){
+                myEpicTarget = targetIdea.SNATCH_THAT_FISHY;
+                Ydelay = true;
+            } else if (!gamepad1.y){
                 Ydelay = false;
             }
 
@@ -266,11 +271,11 @@ public class BlueTeleop extends LinearOpMode {
 
             if(gamepad1.b && myEpicTarget != targetIdea.PRE_SCORE_SPECIMEN && !Bdelay){
                 myEpicTarget = targetIdea.PRE_SCORE_SPECIMEN;
-                Bdelay = false;
+                Bdelay = true;
             }else if (gamepad1.b && myEpicTarget != targetIdea.SCORE_SPECIMEN && !Bdelay){
                 myEpicTarget = targetIdea.SCORE_SPECIMEN;
-                Bdelay = false;
-            }else{
+                Bdelay = true;
+            }else if (!gamepad1.b){
                 Bdelay = false;
             }
 
@@ -285,8 +290,18 @@ public class BlueTeleop extends LinearOpMode {
             wristR.setPosition(hearMeOutLetsDoThis.getwristRPos());
 
             if(gamepad1.x){
-                hsTarget = 1000;
+                hsTarget = 1500;
             }
+
+
+            if(gamepad1.dpad_down){
+                claw.setPosition(.3);
+            }
+
+            if(gamepad1.dpad_up){
+                claw.setPosition(.6);
+            }
+
 
 
             int colorGreen = intakeColor.green();
@@ -326,14 +341,15 @@ public class BlueTeleop extends LinearOpMode {
                 liftL.setPosition(test1);//down
                 liftR.setPosition(test1);
                 raising = false;
-                //hsTarget = 50;//eventually remove
+
             }
 
             if(gamepad1.right_bumper || currentColor  == "yellow" || currentColor == "blue"){
                 liftL.setPosition(0);
                 liftR.setPosition(0);
                 raising = true;
-                hsTarget = 50;
+                hsTarget = 50;//eventually remove
+                //hsTarget = 50;
             }else{
                 raising = false;
             }
