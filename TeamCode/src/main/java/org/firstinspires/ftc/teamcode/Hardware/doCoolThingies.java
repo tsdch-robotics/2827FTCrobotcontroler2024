@@ -22,9 +22,17 @@ public class doCoolThingies {
 
     public static double shoulderTest = 0.2;
 
-    public static double full_HS = 1500;
+    public static double full_HS = 1800;
 
-    public static double intakeLOW = 0.2;
+    public static double intakeLOW = 0.16;
+
+    public static double intakeHigh = 0;
+
+    public static int hoverAcrosPos = 1200;
+
+    public static int safePos = 900;
+
+    public static double scoreSpeciminShoulderPos = 0.6;
 
 
     public enum targetVerticalIdea{
@@ -35,10 +43,8 @@ public class doCoolThingies {
         STALKER,
         SNATCH_THAT_FISHY,
         SQUEEZE_THE_CATCH,
-        GET_THE_HELL_OUTA_HERE_FORWARDS,
-        GET_THE_HELL_OUTA_HERE_BACKWARDS,
-        RAISE_AND_PULL,//when we get a yellow or side color one
-        COLLECT_SPECIMIN
+        COLLECT_SPECIMIN,
+        SAFE_RAISE
         //all zeroing will be automatic
 
     }
@@ -47,7 +53,7 @@ public class doCoolThingies {
         ZERO_HS_SLIDES,
         //BRING_IN_A_CATCH,
         READY_HS_POS,
-        //SAFE_POSITION,//intake doesn't need raise or lower
+        SAFE_POSITION,//intake doesn't need raise or lower
         HOVER_ACROSS_BARIER,
         FULL_EXTENT_DROP//maybe be like, +/- input?
 
@@ -60,22 +66,22 @@ public class doCoolThingies {
 
             case ZERO_HS_SLIDES:
 
-                ultimatePositions.intakeLiftPos = 0;
-                ultimatePositions.HSpos = -10000;//so the power ends up being full
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = -100;//so the power ends up being full//-100
 
                 break;
 
             case READY_HS_POS:
 
-                ultimatePositions.intakeLiftPos = 0;
-                ultimatePositions.HSpos = 30;
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = 1;
 
                 break;
 
             case HOVER_ACROSS_BARIER:
 
-                ultimatePositions.intakeLiftPos = 0;
-                ultimatePositions.HSpos = 900;
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = hoverAcrosPos;
 
                 break;
             case FULL_EXTENT_DROP:
@@ -84,6 +90,14 @@ public class doCoolThingies {
                 ultimatePositions.HSpos = full_HS;
 
                 break;
+
+            case SAFE_POSITION:
+
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = safePos;
+
+                break;
+
 
         }
 
@@ -97,6 +111,9 @@ public class doCoolThingies {
 
         switch (thisVerticalIdea){
 
+            case SAFE_RAISE:
+                ultimatePositions.VSpos = 3000;
+                break;
 
             case DEPOSIT_POTATO:
 
@@ -126,7 +143,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreSpeciminHeight;//update
-                ultimatePositions.shoulderPos = shoulderTest;//0
+                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;
                 ultimatePositions.wristLPos = wristTestL;
                 ultimatePositions.wristRPos = wristTestR;
                 //ultimatePositions.clawPos = false;
@@ -165,11 +182,6 @@ public class doCoolThingies {
                 //close claw
                 break;
 
-
-            case GET_THE_HELL_OUTA_HERE_FORWARDS:
-                //ultimatePositions.intakePower = -1;
-                //ultimatePositions.littleWheelPower = -1;
-                break;
 
             case COLLECT_SPECIMIN:
 

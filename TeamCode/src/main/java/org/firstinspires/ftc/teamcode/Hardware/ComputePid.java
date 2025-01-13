@@ -14,8 +14,8 @@ public class ComputePid {
     public static double vxKp = 0.1, vxKi = 0, vxKd = 0;
     public static double vyKp = 0.1, vyKi = 0, vyKd = 0;
 
-    public static double hsKp = 0.01, hsKi = 0.0, hsKd = 0.0;  // PID gains
-    public static double vsKp = 0.01, vsKi = 0.0, vsKd = 0.0;  // PID gains
+    public static double hsKp = 0.003, hsKi = 0.0, hsKd = 0.0;  // PID gains
+    public static double vsKp = 0.003, vsKi = 0.0, vsKd = 0.0;  // PID gains
 
 
     public double hsPreviousError = 0;

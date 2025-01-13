@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
+import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -40,9 +41,20 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalId
 @TeleOp(name = "BlueTeleop", group = "Sensor")
 public class BlueTeleop extends LinearOpMode {
 
+
+
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
-    currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
-    targetVerticalIdea myEpicTarget = targetVerticalIdea.INIT;
+
+    //currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+
+    targetVerticalIdea verticalTarget = targetVerticalIdea.INIT;
+    targetHorizontalIdea horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+
+
+    targetVerticalIdea nextVerticalTarget = targetVerticalIdea.STALKER;
+    targetHorizontalIdea nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
@@ -141,10 +153,30 @@ public class BlueTeleop extends LinearOpMode {
 
     boolean Bdelay = false;
 
+    public static Boolean killVertical = false;
+    public static Boolean killHorizontal = false;
+
+    boolean alreadyPressingY = false;
+    boolean alreadyPressingX = false;
+    boolean alreadyPressingA= false;
+    boolean alreadyPressingB = false;
+
+
+    boolean Ymode = false;
+    boolean Xmode = false;
+    boolean Bmode= false;
+    boolean Amode = false;
+
+    public static double clawClose = 0.25;
+    public static double clawOpen = 0.5;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        hearMeOutLetsDoThis = doCoolThingies.magicalMacro(myEpicTarget);//testing our ability to update
+        determineColor colorTest = new determineColor();
+        horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTarget,1);//what should we use adjustment for?
+        verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTarget);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -235,10 +267,13 @@ public class BlueTeleop extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
+            double Time = runtime.time();
+
             //ptoL.setPosition(0);
             //ptoR.setPosition(0);
 
-            telemetry.addData("STATE", myEpicTarget);
+            telemetry.addData("hsSTATE", horizontalTarget);
+            telemetry.addData("vsSTATE", verticalTarget);
 /*
             if(gamepad1.dpad_right){
                 armL.setPosition(0);
@@ -257,86 +292,123 @@ public class BlueTeleop extends LinearOpMode {
             //button y -> deposit potato
 
             //official controls buttons
-            /*if(gamepad1.y){
-                myEpicTarget = targetIdea.DEPOSIT_POTATO;
-            }*/
 
-            if(gamepad1.y && myEpicTarget != targetIdea.DEPOSIT_POTATO && myEpicTarget != targetIdea.STALKER &&!Ydelay){
-                myEpicTarget = targetIdea.DEPOSIT_POTATO;
-                Ydelay = true;
-            }else if(gamepad1.y && myEpicTarget != targetIdea.STALKER && !Ydelay){
-                myEpicTarget = targetIdea.STALKER;
-                Ydelay = true;
-            }else if(gamepad1.y && myEpicTarget != targetIdea.SNATCH_THAT_FISHY && !Ydelay){
-                myEpicTarget = targetIdea.SNATCH_THAT_FISHY;
-                Ydelay = true;
-            } else if (!gamepad1.y){
-                Ydelay = false;
+
+            if(gamepad1.right_bumper){
+                claw.setPosition(clawClose);
+            }else if(gamepad1.left_bumper){
+                claw.setPosition(clawOpen);
             }
 
-            if(gamepad1.a){
-                myEpicTarget = targetIdea.COLLECT_SPECIMIN;
+
+            //YELLOW MODE
+            if(gamepad1.y && !Ymode && !alreadyPressingY){
+                verticalTarget = targetVerticalIdea.STALKER;
+
+                Ymode = true;
+                Xmode = false;
+
+                alreadyPressingY = true;
+            }else if(gamepad1.y && !alreadyPressingY){
+
+
+                verticalTarget = nextVerticalTarget;
+                alreadyPressingY = true;
+            }else if (!gamepad1.y){
+                alreadyPressingY = false;
             }
 
-            if(gamepad1.b && myEpicTarget != targetIdea.PRE_SCORE_SPECIMEN && !Bdelay){
-                myEpicTarget = targetIdea.PRE_SCORE_SPECIMEN;
-                Bdelay = true;
-            }else if (gamepad1.b && myEpicTarget != targetIdea.SCORE_SPECIMEN && !Bdelay){
-                myEpicTarget = targetIdea.SCORE_SPECIMEN;
-                Bdelay = true;
+            //SPECIMIN MODE
+            if(gamepad1.x && !Xmode && !alreadyPressingX){
+
+                Xmode = true;
+                Ymode = false;
+
+                alreadyPressingX = true;
+
+                verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
+
+            }else if(gamepad1.x && !alreadyPressingX){
+                verticalTarget = nextVerticalTarget;
+                alreadyPressingX = true;
+            }else if (!gamepad1.x){
+                alreadyPressingX = false;
+            }
+
+
+
+
+            //HORIZONTAL ACXTIONS
+            if(gamepad1.b && !Bmode && !alreadyPressingB){
+
+                Bmode = true;
+                //mode = false;
+
+                alreadyPressingB = true;
+
+                horizontalTarget = targetHorizontalIdea.SAFE_POSITION;
+
+            }else if(gamepad1.b && !alreadyPressingB){
+                horizontalTarget = nextHorizontalTarget;
+                alreadyPressingB = true;
             }else if (!gamepad1.b){
-                Bdelay = false;
+                alreadyPressingB = false;
+            }
+
+            //VERTICAL LOGIC FLOW
+            if(verticalTarget == targetVerticalIdea.STALKER){
+                nextVerticalTarget = targetVerticalIdea.SNATCH_THAT_FISHY;
+            }else if(verticalTarget == targetVerticalIdea.SNATCH_THAT_FISHY){
+                nextVerticalTarget = targetVerticalIdea.SAFE_RAISE;
+            }else if(verticalTarget == targetVerticalIdea.SAFE_RAISE){
+                nextVerticalTarget = targetVerticalIdea.DEPOSIT_POTATO;
+            }else if(verticalTarget == targetVerticalIdea.DEPOSIT_POTATO){
+                nextVerticalTarget = targetVerticalIdea.STALKER;
+            }else if(verticalTarget == targetVerticalIdea.COLLECT_SPECIMIN){
+                nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+            }else if(verticalTarget == targetVerticalIdea.PRE_SCORE_SPECIMEN){
+                nextVerticalTarget = targetVerticalIdea.SCORE_SPECIMEN;
+            }else if(verticalTarget == targetVerticalIdea.SCORE_SPECIMEN){
+                nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+            }
+            //HORIZONTAL LOGIC FLOW
+            if(horizontalTarget == targetHorizontalIdea.READY_HS_POS){
+                nextHorizontalTarget = targetHorizontalIdea.HOVER_ACROSS_BARIER;
+            }else if(horizontalTarget == targetHorizontalIdea.HOVER_ACROSS_BARIER){
+                nextHorizontalTarget = targetHorizontalIdea.FULL_EXTENT_DROP;
+            }else if(horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
+                nextHorizontalTarget = targetHorizontalIdea.SAFE_POSITION;
+            }else if(horizontalTarget == targetHorizontalIdea.SAFE_POSITION){
+                nextHorizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+            }else if(horizontalTarget == targetHorizontalIdea.ZERO_HS_SLIDES){
+                nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
             }
 
 
-            hearMeOutLetsDoThis = doCoolThingies.magicalMacro(myEpicTarget);
 
-            //hsTarget = hearMeOutLetsDoThis.getHSpos();
-            vsTarget = hearMeOutLetsDoThis.getVSpos();
-            armL.setPosition(hearMeOutLetsDoThis.getshoulderPos());
-            armR.setPosition(hearMeOutLetsDoThis.getshoulderPos());
-            wristL.setPosition(hearMeOutLetsDoThis.getwristLPos());
-            wristR.setPosition(hearMeOutLetsDoThis.getwristRPos());
 
-            if(gamepad1.x){
-                hsTarget = 1500;
+            //DETERMINING POSIIONS
+            horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTarget,1);//setting to the corrosponding target
+            verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTarget);
+
+            hsTarget = horizontalPositions.getHSpos();
+
+            if(!killHorizontal){
+                liftL.setPosition(horizontalPositions.getintakeLiftPos());
+                liftR.setPosition(horizontalPositions.getintakeLiftPos());
+            }
+
+            vsTarget = verticalPositions.getVSpos();
+
+            if(!killVertical){
+                armL.setPosition(verticalPositions.getshoulderPos());
+                armR.setPosition(verticalPositions.getshoulderPos());
+                wristL.setPosition(verticalPositions.getwristLPos());
+                wristR.setPosition(verticalPositions.getwristRPos());
             }
 
 
-            if(gamepad1.dpad_down){
-                claw.setPosition(.3);
-            }
-
-            if(gamepad1.dpad_up){
-                claw.setPosition(.6);
-            }
-
-
-
-            int colorGreen = intakeColor.green();
-            int colorRed = intakeColor.red();
-            int colorBlue = intakeColor.blue();
-
-            //rgb I think
-            //telemetry.addData("colorRed", colorRed);
-            //telemetry.addData("colorGreen", colorGreen);
-            //telemetry.addData("colorBlue", colorBlue);
-
-            if (colorRed > 600){
-                if(colorGreen > 600){
-                    currentColor = "yellow";
-                }
-                else{
-                    currentColor = "red";
-                }
-            }else if(colorBlue > 600){
-                currentColor = "blue";
-            }else{
-                currentColor = "none";
-            }
-
-            telemetry.addData("currentColor is", currentColor);
-            double colorChangeDelayServo = 0.9;
+            currentColor = colorTest.color(intakeColor, Time);
 
             if(gamepad1.right_trigger > 0.1){
                 intake.setPower(-gamepad1.right_trigger);
@@ -346,34 +418,23 @@ public class BlueTeleop extends LinearOpMode {
             }
 
 
-            if(gamepad1.left_bumper || currentColor == "red"){
-                liftL.setPosition(test1);//down
-                liftR.setPosition(test1);
-                raising = false;
+            telemetry.addData("currentColor is", currentColor);
+            double colorChangeDelayServo = 0.9;
 
+            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
+                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
             }
 
-            if(gamepad1.right_bumper || currentColor  == "yellow" || currentColor == "blue"){
-                liftL.setPosition(0);
-                liftR.setPosition(0);
-                raising = true;
-                hsTarget = 0;//eventually remove
-                //hsTarget = 50;
-            }else{
-                raising = false;
-            }
 
-            if(currentColor == "red" || raising){
+            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
                 waitUntil = getRuntime() + colorChangeDelayServo;
             }
-            if(gamepad2.y || getRuntime() < waitUntil){
+            if(getRuntime() < waitUntil){
                 flick.setPower(-1);
-            }else if (gamepad1.right_trigger > 0.1){
-                raising = false;//unecessary?
-                flick.setPower(1);
+                telemetry.addData("Servo power", -1);
             }else{
-                raising = false;
-                flick.setPower(0);
+                //flick.setPower(0);
+                flick.setPower(-gamepad1.left_trigger);
             }
 
 
@@ -411,11 +472,7 @@ public class BlueTeleop extends LinearOpMode {
                 liftR.setPosition(0);
             }*/
 
-/*
-            double signSlides = 1;
-            if (gamepad1.left_bumper){
-                signSlides = -1;
-            }*/
+
 
             VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
 
@@ -531,8 +588,17 @@ public class BlueTeleop extends LinearOpMode {
                 horizontalSlides.setPower(0);
             }*/
 
-            verticalSlides.setPower(vsOutput);
-            horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
+            if(!killVertical){
+                verticalSlides.setPower(vsOutput);
+            }else{
+                verticalSlides.setPower(0);
+            }
+            if(!killHorizontal){
+                horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
+            }else{
+                horizontalSlides.setPower(0);
+            }
+
 
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
@@ -556,7 +622,7 @@ public class BlueTeleop extends LinearOpMode {
             finalX = xpos + originX;
             finalY = ypos + originY;
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Run Time:", Time);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
@@ -596,35 +662,18 @@ public class BlueTeleop extends LinearOpMode {
             //HS SLIDES
 
 
-            if(hsTouch.isPressed() && hsTarget == 0){
-                //gamepad1.rumble(10);
-                hsTarget = 1;
+            if(hsTouch.isPressed() && horizontalTarget == targetHorizontalIdea.ZERO_HS_SLIDES){
                 horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//do I also need run without encoder below?
+                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                //hsTarget = 10; //so it doesn't fight agaisnt the touch sensor spring and keep triggering it
-                //zero
-            }else if(hsTarget == 0 && !hsTouch.isPressed()){
-                //hsOutpput = -50 -- so we don't slam it, but then the problem is that if we are REALLY OFF this wouldn't work
-                hsOutput = -1;//encoder is oposite of motor direction in current setup
-            }else{
-                hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
+                horizontalTarget = targetHorizontalIdea.READY_HS_POS;
             }
 
-            //IF IN "ZERO_SLIDES" mode and sensor is pressed, change to READY POSITION
+
+            vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
+            hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
 
 
-            //VS SLIDES
-            /*if(vsTarget == 0 && false){//I DONT WANT THIS TO RUN UNTIL WE GET THE OTHER TOUCH SENSOR ON
-                vsOutput = -1;//this sign should be right
-            }else{
-                vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
-            }
-
-            if(vsTouch.isPressed()){
-                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                vsTarget = 10;
-            }*/
         }
     }
 
