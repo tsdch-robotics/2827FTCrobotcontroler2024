@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import android.text.method.Touch;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.sun.tools.javac.tree.DCTree;
 
 @Config
 public class ComputePid {
@@ -38,7 +43,6 @@ public class ComputePid {
 
     public static double Kf = 0.5;  // Feedforward constant, tune this value
     public static double mass = 13.6078;  // Robot mass (in kg), set to your robot's mass
-
 
     //takes postion, heading, wheel data
 
@@ -264,5 +268,8 @@ public class ComputePid {
         return output;
     }
 
+    /*public void manageZeroing(DcMotor hsSlides, DcMotor vsSlides, TouchSensor touch){
+
+    }*/
 
 }

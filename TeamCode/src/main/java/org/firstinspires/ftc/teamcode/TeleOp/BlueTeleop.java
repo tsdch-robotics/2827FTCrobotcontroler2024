@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -21,7 +22,9 @@ import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
-import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetIdea;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
+
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -39,7 +42,7 @@ public class BlueTeleop extends LinearOpMode {
 
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
     currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
-    targetIdea myEpicTarget = targetIdea.INIT;
+    targetVerticalIdea myEpicTarget = targetVerticalIdea.INIT;
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
@@ -47,6 +50,9 @@ public class BlueTeleop extends LinearOpMode {
     SparkFunOTOS myOtos;
 
     ColorSensor intakeColor;
+    TouchSensor hsTouch;
+    TouchSensor vsTouch;
+
     String currentColor = "none";
     double waitUntil = 0;
 
@@ -124,7 +130,7 @@ public class BlueTeleop extends LinearOpMode {
 
 
     double hsOutput = 0;
-    public static double hsTarget = 50;
+    public static double hsTarget = 0;//that way it will imediently 0
 
     double vsOutput = 0;
     public static double vsTarget = 50;
@@ -138,7 +144,7 @@ public class BlueTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        hearMeOutLetsDoThis = doCoolThingies.magicalMacro(horizontalSlides,verticalSlides, myEpicTarget);//testing our ability to update
+        hearMeOutLetsDoThis = doCoolThingies.magicalMacro(myEpicTarget);//testing our ability to update
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -147,6 +153,9 @@ public class BlueTeleop extends LinearOpMode {
         // Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
+
+        hsTouch = hardwareMap.get(TouchSensor.class, "hsTouch");
+        vsTouch = hardwareMap.get(TouchSensor.class, "vsTouch");
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
@@ -213,10 +222,8 @@ public class BlueTeleop extends LinearOpMode {
         horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
 
-        ptoL.setPosition(0.48);
-        ptoR.setPosition(0.48);
-
-
+        //ptoL.setPosition(0.5);
+        //ptoR.setPosition(0.5);
 
 
         configureOtos();
@@ -227,6 +234,9 @@ public class BlueTeleop extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+            //ptoL.setPosition(0);
+            //ptoR.setPosition(0);
 
             telemetry.addData("STATE", myEpicTarget);
 /*
@@ -264,7 +274,6 @@ public class BlueTeleop extends LinearOpMode {
                 Ydelay = false;
             }
 
-
             if(gamepad1.a){
                 myEpicTarget = targetIdea.COLLECT_SPECIMIN;
             }
@@ -280,7 +289,7 @@ public class BlueTeleop extends LinearOpMode {
             }
 
 
-            hearMeOutLetsDoThis = doCoolThingies.magicalMacro(horizontalSlides,verticalSlides, myEpicTarget);
+            hearMeOutLetsDoThis = doCoolThingies.magicalMacro(myEpicTarget);
 
             //hsTarget = hearMeOutLetsDoThis.getHSpos();
             vsTarget = hearMeOutLetsDoThis.getVSpos();
@@ -348,7 +357,7 @@ public class BlueTeleop extends LinearOpMode {
                 liftL.setPosition(0);
                 liftR.setPosition(0);
                 raising = true;
-                hsTarget = 50;//eventually remove
+                hsTarget = 0;//eventually remove
                 //hsTarget = 50;
             }else{
                 raising = false;
@@ -525,7 +534,6 @@ public class BlueTeleop extends LinearOpMode {
             verticalSlides.setPower(vsOutput);
             horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
 
-
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
             double deltaY = pos.y - oldy;
@@ -584,9 +592,39 @@ public class BlueTeleop extends LinearOpMode {
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
-            hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
-            vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
+            //ZEROING SLIDES WITH TOUCH SENSOR
+            //HS SLIDES
 
+
+            if(hsTouch.isPressed() && hsTarget == 0){
+                //gamepad1.rumble(10);
+                hsTarget = 1;
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//do I also need run without encoder below?
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //hsTarget = 10; //so it doesn't fight agaisnt the touch sensor spring and keep triggering it
+                //zero
+            }else if(hsTarget == 0 && !hsTouch.isPressed()){
+                //hsOutpput = -50 -- so we don't slam it, but then the problem is that if we are REALLY OFF this wouldn't work
+                hsOutput = -1;//encoder is oposite of motor direction in current setup
+            }else{
+                hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
+            }
+
+            //IF IN "ZERO_SLIDES" mode and sensor is pressed, change to READY POSITION
+
+
+            //VS SLIDES
+            /*if(vsTarget == 0 && false){//I DONT WANT THIS TO RUN UNTIL WE GET THE OTHER TOUCH SENSOR ON
+                vsOutput = -1;//this sign should be right
+            }else{
+                vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
+            }
+
+            if(vsTouch.isPressed()){
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                vsTarget = 10;
+            }*/
         }
     }
 

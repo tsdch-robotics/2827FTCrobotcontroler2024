@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-
 @Config
 public class doCoolThingies {
 
@@ -21,10 +20,14 @@ public class doCoolThingies {
     public static double wristTestL = 0.5;
     public static double wristTestR = 0.4;
 
-
     public static double shoulderTest = 0.2;
 
-    public enum targetIdea{
+    public static double full_HS = 1500;
+
+    public static double intakeLOW = 0.2;
+
+
+    public enum targetVerticalIdea{
         INIT,
         DEPOSIT_POTATO,
         PRE_SCORE_SPECIMEN,//when we under or over the bar right before
@@ -36,12 +39,64 @@ public class doCoolThingies {
         GET_THE_HELL_OUTA_HERE_BACKWARDS,
         RAISE_AND_PULL,//when we get a yellow or side color one
         COLLECT_SPECIMIN
+        //all zeroing will be automatic
+
+    }
+
+    public enum targetHorizontalIdea{
+        ZERO_HS_SLIDES,
+        //BRING_IN_A_CATCH,
+        READY_HS_POS,
+        //SAFE_POSITION,//intake doesn't need raise or lower
+        HOVER_ACROSS_BARIER,
+        FULL_EXTENT_DROP//maybe be like, +/- input?
+
     }
 
 
-    public currentDoHicky magicalMacro(DcMotor HS, DcMotor VS,    targetIdea thisIdea){
+    public currentDoHicky magicalHorizontalMacro(targetHorizontalIdea thisVerticalIdea, double adjustment1){
 
-        switch (thisIdea){
+        switch (thisVerticalIdea){
+
+            case ZERO_HS_SLIDES:
+
+                ultimatePositions.intakeLiftPos = 0;
+                ultimatePositions.HSpos = -10000;//so the power ends up being full
+
+                break;
+
+            case READY_HS_POS:
+
+                ultimatePositions.intakeLiftPos = 0;
+                ultimatePositions.HSpos = 30;
+
+                break;
+
+            case HOVER_ACROSS_BARIER:
+
+                ultimatePositions.intakeLiftPos = 0;
+                ultimatePositions.HSpos = 900;
+
+                break;
+            case FULL_EXTENT_DROP:
+
+                ultimatePositions.intakeLiftPos = intakeLOW;
+                ultimatePositions.HSpos = full_HS;
+
+                break;
+
+        }
+
+
+
+        return(ultimatePositions);
+    }
+
+
+    public currentDoHicky magicalVerticalMacro(targetVerticalIdea thisVerticalIdea){
+
+        switch (thisVerticalIdea){
+
 
             case DEPOSIT_POTATO:
 
