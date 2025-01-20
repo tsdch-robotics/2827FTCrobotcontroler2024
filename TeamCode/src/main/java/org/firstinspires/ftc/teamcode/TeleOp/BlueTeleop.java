@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -41,15 +42,13 @@ import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 @TeleOp(name = "BlueTeleop", group = "Sensor")
 public class BlueTeleop extends LinearOpMode {
 
-
-
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
     //currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
     currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,false);
     currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,false);
 
-    targetVerticalIdea verticalTarget = targetVerticalIdea.INIT;
+    targetVerticalIdea verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
     targetHorizontalIdea horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
 
 
@@ -98,7 +97,6 @@ public class BlueTeleop extends LinearOpMode {
 
     private Servo liftL = null;
     private Servo liftR = null;
-    boolean raising = false;
 
     private CRServo flick = null;
 
@@ -167,7 +165,7 @@ public class BlueTeleop extends LinearOpMode {
     boolean Bmode= false;
     boolean Amode = false;
 
-    public static double clawClose = 0.25;
+    public static double clawClose = 0.22;//previous .25
     public static double clawOpen = 0.5;
 
 
@@ -198,9 +196,9 @@ public class BlueTeleop extends LinearOpMode {
         horizontalSlides = hardwareMap.get(DcMotor.class, "HS");
         verticalSlides = hardwareMap.get(DcMotor.class, "VS");
 
+        verticalSlides.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake = hardwareMap.get(DcMotor.class, "intake");
-
 
 
         ptoL = hardwareMap.get(Servo.class, "ptoL");
@@ -218,14 +216,6 @@ public class BlueTeleop extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw");
 
-
-/*
-        private Servo wristL = null;
-        private Servo wristR = null;
-        private Servo claw = null;
-*/
-
-
         armL.setDirection(Servo.Direction.REVERSE);
         armR.setDirection(Servo.Direction.FORWARD);
 
@@ -237,7 +227,6 @@ public class BlueTeleop extends LinearOpMode {
 
         liftL.setDirection(Servo.Direction.REVERSE);
         liftR.setDirection(Servo.Direction.FORWARD);
-
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -302,24 +291,24 @@ public class BlueTeleop extends LinearOpMode {
 
 
             //YELLOW MODE
-            if(gamepad1.y && !Ymode && !alreadyPressingY){
-                verticalTarget = targetVerticalIdea.STALKER;
+            if(gamepad2.y && !Ymode && !alreadyPressingY){
+                verticalTarget = targetVerticalIdea.PRE_ZERO;
 
                 Ymode = true;
                 Xmode = false;
 
                 alreadyPressingY = true;
-            }else if(gamepad1.y && !alreadyPressingY){
+            }else if(gamepad2.y && !alreadyPressingY){
 
 
                 verticalTarget = nextVerticalTarget;
                 alreadyPressingY = true;
-            }else if (!gamepad1.y){
+            }else if (!gamepad2.y){
                 alreadyPressingY = false;
             }
 
             //SPECIMIN MODE
-            if(gamepad1.x && !Xmode && !alreadyPressingX){
+            if(gamepad2.x && !Xmode && !alreadyPressingX){
 
                 Xmode = true;
                 Ymode = false;
@@ -328,10 +317,10 @@ public class BlueTeleop extends LinearOpMode {
 
                 verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
 
-            }else if(gamepad1.x && !alreadyPressingX){
+            }else if(gamepad2.x && !alreadyPressingX){
                 verticalTarget = nextVerticalTarget;
                 alreadyPressingX = true;
-            }else if (!gamepad1.x){
+            }else if (!gamepad2.x){
                 alreadyPressingX = false;
             }
 
@@ -346,7 +335,7 @@ public class BlueTeleop extends LinearOpMode {
 
                 alreadyPressingB = true;
 
-                horizontalTarget = targetHorizontalIdea.SAFE_POSITION;
+                horizontalTarget = targetHorizontalIdea.HOVER_ACROSS_BARIER;
 
             }else if(gamepad1.b && !alreadyPressingB){
                 horizontalTarget = nextHorizontalTarget;
@@ -356,14 +345,21 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             //VERTICAL LOGIC FLOW
-            if(verticalTarget == targetVerticalIdea.STALKER){
+
+            if(verticalTarget == targetVerticalIdea.PRE_ZERO) {
+                nextVerticalTarget = targetVerticalIdea.ZERO_VS_SLIDES;
+            }else if(verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES) {
+                nextVerticalTarget = targetVerticalIdea.READY_VS_POS;
+            }else if(verticalTarget == targetVerticalIdea.READY_VS_POS) {
+                nextVerticalTarget = targetVerticalIdea.STALKER;
+            }else if(verticalTarget == targetVerticalIdea.STALKER){
                 nextVerticalTarget = targetVerticalIdea.SNATCH_THAT_FISHY;
             }else if(verticalTarget == targetVerticalIdea.SNATCH_THAT_FISHY){
                 nextVerticalTarget = targetVerticalIdea.SAFE_RAISE;
             }else if(verticalTarget == targetVerticalIdea.SAFE_RAISE){
                 nextVerticalTarget = targetVerticalIdea.DEPOSIT_POTATO;
             }else if(verticalTarget == targetVerticalIdea.DEPOSIT_POTATO){
-                nextVerticalTarget = targetVerticalIdea.STALKER;
+                nextVerticalTarget = targetVerticalIdea.PRE_ZERO;
             }else if(verticalTarget == targetVerticalIdea.COLLECT_SPECIMIN){
                 nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
             }else if(verticalTarget == targetVerticalIdea.PRE_SCORE_SPECIMEN){
@@ -371,20 +367,25 @@ public class BlueTeleop extends LinearOpMode {
             }else if(verticalTarget == targetVerticalIdea.SCORE_SPECIMEN){
                 nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
             }
+
+
+
             //HORIZONTAL LOGIC FLOW
             if(horizontalTarget == targetHorizontalIdea.READY_HS_POS){
                 nextHorizontalTarget = targetHorizontalIdea.HOVER_ACROSS_BARIER;
             }else if(horizontalTarget == targetHorizontalIdea.HOVER_ACROSS_BARIER){
                 nextHorizontalTarget = targetHorizontalIdea.FULL_EXTENT_DROP;
             }else if(horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                nextHorizontalTarget = targetHorizontalIdea.SAFE_POSITION;
-            }else if(horizontalTarget == targetHorizontalIdea.SAFE_POSITION){
                 nextHorizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
             }else if(horizontalTarget == targetHorizontalIdea.ZERO_HS_SLIDES){
                 nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
             }
 
 
+
+            if(claw.getPosition() != clawClose && (horizontalTarget == targetHorizontalIdea.HOVER_ACROSS_BARIER || horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP)){
+
+            }
 
 
             //DETERMINING POSIIONS
@@ -410,11 +411,11 @@ public class BlueTeleop extends LinearOpMode {
 
             currentColor = colorTest.color(intakeColor, Time);
 
-            if(gamepad1.right_trigger > 0.1){
-                intake.setPower(-gamepad1.right_trigger);
+            if(gamepad1.left_trigger > 0.1){
+                intake.setPower(-gamepad1.left_trigger);
 
             }else{
-                intake.setPower(gamepad1.left_trigger);
+                intake.setPower(gamepad1.right_trigger);
             }
 
 
@@ -434,7 +435,7 @@ public class BlueTeleop extends LinearOpMode {
                 telemetry.addData("Servo power", -1);
             }else{
                 //flick.setPower(0);
-                flick.setPower(-gamepad1.left_trigger);
+                flick.setPower(-gamepad1.right_trigger);
             }
 
 
@@ -511,9 +512,7 @@ public class BlueTeleop extends LinearOpMode {
                 myOtos.resetTracking();
             }
 
-            if (gamepad1.x) {
-                myOtos.calibrateImu();
-            }*/
+            */
 
             double max;
             //double totalMovement = Math.sqrt(Math.pow(vxOutput, 2) + Math.pow(vyOutput, 2));
@@ -570,6 +569,7 @@ public class BlueTeleop extends LinearOpMode {
 
             double hspos = -horizontalSlides.getCurrentPosition();
             double vspos = verticalSlides.getCurrentPosition();
+
 
             //horizontalSlides.setPower(-gamepad1.left_trigger * signSlides);
 
@@ -669,6 +669,12 @@ public class BlueTeleop extends LinearOpMode {
                 horizontalTarget = targetHorizontalIdea.READY_HS_POS;
             }
 
+            if(vsTouch.isPressed() && verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES){
+                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalTarget = targetVerticalIdea.READY_VS_POS;
+            }
 
             vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
             hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);

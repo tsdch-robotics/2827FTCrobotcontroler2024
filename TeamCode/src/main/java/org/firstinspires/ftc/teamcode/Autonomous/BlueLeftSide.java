@@ -10,8 +10,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -53,6 +57,33 @@ public class BlueLeftSide extends LinearOpMode {
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
+    ColorSensor intakeColor;
+    TouchSensor hsTouch;
+    TouchSensor vsTouch;
+
+    private DcMotor horizontalSlides = null;
+    private DcMotor verticalSlides = null;
+
+    private DcMotor intake = null;
+
+
+    private Servo ptoL = null;
+    private Servo ptoR = null;
+    private Servo hookL = null;
+    private Servo hookR = null;
+
+    private Servo armL = null;
+    private Servo armR = null;
+
+    private Servo wristL = null;
+    private Servo wristR = null;
+    private Servo claw = null;
+
+
+    private Servo liftL = null;
+    private Servo liftR = null;
+
+    private CRServo flick = null;
 
 
     public static double scale = 0.8; // Example of FTC dashboard variable
@@ -64,7 +95,7 @@ public class BlueLeftSide extends LinearOpMode {
 
     SparkFunOTOS myOtos;
 
-    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0 /*, function1*/);
+    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), , horizontalAction 0);
     Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
     Action act3 = new Action(new Pose2d(-5, -33, Math.toRadians(0)), 3);
     Action act4 = new Action(new Pose2d(-10, -45, Math.toRadians(-90)), .2);
@@ -133,6 +164,10 @@ public class BlueLeftSide extends LinearOpMode {
     boolean AlreadyPausing = false;
 
 
+    public static double clawClose = 0.22;//previous .25
+    public static double clawOpen = 0.5;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -155,9 +190,12 @@ public class BlueLeftSide extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-
-        // Get a reference to the sensor
+// Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
+
+        hsTouch = hardwareMap.get(TouchSensor.class, "hsTouch");
+        vsTouch = hardwareMap.get(TouchSensor.class, "vsTouch");
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
@@ -165,12 +203,56 @@ public class BlueLeftSide extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
 
 
+        horizontalSlides = hardwareMap.get(DcMotor.class, "HS");
+        verticalSlides = hardwareMap.get(DcMotor.class, "VS");
 
+        verticalSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+
+        ptoL = hardwareMap.get(Servo.class, "ptoL");
+        ptoR = hardwareMap.get(Servo.class, "ptoR");
+        hookL = hardwareMap.get(Servo.class, "hookL");
+        hookR = hardwareMap.get(Servo.class, "hookR");
+
+        flick = hardwareMap.get(CRServo.class, "flick");//Continuous rotation servo
+
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
+
+        wristL = hardwareMap.get(Servo.class, "wristL");
+        wristR = hardwareMap.get(Servo.class, "wristR");
+
+        claw = hardwareMap.get(Servo.class, "claw");
+
+        armL.setDirection(Servo.Direction.REVERSE);
+        armR.setDirection(Servo.Direction.FORWARD);
+
+        wristL.setDirection(Servo.Direction.REVERSE);
+        wristR.setDirection(Servo.Direction.FORWARD);
+
+        liftL = hardwareMap.get(Servo.class, "liftL");
+        liftR = hardwareMap.get(Servo.class, "liftR");
+
+        liftL.setDirection(Servo.Direction.REVERSE);
+        liftR.setDirection(Servo.Direction.FORWARD);
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//important
+        verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
+
 
         configureOtos();
 

@@ -11,9 +11,9 @@ public class doCoolThingies {
 
 
     public static double scoreHeight = 3400;
-    public static double collectHeight = 100;
-    public static double prescoreSpeciminHeight = 300;
-    public static double scoreSpeciminHeight = 350;
+    public static double collectHeight = 2;
+    public static double prescoreSpeciminHeight = 1700;
+    public static double scoreSpeciminHeight = 1900;
     public static double stalkerHeight = 900;
     public static double snatchHeight = 600;
 
@@ -32,10 +32,13 @@ public class doCoolThingies {
 
     public static int safePos = 900;
 
-    public static double scoreSpeciminShoulderPos = 0.6;
+    public static double scoreSpeciminShoulderPos = 0.41;
 
 
     public enum targetVerticalIdea{
+        PRE_ZERO,
+        ZERO_VS_SLIDES,
+        READY_VS_POS,
         INIT,
         DEPOSIT_POTATO,
         PRE_SCORE_SPECIMEN,//when we under or over the bar right before
@@ -63,6 +66,7 @@ public class doCoolThingies {
     public currentDoHicky magicalHorizontalMacro(targetHorizontalIdea thisVerticalIdea, double adjustment1){
 
         switch (thisVerticalIdea){
+
 
             case ZERO_HS_SLIDES:
 
@@ -111,6 +115,34 @@ public class doCoolThingies {
 
         switch (thisVerticalIdea){
 
+
+            case PRE_ZERO:
+
+                ultimatePositions.shoulderPos = 0.2;
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
+                ultimatePositions.clawState = false;
+
+                ultimatePositions.VSpos = 2000;//so the power ends up being full//-100
+
+                break;
+            case ZERO_VS_SLIDES:
+
+                ultimatePositions.VSpos = -500;//so the power ends up being full//-100
+
+                break;
+
+            case READY_VS_POS:
+
+                ultimatePositions.VSpos = 300;
+/*
+                ultimatePositions.shoulderPos = 0.85;
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
+                ultimatePositions.clawState = false;*/
+
+                break;
+
             case SAFE_RAISE:
                 ultimatePositions.VSpos = 3000;
                 break;
@@ -132,8 +164,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = prescoreSpeciminHeight;//update
                 ultimatePositions.shoulderPos = .5;//0.7
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
                 ultimatePositions.clawState = true;//and declaring it prevents a user error
                 //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
 
@@ -143,9 +175,9 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreSpeciminHeight;//update
-                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;//.3
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
                 //ultimatePositions.clawPos = false;
                 //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
 
@@ -155,8 +187,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
                 ultimatePositions.shoulderPos = 0.85;//0.8
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
                 ultimatePositions.clawState = false;
                 break;
 
@@ -165,8 +197,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
                 ultimatePositions.shoulderPos = 0.85;//0.5
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
                 ultimatePositions.clawState = false;
 
                 break;
