@@ -3,23 +3,25 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 public class Action {
+
     Pose2d pose;
     double waitTime;
     currentDoHicky verticalDoHicky;
     currentDoHicky horizontalDoHicky;
 
-
-    doCoolThingies.targetVerticalIdea verticalTargetAuto = doCoolThingies.targetVerticalIdea.COLLECT_SPECIMIN;
-    doCoolThingies.targetHorizontalIdea horizontalTargetAuto = doCoolThingies.targetHorizontalIdea.ZERO_HS_SLIDES;
+    targetVerticalIdea verticalTargetAuto;// = targetVerticalIdea.COLLECT_SPECIMIN;
+    targetHorizontalIdea horizontalTargetAuto;// = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     // Constructor to initialize the action with a Pose2d and wait time
-    public Action(Pose2d pose, double waitTime, currentDoHicky verticalDoHicky, currentDoHicky horizontalDoHicky) {
+    public Action(Pose2d pose, double waitTime, targetVerticalIdea verticalTargetAuto, targetHorizontalIdea targetHorizontalIdeaAuto) {
         this.pose = pose;
         this.waitTime = waitTime;
-        this.verticalDoHicky = verticalDoHicky;
-        this.horizontalDoHicky = horizontalDoHicky;
+        this.verticalTargetAuto = verticalTargetAuto;
+        this.horizontalTargetAuto = targetHorizontalIdeaAuto;
     }
 
     // Getter for Pose2d
@@ -30,14 +32,17 @@ public class Action {
     // Getter for wait time
     public double getWaitTime() {return waitTime;}
 
-    public currentDoHicky getHorizontalDoHicky(){
+    public targetHorizontalIdea getHorizontalTargetAuto(){
 
-
-
-        return horizontalDoHicky;
+        return horizontalTargetAuto;
 
     }
 
-    public currentDoHicky getVerticalDoHicky(){return verticalDoHicky;}
+    public targetVerticalIdea getVerticalTargetAuto(){
+
+        return verticalTargetAuto;
+
+    }
+
 
 }

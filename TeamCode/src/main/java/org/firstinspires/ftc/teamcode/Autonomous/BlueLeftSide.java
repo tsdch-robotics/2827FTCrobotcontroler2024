@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea.COLLECT_SPECIMIN;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -26,6 +28,8 @@ import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
+import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 import org.opencv.core.Mat;
 //import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -34,13 +38,16 @@ import com.acmerobotics.roadrunner.Vector2d;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
 
 import java.util.List;
 import java.util.ArrayList;
 
 
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
  *
@@ -54,6 +61,14 @@ import java.util.ArrayList;
 @Config
 @Autonomous(name = "BlueLeftSide", group = "Autonomous")
 public class BlueLeftSide extends LinearOpMode {
+
+
+
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.COLLECT_SPECIMIN;
+    targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
+
+
+    doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
@@ -95,7 +110,7 @@ public class BlueLeftSide extends LinearOpMode {
 
     SparkFunOTOS myOtos;
 
-    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), , horizontalAction 0);
+    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.ZERO_HS_SLIDES);
     Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
     Action act3 = new Action(new Pose2d(-5, -33, Math.toRadians(0)), 3);
     Action act4 = new Action(new Pose2d(-10, -45, Math.toRadians(-90)), .2);
@@ -168,9 +183,18 @@ public class BlueLeftSide extends LinearOpMode {
     public static double clawOpen = 0.5;
 
 
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
+
+
+
 
         /*actions.add(act1);
         actions.add(act1);
@@ -284,6 +308,19 @@ public class BlueLeftSide extends LinearOpMode {
                     }
                 }
             }
+
+
+            //getting vertical and horz systems
+            verticalTargetAuto = currentAction.getVerticalTargetAuto();
+            horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
+
+            verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+            horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
+
+
+
+
+
             //next we must complete the pause
 
             //once in targetBox, it starts the pause
