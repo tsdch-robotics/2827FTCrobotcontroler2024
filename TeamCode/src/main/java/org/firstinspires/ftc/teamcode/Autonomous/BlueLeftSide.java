@@ -59,7 +59,7 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@Autonomous(name = "BlueLeftSide", group = "Autonomous")
+@Autonomous(name = "BlueLeftSide", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class BlueLeftSide extends LinearOpMode {
 
 
@@ -101,23 +101,36 @@ public class BlueLeftSide extends LinearOpMode {
     private CRServo flick = null;
 
 
-    public static double scale = 0.8; // Example of FTC dashboard variable
+    public static double scale = 0.8; //I think this is a speed scaler?
 
     public boolean inTargetBox = false;
+
     public int actionNumber = 0;
 
     // Create an instance of the sensor
 
     SparkFunOTOS myOtos;
 
-    Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.ZERO_HS_SLIDES);
-    Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
-    Action act3 = new Action(new Pose2d(-5, -33, Math.toRadians(0)), 3);
-    Action act4 = new Action(new Pose2d(-10, -45, Math.toRadians(-90)), .2);
-    Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
-    Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);
+    Action act1 = new Action(new Pose2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action act2 = new Action(new Pose2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act3 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act4 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act5 = new Action(new Pose2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
-   // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
+    //needs not to continune until it senses
+    Action act6 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
+    Action act7 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
+    Action act8 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action act9 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act10 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
+    Action act11 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
+
+
+
+    int numberOfActs = 11;
+
+
+    // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
    // Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 2);
 
     List<Action> actions = new ArrayList<>();
@@ -144,10 +157,15 @@ public class BlueLeftSide extends LinearOpMode {
 
     double finalX = 0;
     double finalY = 0;
-    double originY = -61;// -61;
-    double originX = -7;//-7;
 
-    Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
+
+    //ORIGIN OF BEGINNING
+
+    double yawOrigin = 0;
+    double originY = -64;// -61;
+    double originX = -14;//-7;
+
+    //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
 
     double normalHeading = 0;
@@ -183,9 +201,17 @@ public class BlueLeftSide extends LinearOpMode {
     public static double clawOpen = 0.5;
 
 
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0, false);
 
+    double vsTarget = 0;
+    double hsTarget = 0;
+
+    boolean killHorizontal = true;
+    boolean killVertical = true;
+
+    double vsOutput = 0;
+    double hsOutput = 0;
 
 
     @Override
@@ -203,13 +229,21 @@ public class BlueLeftSide extends LinearOpMode {
             actions.add(act2);
         }*/
 
+        int takeNoteOFTHIS = numberOfActs;
+
         actions.add(act1);
         actions.add(act2);
         actions.add(act3);
         actions.add(act4);
         actions.add(act5);
         actions.add(act6);
-        actions.add(returnHome);
+        actions.add(act7);
+        actions.add(act8);
+        actions.add(act9);
+        actions.add(act10);
+        actions.add(act11);
+
+        //actions.add(returnHome);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -300,8 +334,8 @@ public class BlueLeftSide extends LinearOpMode {
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 1 & velocities.getVx() < stopSpeed){
-                if (Math.abs(finalY - targetY) < 1 & velocities.getVy() < stopSpeed){
+            if (Math.abs(finalX - targetX) < 3 & velocities.getVx() < stopSpeed){//prevously, 3 was 1
+                if (Math.abs(finalY - targetY) < 3 & velocities.getVy() < stopSpeed){
                     if (/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.001){
                         inTargetBox = true;
                         gamepad1.rumble(3);
@@ -310,7 +344,7 @@ public class BlueLeftSide extends LinearOpMode {
             }
 
 
-            //getting vertical and horz systems
+            //GETTING VERTICAL AND HORIZONTAL
             verticalTargetAuto = currentAction.getVerticalTargetAuto();
             horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
 
@@ -318,9 +352,65 @@ public class BlueLeftSide extends LinearOpMode {
             horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
 
 
+            hsTarget = horizontalPositions.getHSpos();
+
+            if(!killHorizontal){
+                liftL.setPosition(horizontalPositions.getintakeLiftPos());
+                liftR.setPosition(horizontalPositions.getintakeLiftPos());
+                intake.setPower(horizontalPositions.getIntakeSpeed());
+            }
+
+            vsTarget = verticalPositions.getVSpos();
+
+            if(!killVertical){
+                armL.setPosition(verticalPositions.getshoulderPos());
+                armR.setPosition(verticalPositions.getshoulderPos());
+                wristL.setPosition(verticalPositions.getwristLPos());
+                wristR.setPosition(verticalPositions.getwristRPos());
+                if(!verticalPositions.getClawState()){//false
+                    claw.setPosition(clawOpen);
+                }else{
+                    claw.setPosition(clawClose);
+                }
+            }
+
+
+            /*COLOR SENSING AUTOMATION
+
+            currentColor = colorTest.color(intakeColor, Time);
+
+            if(gamepad1.left_trigger > 0.1){
+                intake.setPower(-gamepad1.left_trigger);
+
+            }else{
+                intake.setPower(gamepad1.right_trigger);
+            }
+
+
+            telemetry.addData("currentColor is", currentColor);
+            double colorChangeDelayServo = 0.9;
+
+            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
+                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+            }
+
+
+            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
+                waitUntil = getRuntime() + colorChangeDelayServo;
+            }
+            if(getRuntime() < waitUntil){
+                flick.setPower(-1);
+                telemetry.addData("Servo power", -1);
+            }else{
+                //flick.setPower(0);
+                flick.setPower(-gamepad1.right_trigger);
+            }
+
+            */
 
 
 
+            //CONTINUE DRIVETRAIN AUTO
             //next we must complete the pause
 
             //once in targetBox, it starts the pause
@@ -363,7 +453,7 @@ public class BlueLeftSide extends LinearOpMode {
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             double xpos = pos.x;
             double ypos = pos.y;
-            heading = pos.h;
+            heading = pos.h + yawOrigin;
             //potential problem: taking more than one reading throughout the program
 
             normalHeading = heading;
@@ -441,7 +531,20 @@ public class BlueLeftSide extends LinearOpMode {
                 rightBackDrive.setPower(0);
             }
 
+            //MORE SLIDES STUFFS
+            double hspos = -horizontalSlides.getCurrentPosition();
+            double vspos = verticalSlides.getCurrentPosition();
 
+            if(!killVertical){
+                verticalSlides.setPower(vsOutput);
+            }else{
+                verticalSlides.setPower(0);
+            }
+            if(!killHorizontal){
+                horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
+            }else{
+                horizontalSlides.setPower(0);
+            }
 
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
@@ -464,6 +567,7 @@ public class BlueLeftSide extends LinearOpMode {
             // finalY = finalY + deltaY;
             finalX = xpos + originX;
             finalY = ypos + originY;
+            //see below for the use of originYaw
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -472,6 +576,9 @@ public class BlueLeftSide extends LinearOpMode {
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
+            telemetry.addData("X coordinate", targetX);
+            telemetry.addData("Y coordinate", targetY);
+
             telemetry.addData("yawOutput", yawOutput);
             telemetry.addData("vxOut", vxOutput);
             telemetry.addData("vyOut", vyOutput);
@@ -490,7 +597,7 @@ public class BlueLeftSide extends LinearOpMode {
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
@@ -498,6 +605,9 @@ public class BlueLeftSide extends LinearOpMode {
             yawOutput = yawOutput * scale;
             vxOutput = vxOutput * scale;
             vyOutput = vyOutput * scale;
+
+            vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
+            hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
 
         }
     }

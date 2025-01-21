@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 import org.opencv.core.Mat;
 //import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -67,8 +68,8 @@ public class BackandForthPID extends LinearOpMode {
     Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
     Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);*/
 
-    Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 4);
-    Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 4);
+    Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
 
     List<Action> actions = new ArrayList<>();
 
@@ -97,7 +98,7 @@ public class BackandForthPID extends LinearOpMode {
     double originY = -50;// -61;
     double originX = -50;//-7;
 
-    Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
+    Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
 
 
     double normalHeading = 0;

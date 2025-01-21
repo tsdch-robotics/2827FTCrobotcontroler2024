@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class doCoolThingies {
 
-    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,false);//change this to your ideal init pos
+    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, false);//change this to your ideal init pos
 
 
     public static double scoreHeight = 3400;
@@ -47,7 +47,8 @@ public class doCoolThingies {
         SNATCH_THAT_FISHY,
         SQUEEZE_THE_CATCH,
         COLLECT_SPECIMIN,
-        SAFE_RAISE
+        SAFE_RAISE,
+        RELEASE
         //all zeroing will be automatic
 
     }
@@ -58,6 +59,7 @@ public class doCoolThingies {
         READY_HS_POS,
         SAFE_POSITION,//intake doesn't need raise or lower
         HOVER_ACROSS_BARIER,
+        FULL_EXTENT_DROP_WITH_INTAKE, //for autoonomous only
         FULL_EXTENT_DROP//maybe be like, +/- input?
 
     }
@@ -79,6 +81,7 @@ public class doCoolThingies {
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
                 ultimatePositions.HSpos = 1;
+                ultimatePositions.intakeSpeed = 0;//put elsewhere?
 
                 break;
 
@@ -95,12 +98,25 @@ public class doCoolThingies {
 
                 break;
 
+
+            case FULL_EXTENT_DROP_WITH_INTAKE:
+
+                ultimatePositions.intakeLiftPos = intakeLOW;
+                ultimatePositions.HSpos = full_HS;
+                ultimatePositions.intakeSpeed = 1;
+
+                break;
+
             case SAFE_POSITION:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
                 ultimatePositions.HSpos = safePos;
 
                 break;
+
+
+
+
 
 
         }
@@ -225,6 +241,15 @@ public class doCoolThingies {
                 ultimatePositions.clawState = false;
 
                 break;
+
+
+            case RELEASE:
+
+                ultimatePositions.clawState = false;
+
+                break;
+
+
 
         }
 

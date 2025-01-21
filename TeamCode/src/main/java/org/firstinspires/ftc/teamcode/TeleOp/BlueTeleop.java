@@ -45,8 +45,8 @@ public class BlueTeleop extends LinearOpMode {
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
     //currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,false);
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,false);
 
     targetVerticalIdea verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
     targetHorizontalIdea horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
