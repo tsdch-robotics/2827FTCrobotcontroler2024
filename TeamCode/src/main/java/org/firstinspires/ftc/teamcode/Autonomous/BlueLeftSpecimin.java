@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
+import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
@@ -34,16 +35,6 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalId
 import java.util.List;
 import java.util.ArrayList;
 
-/*
- * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
- *
- * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- *
- * See the sensor's product page: https://www.sparkfun.com/products/24904
- */
 @Config
 @Autonomous(name = "BlueLeftSpecimin", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class BlueLeftSpecimin extends LinearOpMode {
@@ -58,6 +49,7 @@ public class BlueLeftSpecimin extends LinearOpMode {
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
     ColorSensor intakeColor;
+    String currentColor = "none";
     TouchSensor hsTouch;
     TouchSensor vsTouch;
 
@@ -103,10 +95,12 @@ public class BlueLeftSpecimin extends LinearOpMode {
 
     Action act5 = new Action(new Position2d(-5, -52, Math.toRadians(-30)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
-    Action act6 = new Action(new Position2d(0, -45, Math.toRadians(-30)), 2, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act6 = new Action(new Position2d(0, -45, Math.toRadians(-30)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act6b = new Action(new Position2d(-5, -50, Math.toRadians(0)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act6c = new Action(new Position2d(0, -45, Math.toRadians(-30)), 6, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
 
-    Action act7 = new Action(new Position2d(-45, -45, Math.toRadians(-30)), 5/*or if the correct color*/, targetVerticalIdea.STALKER, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
+    Action act7 = new Action(new Position2d(-45, -45, Math.toRadians(-30)), 1/*or if the correct color*/, targetVerticalIdea.STALKER, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
 
     //consider no velocity delay aspect for smooth transitions without delay
     //needs some flow logic here
@@ -122,7 +116,7 @@ public class BlueLeftSpecimin extends LinearOpMode {
     Action act13 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
 
 
-    int numberOfActs = 11;
+     int numberOfActs = 11;
 
 
     // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
@@ -212,12 +206,11 @@ public class BlueLeftSpecimin extends LinearOpMode {
     boolean noMoreVSzero = false;
     boolean noMoreHSzero = false;
 
+    boolean promptedToContinueNow = false;//to speed things up when needed
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-
-
-
-
 
 
         /*actions.add(act1);
@@ -235,6 +228,8 @@ public class BlueLeftSpecimin extends LinearOpMode {
         actions.add(act4);
         actions.add(act5);
         actions.add(act6);
+        actions.add(act6b);
+        actions.add(act6c);
         actions.add(act7);
         actions.add(act8);
         actions.add(act8b);
@@ -250,6 +245,8 @@ public class BlueLeftSpecimin extends LinearOpMode {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 // Get a reference to the sensor
+        determineColor colorTest = new determineColor();
+
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
 
@@ -339,8 +336,9 @@ public class BlueLeftSpecimin extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            double Time = runtime.time();
 
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
 
             double stopSpeed = 0.0001;
             double noPauseLeft;
@@ -395,6 +393,7 @@ public class BlueLeftSpecimin extends LinearOpMode {
                 horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS;
             }
 
+
             //SET POSITIONS ACCORDINGLY
             verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
             horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
@@ -424,27 +423,17 @@ public class BlueLeftSpecimin extends LinearOpMode {
             }
 
 
-            /*COLOR SENSING AUTOMATION
-
+            //COLOR SENSING AUTOMATION
             currentColor = colorTest.color(intakeColor, Time);
-
-            if(gamepad1.left_trigger > 0.1){
-                intake.setPower(-gamepad1.left_trigger);
-
-            }else{
-                intake.setPower(gamepad1.right_trigger);
-            }
-
 
             telemetry.addData("currentColor is", currentColor);
             double colorChangeDelayServo = 0.9;
 
-            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTargetAuto == targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE){
+                promptedToContinueNow = true;
             }
 
-
-            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
+            /*if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
                 waitUntil = getRuntime() + colorChangeDelayServo;
             }
             if(getRuntime() < waitUntil){
@@ -453,9 +442,8 @@ public class BlueLeftSpecimin extends LinearOpMode {
             }else{
                 //flick.setPower(0);
                 flick.setPower(-gamepad1.right_trigger);
-            }
+            }*/
 
-            */
 
 
 
@@ -468,10 +456,12 @@ public class BlueLeftSpecimin extends LinearOpMode {
                 AlreadyPausing = true;
             }
 
-            if (inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime){
+            //GO ONTO THE NEXT ACTION PROCESS
+            if ((inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime) || promptedToContinueNow){
                 AlreadyPausing = false;
                 actionNumber += 1;
                 inTargetBox = false;
+                promptedToContinueNow = false;
             }
 
 
