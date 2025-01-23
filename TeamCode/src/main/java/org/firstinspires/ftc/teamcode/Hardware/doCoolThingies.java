@@ -10,7 +10,7 @@ public class doCoolThingies {
     currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, 0, false);//change this to your ideal init pos
 
 
-    public static double scoreHeight = 3400;
+    public static double scoreHeight = 3500;
     public static double collectHeight = 2;
     public static double prescoreSpeciminHeight = 1700;
     public static double scoreSpeciminHeight = 1900;
@@ -36,11 +36,14 @@ public class doCoolThingies {
 
 
     public enum targetVerticalIdea{
+        PARK,
         PRE_ZERO,
         ZERO_VS_SLIDES,
         READY_VS_POS,
         INIT,
         DEPOSIT_POTATO,
+        DEPOSIT_POTATO_AUTO,
+        RELEASE_POTATO,
         PRE_SCORE_SPECIMEN,//when we under or over the bar right before
         SCORE_SPECIMEN,
         STALKER,
@@ -62,6 +65,7 @@ public class doCoolThingies {
         HOVER_ACROSS_BARIER,
         FULL_EXTENT_DROP_WITH_INTAKE, //for autoonomous only
         ZERO_HS_SLIDES_FLICK_ON,//likewised
+        READY_HS_POS_FLICK_STILL_ON,
         FULL_EXTENT_DROP//maybe be like, +/- input?
 
     }
@@ -85,6 +89,15 @@ public class doCoolThingies {
                 ultimatePositions.HSpos = 1;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
                 ultimatePositions.flickSpeed = 0;
+
+                break;
+
+            case READY_HS_POS_FLICK_STILL_ON:
+
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = 1;
+                ultimatePositions.intakeSpeed = 0;//put elsewhere?
+
 
                 break;
 
@@ -181,7 +194,20 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreHeight;//update
-                ultimatePositions.shoulderPos = 0.17;//0.17
+                ultimatePositions.shoulderPos = 0.21;//0.17//makes it go in a bit better
+                ultimatePositions.wristLPos = .5;//.5
+                ultimatePositions.wristRPos = .4;//.4
+                //ultimatePositions.clawPos = false;
+                //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                break;
+
+
+            case DEPOSIT_POTATO_AUTO:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = scoreHeight;//update
+                ultimatePositions.shoulderPos = 0.22;//0.17
                 ultimatePositions.wristLPos = .5;//.5
                 ultimatePositions.wristRPos = .4;//.4
                 //ultimatePositions.clawPos = false;
@@ -216,7 +242,7 @@ public class doCoolThingies {
             case STALKER:
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
-                ultimatePositions.shoulderPos = 0.85;//0.8
+                ultimatePositions.shoulderPos = 0.85;//0.85
                 ultimatePositions.wristLPos = .5;
                 ultimatePositions.wristRPos = .4;
                 ultimatePositions.clawState = false;
@@ -226,7 +252,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = 0.85;//0.5
+                ultimatePositions.shoulderPos = 0.85;//0.85 - i reduce to .8 for better potential
                 ultimatePositions.wristLPos = .5;
                 ultimatePositions.wristRPos = .4;
                 ultimatePositions.clawState = false;
@@ -259,6 +285,33 @@ public class doCoolThingies {
                 ultimatePositions.clawState = false;
 
                 break;
+
+
+            case RELEASE_POTATO:
+
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = scoreHeight;//update
+                ultimatePositions.shoulderPos = 0.16;//0.17
+                ultimatePositions.wristLPos = .5;//.5
+                ultimatePositions.wristRPos = .4;//.4
+                //ultimatePositions.clawPos = false;
+                //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                ultimatePositions.clawState = false;
+
+                break;
+
+            case PARK:
+
+                ultimatePositions.VSpos = 1;
+                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;//.3
+                ultimatePositions.wristLPos = .5;
+                ultimatePositions.wristRPos = .4;
+
+                break;
+
+
 
 
 

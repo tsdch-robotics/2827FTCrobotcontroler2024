@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
+import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
@@ -34,22 +35,12 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalId
 import java.util.List;
 import java.util.ArrayList;
 
-/*
- * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
- *
- * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- *
- * See the sensor's product page: https://www.sparkfun.com/products/24904
- */
 @Config
 @Autonomous(name = "BlueLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
 
-    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.COLLECT_SPECIMIN;
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
 
@@ -58,6 +49,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
     ColorSensor intakeColor;
+
+    String currentColor = "none";
     TouchSensor hsTouch;
     TouchSensor vsTouch;
 
@@ -95,20 +88,31 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     // Create an instance of the sensor
 
     SparkFunOTOS myOtos;
+    //use mr hicks robt squaring specimin advice
+    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES);
+    Action meetThebasket = new Action(new Position2d(-50,-63,Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES);
+    Action dropSample = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 2, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action bringBack = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
+    Action grabIt = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON);
+    Action squeeze = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action safeRaise = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
 
-    Action act1 = new Action(new Position2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act2 = new Action(new Position2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act3 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act4 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act5 = new Action(new Position2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action deposit = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
 
-    //needs not to continune until it senses
-    Action act6 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
-    Action act7 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
-    Action act8 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act9 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act10 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
-    Action act11 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
+    //instead add another dropSample and go
+
+    Action collectSampleMid = new Action(new Position2d(-47, -57, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+    Action collectSampleLeft = new Action(new Position2d(-40, -55, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+    Action park = new Action(new Position2d(-45, -20, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS);
+    Action parkb = new Action(new Position2d(-25, -20, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS);
+
+
+
+    //Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
 
 
 
@@ -148,7 +152,7 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
     double yawOrigin = 0;
     double originY = -64;// -61;
-    double originX = -14;//-7;
+    double originX = -14;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -182,29 +186,31 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     boolean AlreadyPausing = false;
 
 
-    public static double clawClose = 0.22;//previous .25
+    public static double clawClose = 0.2;//previous .25
     public static double clawOpen = 0.5;
 
 
     currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0, 0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false);
 
     double vsTarget = 0;
     double hsTarget = 0;
 
-    boolean killHorizontal = true;
-    boolean killVertical = true;
+    boolean killHorizontal = false;
+    boolean killVertical = false;
 
     double vsOutput = 0;
     double hsOutput = 0;
 
 
+    boolean noMoreVSzero = false;
+    boolean noMoreHSzero = false;
+
+    boolean promptedToContinueNow = false;//to speed things up when needed
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-
-
-
-
 
 
         /*actions.add(act1);
@@ -217,16 +223,46 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
         int takeNoteOFTHIS = numberOfActs;
 
         actions.add(act1);
-        actions.add(act2);
-        actions.add(act3);
-        actions.add(act4);
-        actions.add(act5);
-        actions.add(act6);
-        actions.add(act7);
-        actions.add(act8);
-        actions.add(act9);
-        actions.add(act10);
-        actions.add(act11);
+        actions.add(meetThebasket);
+        actions.add(dropSample);
+        actions.add(collectSampleRight);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
+        actions.add(safeRaise);
+
+        actions.add(deposit);
+        actions.add(dropSample);
+
+
+        /*actions.add(collectSampleMid);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
+
+        actions.add(safeRaise);
+
+
+        actions.add(deposit);
+        actions.add(dropSample);*/
+
+        actions.add(park);
+        actions.add(parkb);
+
+
+
+        /*actions.add(collectSampleLeft);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
+        actions.add(safeRaise);
+
+        actions.add(deposit);
+        actions.add(dropSample);*/
+
 
         //actions.add(returnHome);
 
@@ -234,6 +270,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 // Get a reference to the sensor
+        determineColor colorTest = new determineColor();
+
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
 
@@ -300,16 +338,32 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
         configureOtos();
 
         // Wait for the start button to be pressed
+
+
+
+        //so that it can hold in init
+        verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+
+        armL.setPosition(verticalPositions.getshoulderPos());
+        armR.setPosition(verticalPositions.getshoulderPos());
+        wristL.setPosition(verticalPositions.getwristLPos());
+        wristR.setPosition(verticalPositions.getwristRPos());
+        if(!verticalPositions.getClawState()){//false
+            claw.setPosition(clawOpen);
+        }else{
+            claw.setPosition(clawClose);
+        }
+
         waitForStart();
         resetRuntime();
-
 
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            double Time = runtime.time();
 
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
 
             double stopSpeed = 0.0001;
             double noPauseLeft;
@@ -330,9 +384,42 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
 
             //GETTING VERTICAL AND HORIZONTAL
-            verticalTargetAuto = currentAction.getVerticalTargetAuto();
-            horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
+            if(!noMoreVSzero){
+                verticalTargetAuto = currentAction.getVerticalTargetAuto();
+            }
 
+            if(!noMoreHSzero){
+                horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
+            }
+
+
+            //AUTO ZERO
+            if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
+                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+                noMoreVSzero = true;
+            }else if (verticalTargetAuto != targetVerticalIdea.ZERO_VS_SLIDES){
+                noMoreVSzero = false;
+            }else{
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+            }
+
+            if(horizontalTargetAuto == targetHorizontalIdea.ZERO_HS_SLIDES && hsTouch.isPressed()){
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON;
+                noMoreHSzero = true;
+            }else if (horizontalTargetAuto != targetHorizontalIdea.ZERO_HS_SLIDES){
+                noMoreHSzero = false;
+            }else{
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON;
+            }
+
+
+            //SET POSITIONS ACCORDINGLY
             verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
             horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
 
@@ -343,6 +430,7 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
                 liftL.setPosition(horizontalPositions.getintakeLiftPos());
                 liftR.setPosition(horizontalPositions.getintakeLiftPos());
                 intake.setPower(horizontalPositions.getIntakeSpeed());
+                flick.setPower(horizontalPositions.getFlickSpeed());
             }
 
             vsTarget = verticalPositions.getVSpos();
@@ -360,27 +448,17 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             }
 
 
-            /*COLOR SENSING AUTOMATION
-
+            //COLOR SENSING AUTOMATION
             currentColor = colorTest.color(intakeColor, Time);
-
-            if(gamepad1.left_trigger > 0.1){
-                intake.setPower(-gamepad1.left_trigger);
-
-            }else{
-                intake.setPower(gamepad1.right_trigger);
-            }
-
 
             telemetry.addData("currentColor is", currentColor);
             double colorChangeDelayServo = 0.9;
 
-            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTargetAuto == targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE){
+                promptedToContinueNow = true;
             }
 
-
-            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
+            /*if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
                 waitUntil = getRuntime() + colorChangeDelayServo;
             }
             if(getRuntime() < waitUntil){
@@ -389,9 +467,7 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             }else{
                 //flick.setPower(0);
                 flick.setPower(-gamepad1.right_trigger);
-            }
-
-            */
+            }*/
 
 
 
@@ -404,10 +480,12 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
                 AlreadyPausing = true;
             }
 
-            if (inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime){
+            //GO ONTO THE NEXT ACTION PROCESS
+            if ((inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime)/* || promptedToContinueNow*/){
                 AlreadyPausing = false;
                 actionNumber += 1;
                 inTargetBox = false;
+                promptedToContinueNow = false;
             }
 
 

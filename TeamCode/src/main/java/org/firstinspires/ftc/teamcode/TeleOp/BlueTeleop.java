@@ -294,24 +294,24 @@ public class BlueTeleop extends LinearOpMode {
 
 
             //YELLOW MODE
-            if(gamepad2.y && !Ymode && !alreadyPressingY){
+            if(gamepad1.y && !Ymode && !alreadyPressingY){
                 verticalTarget = targetVerticalIdea.PRE_ZERO;
 
                 Ymode = true;
                 Xmode = false;
 
                 alreadyPressingY = true;
-            }else if(gamepad2.y && !alreadyPressingY){
+            }else if(gamepad1.y && !alreadyPressingY){
 
 
                 verticalTarget = nextVerticalTarget;
                 alreadyPressingY = true;
-            }else if (!gamepad2.y){
+            }else if (!gamepad1.y){
                 alreadyPressingY = false;
             }
 
             //SPECIMIN MODE
-            if(gamepad2.x && !Xmode && !alreadyPressingX){
+            if(gamepad1.x && !Xmode && !alreadyPressingX){
 
                 Xmode = true;
                 Ymode = false;
@@ -320,10 +320,10 @@ public class BlueTeleop extends LinearOpMode {
 
                 verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
 
-            }else if(gamepad2.x && !alreadyPressingX){
+            }else if(gamepad1.x && !alreadyPressingX){
                 verticalTarget = nextVerticalTarget;
                 alreadyPressingX = true;
-            }else if (!gamepad2.x){
+            }else if (!gamepad1.x){
                 alreadyPressingX = false;
             }
 
@@ -538,8 +538,8 @@ public class BlueTeleop extends LinearOpMode {
 
 
             if(!hanging){
-                axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-                lateral =  -gamepad1.left_stick_x;
+                axial   = gamepad1.left_stick_y;//drive  // Note: pushing stick forward gives negative value
+                lateral =  -gamepad1.left_stick_x;//strafe
                 yaw     =  -gamepad1.right_stick_x;
             }else{
                 axial = vsPower;

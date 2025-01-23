@@ -49,6 +49,7 @@ public class BlueLeftSpecimin extends LinearOpMode {
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
     ColorSensor intakeColor;
+
     String currentColor = "none";
     TouchSensor hsTouch;
     TouchSensor vsTouch;
@@ -87,11 +88,11 @@ public class BlueLeftSpecimin extends LinearOpMode {
     // Create an instance of the sensor
 
     SparkFunOTOS myOtos;
-
-    Action act1 = new Action(new Position2d(-5,-50,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES);
-    Action act2 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act3 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 2, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act4 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 1, targetVerticalIdea.PRE_ZERO/*add the drop it aspect*/, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+//use mr hicks robt squaring specimin advice
+    Action act1 = new Action(new Position2d(-5,-45,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES);
+    Action act2 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act3 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 2, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act4 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_ZERO/*add the drop it aspect*/, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
     Action act5 = new Action(new Position2d(-5, -52, Math.toRadians(-30)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
@@ -446,7 +447,6 @@ public class BlueLeftSpecimin extends LinearOpMode {
 
 
 
-
             //CONTINUE DRIVETRAIN AUTO
             //next we must complete the pause
 
@@ -457,7 +457,7 @@ public class BlueLeftSpecimin extends LinearOpMode {
             }
 
             //GO ONTO THE NEXT ACTION PROCESS
-            if ((inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime) || promptedToContinueNow){
+            if ((inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime)/* || promptedToContinueNow*/){
                 AlreadyPausing = false;
                 actionNumber += 1;
                 inTargetBox = false;
