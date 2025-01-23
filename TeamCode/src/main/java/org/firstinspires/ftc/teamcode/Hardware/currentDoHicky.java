@@ -10,9 +10,10 @@ public class currentDoHicky {
     double wristLPos;
     double wristRPos;//intake is the front of the robot this year
     double intakeSpeed; //for autonomous only
+    double flickSpeed;//likewise
     boolean clawState;
 
-    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos, double intakeSpeed, boolean clawState) {
+    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos, double intakeSpeed, double flickSpeed, boolean clawState) {
         this.HSpos = HSpos;
         this.VSpos = VSpos;
         this.intakeLiftPos = intakeLiftPos;
@@ -20,6 +21,7 @@ public class currentDoHicky {
         this.wristLPos = wristLPos;
         this.wristRPos = wristRPos;
         this.intakeSpeed = intakeSpeed;
+        this.flickSpeed = flickSpeed;
         this.clawState = clawState;
     }
 
@@ -52,9 +54,10 @@ public class currentDoHicky {
         return intakeSpeed;
     }
 
+    public double getFlickSpeed(){return flickSpeed;}
+
     public boolean getClawState() {
         return clawState;
     }
-
 
 }

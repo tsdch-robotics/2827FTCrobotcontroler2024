@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,13 +20,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 import org.opencv.core.Mat;
-//import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
@@ -68,8 +66,8 @@ public class BackandForthPID extends LinearOpMode {
     Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
     Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);*/
 
-    Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
-    Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action act1 = new Action(new Position2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action act2 = new Action(new Position2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
 
     List<Action> actions = new ArrayList<>();
 
@@ -81,7 +79,7 @@ public class BackandForthPID extends LinearOpMode {
     double act6pause = 1;
 
 
-    List<Pose2d> pauses = new ArrayList<>();
+    List<Position2d> pauses = new ArrayList<>();
 
 
     public static double scale = 0.8; // Example of FTC dashboard variable
@@ -98,7 +96,7 @@ public class BackandForthPID extends LinearOpMode {
     double originY = -50;// -61;
     double originX = -50;//-7;
 
-    Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action returnHome = new Action(new Position2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
 
 
     double normalHeading = 0;
@@ -184,7 +182,7 @@ public class BackandForthPID extends LinearOpMode {
             double noPauseLeft;
 
             Action currentAction = actions.get(actionNumber); // Get the current action
-            Pose2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
+            Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
@@ -211,9 +209,9 @@ public class BackandForthPID extends LinearOpMode {
             }
 
 
-            targetX = targetPose.position.x;
-            targetY = targetPose.position.y;
-            yawTarget = Math.toDegrees(targetPose.heading.log());
+            targetX = targetPose.getThisX();
+            targetY = targetPose.getThisY();
+            yawTarget = Math.toDegrees(targetPose.getThisHeading());
             telemetry.addData("yawTarget", yawTarget);
 
             double TelemX = -finalX;

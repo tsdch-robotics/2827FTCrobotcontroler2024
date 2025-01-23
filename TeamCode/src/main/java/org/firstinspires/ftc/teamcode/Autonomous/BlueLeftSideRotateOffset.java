@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea.COLLECT_SPECIMIN;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Pose2d;
+//import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -20,23 +17,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
-import org.opencv.core.Mat;
-//import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
-
-import org.firstinspires.ftc.teamcode.Hardware.Action;
-import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
@@ -46,8 +36,6 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalId
 import java.util.List;
 import java.util.ArrayList;
 
-
-import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
  *
@@ -59,8 +47,8 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@Autonomous(name = "BlueLeftSide", group = "Autonomous", preselectTeleOp = "BlueTeleop")
-public class BlueLeftSide extends LinearOpMode {
+@Autonomous(name = "BlueLeftSideRotateOffset", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class BlueLeftSideRotateOffset extends LinearOpMode {
 
 
 
@@ -111,20 +99,20 @@ public class BlueLeftSide extends LinearOpMode {
 
     SparkFunOTOS myOtos;
 
-    Action act1 = new Action(new Pose2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act2 = new Action(new Pose2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act3 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act4 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act5 = new Action(new Pose2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+    Action act1 = new Action(new Position2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action act2 = new Action(new Position2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act3 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act4 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act5 = new Action(new Position2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
     //needs not to continune until it senses
-    Action act6 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
-    Action act7 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
-    Action act8 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act9 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act10 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
-    Action act11 = new Action(new Pose2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
-
+    Action act6 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
+    Action act7 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
+    Action act8 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action act9 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act10 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
+    Action act11 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
 
 
     int numberOfActs = 11;
@@ -143,7 +131,7 @@ public class BlueLeftSide extends LinearOpMode {
     double act6pause = 1;
 
 
-    List<Pose2d> pauses = new ArrayList<>();
+    List<Position2d> pauses = new ArrayList<>();
 
 
     public static double testttt = 1; // Example of FTC dashboard variable
@@ -161,7 +149,7 @@ public class BlueLeftSide extends LinearOpMode {
 
     //ORIGIN OF BEGINNING
 
-    double yawOrigin = 0;
+    double yawOrigin = -90;
     double originY = -64;// -61;
     double originX = -14;//-7;
 
@@ -172,7 +160,7 @@ public class BlueLeftSide extends LinearOpMode {
     double currentDriveX = 0;
     double currentDriveY = 0;
 
-    public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
+    public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PIDgains
 
     private double previousError = 0;
     private double integralSum = 0;
@@ -201,8 +189,8 @@ public class BlueLeftSide extends LinearOpMode {
     public static double clawOpen = 0.5;
 
 
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0, false);
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false);
 
     double vsTarget = 0;
     double hsTarget = 0;
@@ -330,7 +318,7 @@ public class BlueLeftSide extends LinearOpMode {
             double noPauseLeft;
 
             Action currentAction = actions.get(actionNumber); // Get the current action
-            Pose2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
+            Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
@@ -426,9 +414,9 @@ public class BlueLeftSide extends LinearOpMode {
             }
 
 
-            targetX = targetPose.position.x;
-            targetY = targetPose.position.y;
-            yawTarget = Math.toDegrees(targetPose.heading.log());
+            targetX = targetPose.getThisX();
+            targetY = targetPose.getThisY();
+            yawTarget = Math.toDegrees(targetPose.getThisHeading());//I think
             telemetry.addData("yawTarget", yawTarget);
 
             double TelemX = -finalX;
@@ -451,9 +439,14 @@ public class BlueLeftSide extends LinearOpMode {
             dashboard.sendTelemetryPacket(packet);
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            double xpos = pos.x;
-            double ypos = pos.y;
-            heading = pos.h + yawOrigin;
+
+            //testing new feature
+            double unOriginedxpos = pos.x;
+            double unOriginedypos = pos.y;
+
+            double xpos = unOriginedxpos * Math.cos(Math.toRadians(yawOrigin)) - unOriginedypos * Math.sin(Math.toRadians(yawOrigin));
+            double ypos = unOriginedxpos * Math.sin(Math.toRadians(yawOrigin)) + unOriginedypos * Math.sin(Math.toRadians(yawOrigin));
+            heading = pos.h + Math.toRadians(yawOrigin);
             //potential problem: taking more than one reading throughout the program
 
             normalHeading = heading;
@@ -597,7 +590,7 @@ public class BlueLeftSide extends LinearOpMode {
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(/*pos.h*/pos.h + Math.toRadians(yawOrigin), getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 

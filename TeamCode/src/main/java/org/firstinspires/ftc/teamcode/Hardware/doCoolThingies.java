@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class doCoolThingies {
 
-    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, false);//change this to your ideal init pos
+    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, 0, false);//change this to your ideal init pos
 
 
     public static double scoreHeight = 3400;
@@ -48,7 +48,8 @@ public class doCoolThingies {
         SQUEEZE_THE_CATCH,
         COLLECT_SPECIMIN,
         SAFE_RAISE,
-        RELEASE
+        RELEASE,
+
         //all zeroing will be automatic
 
     }
@@ -60,6 +61,7 @@ public class doCoolThingies {
         SAFE_POSITION,//intake doesn't need raise or lower
         HOVER_ACROSS_BARIER,
         FULL_EXTENT_DROP_WITH_INTAKE, //for autoonomous only
+        ZERO_HS_SLIDES_FLICK_ON,//likewised
         FULL_EXTENT_DROP//maybe be like, +/- input?
 
     }
@@ -82,6 +84,7 @@ public class doCoolThingies {
                 ultimatePositions.intakeLiftPos = intakeHigh;
                 ultimatePositions.HSpos = 1;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
+                ultimatePositions.flickSpeed = 0;
 
                 break;
 
@@ -114,6 +117,16 @@ public class doCoolThingies {
 
                 break;
 
+            case ZERO_HS_SLIDES_FLICK_ON:
+
+                ultimatePositions.intakeLiftPos = intakeHigh;
+                ultimatePositions.HSpos = -100;//so the power ends up being full//-100
+                ultimatePositions.flickSpeed = -1; // pull in
+
+                break;
+
+
+
 
 
 
@@ -145,6 +158,7 @@ public class doCoolThingies {
             case ZERO_VS_SLIDES:
 
                 ultimatePositions.VSpos = -500;//so the power ends up being full//-100
+                ultimatePositions.clawState = true;
 
                 break;
 
@@ -222,10 +236,7 @@ public class doCoolThingies {
 
             case SQUEEZE_THE_CATCH:
                 //ultimatePositions.HSpos = 0;
-                ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = shoulderTest;//0.5
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+
                 ultimatePositions.clawState = true;
                 //close claw
                 break;

@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 
-import com.acmerobotics.roadrunner.Pose2d;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 public class Action {
 
-    Pose2d pose;
+    Position2d pose;
     double waitTime;
     currentDoHicky verticalDoHicky;
     currentDoHicky horizontalDoHicky;
@@ -17,7 +16,7 @@ public class Action {
     targetHorizontalIdea horizontalTargetAuto;// = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     // Constructor to initialize the action with a Pose2d and wait time
-    public Action(Pose2d pose, double waitTime, targetVerticalIdea verticalTargetAuto, targetHorizontalIdea targetHorizontalIdeaAuto) {
+    public Action(Position2d pose, double waitTime, targetVerticalIdea verticalTargetAuto, targetHorizontalIdea targetHorizontalIdeaAuto) {
         this.pose = pose;
         this.waitTime = waitTime;
         this.verticalTargetAuto = verticalTargetAuto;
@@ -25,7 +24,7 @@ public class Action {
     }
 
     // Getter for Pose2d
-    public Pose2d getPose() {
+    public Position2d getPose() {
         return pose;
     }
 

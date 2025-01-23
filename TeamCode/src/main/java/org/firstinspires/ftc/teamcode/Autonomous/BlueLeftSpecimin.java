@@ -1,32 +1,38 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
+import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
+
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
-import org.firstinspires.ftc.teamcode.Hardware.determineColor;
+
+
+import java.util.List;
+import java.util.ArrayList;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
@@ -39,45 +45,24 @@ import org.firstinspires.ftc.teamcode.Hardware.determineColor;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
-@TeleOp(name = "BlueTeleop", group = "Sensor")
-public class BlueTeleop extends LinearOpMode {
+@Autonomous(name = "BlueLeftSpecimin", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class BlueLeftSpecimin extends LinearOpMode {
+
+
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+    targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
+
 
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
-    //currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
-
-    targetVerticalIdea verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
-    targetHorizontalIdea horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
-
-
-    targetVerticalIdea nextVerticalTarget = targetVerticalIdea.STALKER;
-    targetHorizontalIdea nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
-
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
-
-    // Create an instance of the sensor
-    SparkFunOTOS myOtos;
 
     ColorSensor intakeColor;
     TouchSensor hsTouch;
     TouchSensor vsTouch;
 
-    String currentColor = "none";
-    double waitUntil = 0;
-
-    public static double test1 = .2; // Example of FTC dashboard variable
-
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-
     private DcMotor horizontalSlides = null;
     private DcMotor verticalSlides = null;
-
 
     private DcMotor intake = null;
 
@@ -101,19 +86,86 @@ public class BlueTeleop extends LinearOpMode {
     private CRServo flick = null;
 
 
+    public static double scale = 0.8; //I think this is a speed scaler?
+
+    public boolean inTargetBox = false;
+
+    public int actionNumber = 0;
+
+    // Create an instance of the sensor
+
+    SparkFunOTOS myOtos;
+
+    Action act1 = new Action(new Position2d(-5,-50,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES);
+    Action act2 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act3 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 2, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action act4 = new Action(new Position2d(-5, -45, Math.toRadians(0)), 1, targetVerticalIdea.PRE_ZERO/*add the drop it aspect*/, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+    Action act5 = new Action(new Position2d(-5, -52, Math.toRadians(-30)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+    Action act6 = new Action(new Position2d(0, -45, Math.toRadians(-30)), 2, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+
+
+    Action act7 = new Action(new Position2d(-45, -45, Math.toRadians(-30)), 5/*or if the correct color*/, targetVerticalIdea.STALKER, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
+
+    //consider no velocity delay aspect for smooth transitions without delay
+    //needs some flow logic here
+
+    //needs not to continune until it senses
+
+    Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
+    Action act8b = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
+    Action act9 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act10 = new Action(new Position2d(-45, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
+    Action act11 = new Action(new Position2d(-45, -40, Math.toRadians(0)), 4, targetVerticalIdea.PRE_ZERO, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act12 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.READY_HS_POS);
+    Action act13 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
+
+
+    int numberOfActs = 11;
+
+
+    // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
+    // Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 2);
+
+    List<Action> actions = new ArrayList<>();
+
+    double act1pause = 1;
+    double act2pause = 1;
+    double act3pause = 1;
+    double act4pause = 1;
+    double act5pause = 1;
+    double act6pause = 1;
+
+
+    List<Position2d> pauses = new ArrayList<>();
+
+
+    public static double testttt = 1; // Example of FTC dashboard variable
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
+    private Servo servo = null;
 
     double finalX = 0;
     double finalY = 0;
 
 
-    double yawOrigin = -90;
-    double originY = 0;
-    double originX = 0;
+    //ORIGIN OF BEGINNING
+
+    double yawOrigin = 0;
+    double originY = -64;// -61;
+    double originX = -7;//place on right side of tile
+
+    //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
+
 
     double normalHeading = 0;
     double currentDriveX = 0;
     double currentDriveY = 0;
-
 
     public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
 
@@ -131,59 +183,73 @@ public class BlueTeleop extends LinearOpMode {
     private double vxOutput = 0;
     private double vyOutput = 0;
 
+    public double heading = 0;
+
     ComputePid PID = new ComputePid();
 
 
-    boolean hanging = false;
+    double endTime = 0;
+    boolean AlreadyPausing = false;
 
-    double vsPower = 0;
-    double hsPower = 0;
-
-    double yaw = 0;
-
-
-    double hsOutput = 0;
-    public static double hsTarget = 0;//that way it will imediently 0
-
-    double vsOutput = 0;
-    public static double vsTarget = 50;
-
-    public static double clawTest = 0.5;
-
-    boolean Ydelay = false;
-
-    boolean Bdelay = false;
-
-    public static Boolean killVertical = false;
-    public static Boolean killHorizontal = false;
-
-    boolean alreadyPressingY = false;
-    boolean alreadyPressingX = false;
-    boolean alreadyPressingA= false;
-    boolean alreadyPressingB = false;
-
-
-    boolean Ymode = false;
-    boolean Xmode = false;
-    boolean Bmode= false;
-    boolean Amode = false;
 
     public static double clawClose = 0.22;//previous .25
     public static double clawOpen = 0.5;
 
 
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false);
+
+    double vsTarget = 0;
+    double hsTarget = 0;
+
+    boolean killHorizontal = false;
+    boolean killVertical = false;
+
+    double vsOutput = 0;
+    double hsOutput = 0;
+
+
+    boolean noMoreVSzero = false;
+    boolean noMoreHSzero = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        determineColor colorTest = new determineColor();
-        horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTarget,1);//what should we use adjustment for?
-        verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTarget);
+
+
+
+
+
+        /*actions.add(act1);
+        actions.add(act1);
+        for (int i = 0; i < 20; i++) {
+            actions.add(act1);
+            actions.add(act2);
+        }*/
+
+        int takeNoteOFTHIS = numberOfActs;
+
+        actions.add(act1);
+        actions.add(act2);
+        actions.add(act3);
+        actions.add(act4);
+        actions.add(act5);
+        actions.add(act6);
+        actions.add(act7);
+        actions.add(act8);
+        actions.add(act8b);
+        actions.add(act9);
+        actions.add(act10);
+        actions.add(act11);
+        actions.add(act12);
+        actions.add(act13);
+
+        //actions.add(returnHome);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-
-        // Get a reference to the sensor
+// Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
 
@@ -246,160 +312,101 @@ public class BlueTeleop extends LinearOpMode {
         horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
 
-        //ptoL.setPosition(0.5);
-        //ptoR.setPosition(0.5);
-
 
         configureOtos();
 
         // Wait for the start button to be pressed
+
+
+
+        //so that it can hold in init
+        verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+
+        armL.setPosition(verticalPositions.getshoulderPos());
+        armR.setPosition(verticalPositions.getshoulderPos());
+        wristL.setPosition(verticalPositions.getwristLPos());
+        wristR.setPosition(verticalPositions.getwristRPos());
+        if(!verticalPositions.getClawState()){//false
+            claw.setPosition(clawOpen);
+        }else{
+            claw.setPosition(clawClose);
+        }
+
         waitForStart();
         resetRuntime();
+
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            double Time = runtime.time();
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
 
-            //ptoL.setPosition(0);
-            //ptoR.setPosition(0);
 
-            telemetry.addData("hsSTATE", horizontalTarget);
-            telemetry.addData("vsSTATE", verticalTarget);
-/*
-            if(gamepad1.dpad_right){
-                armL.setPosition(0);
+            double stopSpeed = 0.0001;
+            double noPauseLeft;
+
+            Action currentAction = actions.get(actionNumber); // Get the current action
+            Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
+            double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
+
+            //chekcs to see if we are in target box and if speed is 0
+            if (Math.abs(finalX - targetX) < 3 & velocities.getVx() < stopSpeed){//prevously, 3 was 1
+                if (Math.abs(finalY - targetY) < 3 & velocities.getVy() < stopSpeed){
+                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.001){
+                        inTargetBox = true;
+                        gamepad1.rumble(3);
+                    }
+                }
+            }
+
+
+            //GETTING VERTICAL AND HORIZONTAL
+            if(!noMoreVSzero){
+                verticalTargetAuto = currentAction.getVerticalTargetAuto();
+            }
+
+            if(!noMoreHSzero){
+                horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
+            }
+
+
+            //AUTO ZERO
+            if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
+                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+                noMoreVSzero = true;
+            }else if (verticalTargetAuto != targetVerticalIdea.ZERO_VS_SLIDES){
+                noMoreVSzero = false;
             }else{
-                armL.setPosition(1);
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
             }
 
-            if(gamepad1.dpad_left){
-                armR.setPosition(0);
+            if(horizontalTargetAuto == targetHorizontalIdea.ZERO_HS_SLIDES && hsTouch.isPressed()){
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS;
+                noMoreHSzero = true;
+            }else if (horizontalTargetAuto != targetHorizontalIdea.ZERO_HS_SLIDES){
+                noMoreHSzero = false;
             }else{
-                armR.setPosition(1);
-            }*/
-
-
-            //button a ->
-            //button y -> deposit potato
-
-            //official controls buttons
-
-
-            if(gamepad1.right_bumper){
-                claw.setPosition(clawClose);
-            }else if(gamepad1.left_bumper){
-                claw.setPosition(clawOpen);
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS;
             }
 
+            //SET POSITIONS ACCORDINGLY
+            verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+            horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
 
-            //YELLOW MODE
-            if(gamepad2.y && !Ymode && !alreadyPressingY){
-                verticalTarget = targetVerticalIdea.PRE_ZERO;
-
-                Ymode = true;
-                Xmode = false;
-
-                alreadyPressingY = true;
-            }else if(gamepad2.y && !alreadyPressingY){
-
-
-                verticalTarget = nextVerticalTarget;
-                alreadyPressingY = true;
-            }else if (!gamepad2.y){
-                alreadyPressingY = false;
-            }
-
-            //SPECIMIN MODE
-            if(gamepad2.x && !Xmode && !alreadyPressingX){
-
-                Xmode = true;
-                Ymode = false;
-
-                alreadyPressingX = true;
-
-                verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
-
-            }else if(gamepad2.x && !alreadyPressingX){
-                verticalTarget = nextVerticalTarget;
-                alreadyPressingX = true;
-            }else if (!gamepad2.x){
-                alreadyPressingX = false;
-            }
-
-
-
-
-            //HORIZONTAL ACXTIONS
-            if(gamepad1.b && !Bmode && !alreadyPressingB){
-
-                Bmode = true;
-                //mode = false;
-
-                alreadyPressingB = true;
-
-                horizontalTarget = targetHorizontalIdea.HOVER_ACROSS_BARIER;
-
-            }else if(gamepad1.b && !alreadyPressingB){
-                horizontalTarget = nextHorizontalTarget;
-                alreadyPressingB = true;
-            }else if (!gamepad1.b){
-                alreadyPressingB = false;
-            }
-
-            //VERTICAL LOGIC FLOW
-
-            if(verticalTarget == targetVerticalIdea.PRE_ZERO) {
-                nextVerticalTarget = targetVerticalIdea.ZERO_VS_SLIDES;
-            }else if(verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES) {
-                nextVerticalTarget = targetVerticalIdea.READY_VS_POS;
-            }else if(verticalTarget == targetVerticalIdea.READY_VS_POS) {
-                nextVerticalTarget = targetVerticalIdea.STALKER;
-            }else if(verticalTarget == targetVerticalIdea.STALKER){
-                nextVerticalTarget = targetVerticalIdea.SNATCH_THAT_FISHY;
-            }else if(verticalTarget == targetVerticalIdea.SNATCH_THAT_FISHY){
-                nextVerticalTarget = targetVerticalIdea.SAFE_RAISE;
-            }else if(verticalTarget == targetVerticalIdea.SAFE_RAISE){
-                nextVerticalTarget = targetVerticalIdea.DEPOSIT_POTATO;
-            }else if(verticalTarget == targetVerticalIdea.DEPOSIT_POTATO){
-                nextVerticalTarget = targetVerticalIdea.PRE_ZERO;
-            }else if(verticalTarget == targetVerticalIdea.COLLECT_SPECIMIN){
-                nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
-            }else if(verticalTarget == targetVerticalIdea.PRE_SCORE_SPECIMEN){
-                nextVerticalTarget = targetVerticalIdea.SCORE_SPECIMEN;
-            }else if(verticalTarget == targetVerticalIdea.SCORE_SPECIMEN){
-                nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
-            }
-
-
-
-            //HORIZONTAL LOGIC FLOW
-            if(horizontalTarget == targetHorizontalIdea.READY_HS_POS){
-                nextHorizontalTarget = targetHorizontalIdea.HOVER_ACROSS_BARIER;
-            }else if(horizontalTarget == targetHorizontalIdea.HOVER_ACROSS_BARIER){
-                nextHorizontalTarget = targetHorizontalIdea.FULL_EXTENT_DROP;
-            }else if(horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                nextHorizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
-            }else if(horizontalTarget == targetHorizontalIdea.ZERO_HS_SLIDES){
-                nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
-            }
-
-
-
-            if(claw.getPosition() != clawClose && (horizontalTarget == targetHorizontalIdea.HOVER_ACROSS_BARIER || horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP)){
-
-            }
-
-
-            //DETERMINING POSIIONS
-            horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTarget,1);//setting to the corrosponding target
-            verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTarget);
 
             hsTarget = horizontalPositions.getHSpos();
 
             if(!killHorizontal){
                 liftL.setPosition(horizontalPositions.getintakeLiftPos());
                 liftR.setPosition(horizontalPositions.getintakeLiftPos());
+                intake.setPower(horizontalPositions.getIntakeSpeed());
+                flick.setPower(horizontalPositions.getFlickSpeed());
             }
 
             vsTarget = verticalPositions.getVSpos();
@@ -409,8 +416,15 @@ public class BlueTeleop extends LinearOpMode {
                 armR.setPosition(verticalPositions.getshoulderPos());
                 wristL.setPosition(verticalPositions.getwristLPos());
                 wristR.setPosition(verticalPositions.getwristRPos());
+                if(!verticalPositions.getClawState()){//false
+                    claw.setPosition(clawOpen);
+                }else{
+                    claw.setPosition(clawClose);
+                }
             }
 
+
+            /*COLOR SENSING AUTOMATION
 
             currentColor = colorTest.color(intakeColor, Time);
 
@@ -441,44 +455,30 @@ public class BlueTeleop extends LinearOpMode {
                 flick.setPower(-gamepad1.right_trigger);
             }
 
-
-            /*if(gamepad2.x){
-                flick.setPower(1);
-                armL.setPosition(1);
-                armR.setPosition(1);
-                hookL.setPosition(1);
-                hookR.setPosition(1);
-                ptoL.setPosition(1);
-                ptoR.setPosition(1);
-                liftL.setPosition(1);
-                liftR.setPosition(1);
-            }
-            if(gamepad2.b){
-                flick.setPower(0);
-                armL.setPosition(0);
-                armR.setPosition(0);
-                hookL.setPosition(0);
-                hookR.setPosition(0);
-                ptoL.setPosition(0);
-                ptoR.setPosition(0);
-                liftL.setPosition(0);
-                liftR.setPosition(0);
-            }*/
+            */
 
 
-            /*if(gamepad2.y){
-                liftL.setPosition(1);
-                liftR.setPosition(1);
+
+            //CONTINUE DRIVETRAIN AUTO
+            //next we must complete the pause
+
+            //once in targetBox, it starts the pause
+            if(inTargetBox & !AlreadyPausing){
+                endTime = getRuntime() + waitTime;
+                AlreadyPausing = true;
             }
 
-            if(gamepad2.x){
-                liftL.setPosition(0);
-                liftR.setPosition(0);
-            }*/
+            if (inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime){
+                AlreadyPausing = false;
+                actionNumber += 1;
+                inTargetBox = false;
+            }
 
 
-
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            targetX = targetPose.getThisX();
+            targetY = targetPose.getThisY();
+            yawTarget = Math.toDegrees(targetPose.getThisHeading());
+            telemetry.addData("yawTarget", yawTarget);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
@@ -500,26 +500,23 @@ public class BlueTeleop extends LinearOpMode {
             dashboard.sendTelemetryPacket(packet);
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-
-            double unOriginedxpos = pos.x;
-            double unOriginedypos = pos.y;
-
-            double xpos = (unOriginedxpos + originX) * Math.cos(Math.toRadians(yawOrigin)) - (unOriginedypos + originY) * Math.sin(Math.toRadians(yawOrigin));
-            double ypos = (unOriginedxpos + originX) * Math.sin(Math.toRadians(yawOrigin)) + (unOriginedypos + originY) * Math.sin(Math.toRadians(yawOrigin));
-            double heading = pos.h + Math.toRadians(yawOrigin);
+            double xpos = pos.x;
+            double ypos = pos.y;
+            heading = pos.h + yawOrigin;
             //potential problem: taking more than one reading throughout the program
 
             normalHeading = heading;
             if (normalHeading != Math.abs(normalHeading)){//negatinve
                 normalHeading = normalHeading + 2*3.14159265;
             }
-//POSSIBLY KEEP INCASE A RESET IS NEEDED
 
-            /*if (gamepad1.y) {
+            if (gamepad1.y) {
                 myOtos.resetTracking();
             }
 
-            */
+            if (gamepad1.x) {
+                myOtos.calibrateImu();
+            }
 
             double max;
             //double totalMovement = Math.sqrt(Math.pow(vxOutput, 2) + Math.pow(vyOutput, 2));
@@ -534,17 +531,19 @@ public class BlueTeleop extends LinearOpMode {
             //
             //so lateral is working but axial is not?
 
-// POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
 
+            lateral = /*+*/(-vxOutput) * Math.cos(normalHeading) + (-vyOutput) * Math.sin(normalHeading);//rotate counter clockwise or clockwise???//x
+            axial = -(-vxOutput) * Math.sin(normalHeading) + /*+*/(-vyOutput) * Math.cos(normalHeading);//y
 
-            if(!hanging){
-                axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-                lateral =  -gamepad1.left_stick_x;
-                yaw     =  -gamepad1.right_stick_x;
-            }else{
-                axial = vsPower;
+            double yaw = yawOutput;
+
+            if(gamepad1.left_trigger > .1){
+                yaw = 0;
+            }
+
+            if (gamepad1.right_trigger > .1){
                 lateral = 0;
-                yaw     = 0;
+                axial = 0;
             }
 
           /*  if (totalMovement > 1.0) {
@@ -569,31 +568,21 @@ public class BlueTeleop extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            if (!gamepad1.a){
+                leftFrontDrive.setPower(leftFrontPower);
+                rightFrontDrive.setPower(rightFrontPower);
+                leftBackDrive.setPower(leftBackPower);
+                rightBackDrive.setPower(rightBackPower);
+            }else{
+                leftFrontDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+            }
 
+            //MORE SLIDES STUFFS
             double hspos = -horizontalSlides.getCurrentPosition();
             double vspos = verticalSlides.getCurrentPosition();
-
-
-            //horizontalSlides.setPower(-gamepad1.left_trigger * signSlides);
-
-
-            /*
-            hsPower = -gamepad1.left_trigger * signSlides;
-            vsPower = gamepad1.right_trigger * signSlides;
-
-
-            if (hspos < 1700 & hsPower < 0){
-                horizontalSlides.setPower(hsPower);
-            }
-            else if (hspos > 40 & hsPower > 0){
-                horizontalSlides.setPower(hsPower);
-            }else{
-                horizontalSlides.setPower(0);
-            }*/
 
             if(!killVertical){
                 verticalSlides.setPower(vsOutput);
@@ -605,7 +594,6 @@ public class BlueTeleop extends LinearOpMode {
             }else{
                 horizontalSlides.setPower(0);
             }
-
 
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
@@ -626,24 +614,26 @@ public class BlueTeleop extends LinearOpMode {
 
             //finalX = finalX + deltaX;
             // finalY = finalY + deltaY;
-            finalX = xpos;// + originX;
-            finalY = ypos;// + originY;
+            finalX = xpos + originX;
+            finalY = ypos + originY;
+            //see below for the use of originYaw
 
-            telemetry.addData("Run Time:", Time);
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
+            telemetry.addData("X coordinate", targetX);
+            telemetry.addData("Y coordinate", targetY);
+
             telemetry.addData("yawOutput", yawOutput);
             telemetry.addData("vxOut", vxOutput);
             telemetry.addData("vyOut", vyOutput);
             telemetry.addData("axial", axial);
             telemetry.addData("lateral", lateral);
             telemetry.addData("Heading radians", normalHeading);
-
-
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
             telemetry.addData("angular velocity radians/second", velocities.getVh());
@@ -651,41 +641,22 @@ public class BlueTeleop extends LinearOpMode {
             telemetry.addData("xacceleration inches/sec2", velocities.getAx());
             telemetry.addData("yacceleration inches/second2", velocities.getAy());
             telemetry.addData("angular acceleration radians/second2", velocities.getAh());
-
-            telemetry.addData("hs pos", hspos);
-            telemetry.addData("vs pos", vspos);
-
-
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
-            //ZEROING SLIDES WITH TOUCH SENSOR
-            //HS SLIDES
 
-
-            if(hsTouch.isPressed() && horizontalTarget == targetHorizontalIdea.ZERO_HS_SLIDES){
-                horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                horizontalTarget = targetHorizontalIdea.READY_HS_POS;
-            }
-
-            if(vsTouch.isPressed() && verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES){
-                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                verticalTarget = targetVerticalIdea.READY_VS_POS;
-            }
+            yawOutput = yawOutput * scale;
+            vxOutput = vxOutput * scale;
+            vyOutput = vyOutput * scale;
 
             vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
             hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
-
 
         }
     }
