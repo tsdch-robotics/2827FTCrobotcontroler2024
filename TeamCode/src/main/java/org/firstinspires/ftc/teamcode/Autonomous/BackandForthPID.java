@@ -66,8 +66,8 @@ public class BackandForthPID extends LinearOpMode {
     Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
     Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);*/
 
-    Action act1 = new Action(new Position2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
-    Action act2 = new Action(new Position2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action act1 = new Action(new Position2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act2 = new Action(new Position2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
 
     List<Action> actions = new ArrayList<>();
 
@@ -96,7 +96,7 @@ public class BackandForthPID extends LinearOpMode {
     double originY = -50;// -61;
     double originX = -50;//-7;
 
-    Action returnHome = new Action(new Position2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS);
+    Action returnHome = new Action(new Position2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
 
 
     double normalHeading = 0;

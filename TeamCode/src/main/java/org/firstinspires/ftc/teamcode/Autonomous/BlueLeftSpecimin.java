@@ -85,36 +85,38 @@ public class BlueLeftSpecimin extends LinearOpMode {
 
     public int actionNumber = 0;
 
+    double maxSpeed = 1;
+
     // Create an instance of the sensor
 
     SparkFunOTOS myOtos;
 //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(-5,-45,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES);
-    Action act2 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act3 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 2, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act4 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_ZERO/*add the drop it aspect*/, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act1 = new Action(new Position2d(-5,-45,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
+    Action act2 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action act3 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 2, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action act4 = new Action(new Position2d(-5, -38, Math.toRadians(0)), 1, targetVerticalIdea.PRE_ZERO/*add the drop it aspect*/, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
-    Action act5 = new Action(new Position2d(-5, -52, Math.toRadians(-30)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act5 = new Action(new Position2d(-5, -52, Math.toRadians(-30)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
-    Action act6 = new Action(new Position2d(0, -45, Math.toRadians(-30)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
-    Action act6b = new Action(new Position2d(-5, -50, Math.toRadians(0)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
-    Action act6c = new Action(new Position2d(0, -45, Math.toRadians(-30)), 6, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act6 = new Action(new Position2d(0, -45, Math.toRadians(-30)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action act6b = new Action(new Position2d(-5, -50, Math.toRadians(0)), 3, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action act6c = new Action(new Position2d(0, -45, Math.toRadians(-30)), 6, targetVerticalIdea.READY_VS_POS, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
 
-    Action act7 = new Action(new Position2d(-45, -45, Math.toRadians(-30)), 1/*or if the correct color*/, targetVerticalIdea.STALKER, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
+    Action act7 = new Action(new Position2d(-45, -45, Math.toRadians(-30)), 1/*or if the correct color*/, targetVerticalIdea.STALKER, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, 0.8);
 
     //consider no velocity delay aspect for smooth transitions without delay
     //needs some flow logic here
 
     //needs not to continune until it senses
 
-    Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
-    Action act8b = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act9 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act10 = new Action(new Position2d(-45, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
-    Action act11 = new Action(new Position2d(-45, -40, Math.toRadians(0)), 4, targetVerticalIdea.PRE_ZERO, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
-    Action act12 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.READY_HS_POS);
-    Action act13 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
+    Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act8b = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act9 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act10 = new Action(new Position2d(-45, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act11 = new Action(new Position2d(-45, -40, Math.toRadians(0)), 4, targetVerticalIdea.PRE_ZERO, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action act12 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act13 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS, 0.8);
 
 
      int numberOfActs = 11;
@@ -368,6 +370,8 @@ public class BlueLeftSpecimin extends LinearOpMode {
                 horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
             }
 
+
+            maxSpeed = currentAction.getMaxSpeed();
 
             //AUTO ZERO
             if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
@@ -641,9 +645,9 @@ public class BlueLeftSpecimin extends LinearOpMode {
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
 
-            yawOutput = yawOutput * scale;
-            vxOutput = vxOutput * scale;
-            vyOutput = vyOutput * scale;
+            yawOutput = yawOutput * maxSpeed;
+            vxOutput = vxOutput * maxSpeed;
+            vyOutput = vyOutput * maxSpeed;
 
             vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
             hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);

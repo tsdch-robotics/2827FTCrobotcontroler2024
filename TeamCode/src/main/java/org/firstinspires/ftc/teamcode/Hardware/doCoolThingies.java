@@ -49,6 +49,7 @@ public class doCoolThingies {
         STALKER,
         SNATCH_THAT_FISHY,
         SQUEEZE_THE_CATCH,
+        ZERO_COLLECT,
         COLLECT_SPECIMIN,
         COLLECT_SPECIMIN_AUTO,
         SAFE_RAISE,
@@ -268,6 +269,16 @@ public class doCoolThingies {
                 //close claw
                 break;
 
+            case ZERO_COLLECT:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = -500;//update
+                ultimatePositions.shoulderPos = 0;
+                ultimatePositions.wristLPos = wristTestL;
+                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.clawState = false;
+
+                break;
 
             case COLLECT_SPECIMIN:
 
@@ -285,8 +296,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = collectHeight;//update
                 ultimatePositions.shoulderPos = 0;
-                ultimatePositions.wristLPos = .45;
-                ultimatePositions.wristRPos = .35;
+                ultimatePositions.wristLPos = .46;
+                ultimatePositions.wristRPos = .36;
                 ultimatePositions.clawState = false;
 
                 break;

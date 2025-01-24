@@ -100,19 +100,19 @@ public class BlueLeftSideRotateOffset extends LinearOpMode {
     SparkFunOTOS myOtos;
 
 
-    Action act1 = new Action(new Position2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act2 = new Action(new Position2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act3 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act4 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action act5 = new Action(new Position2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act1 = new Action(new Position2d(-30,-55,Math.toRadians(-90)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act2 = new Action(new Position2d(-30, -55, Math.toRadians(-60)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act3 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action act4 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action act5 = new Action(new Position2d(-25, -45, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
     //needs not to continune until it senses
-    Action act6 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
-    Action act7 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS);
-    Action act8 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action act9 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
-    Action act10 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS);
-    Action act11 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS);
+    Action act6 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act7 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act8 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act9 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act10 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act11 = new Action(new Position2d(-30, -55, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, 0.8);
 
 
     int numberOfActs = 11;

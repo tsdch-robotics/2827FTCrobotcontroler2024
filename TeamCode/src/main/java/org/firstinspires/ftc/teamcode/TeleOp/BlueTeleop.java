@@ -353,6 +353,7 @@ public class BlueTeleop extends LinearOpMode {
                 nextVerticalTarget = targetVerticalIdea.ZERO_VS_SLIDES;
             }else if(verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES) {
                 nextVerticalTarget = targetVerticalIdea.READY_VS_POS;
+
             }else if(verticalTarget == targetVerticalIdea.READY_VS_POS) {
                 nextVerticalTarget = targetVerticalIdea.STALKER;
             }else if(verticalTarget == targetVerticalIdea.STALKER){

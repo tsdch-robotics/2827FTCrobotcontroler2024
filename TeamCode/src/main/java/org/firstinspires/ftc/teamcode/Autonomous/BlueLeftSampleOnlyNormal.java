@@ -85,29 +85,30 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
     public int actionNumber = 0;
 
+    double maxSpeed = 1;
     // Create an instance of the sensor
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES);
-    Action meetThebasket = new Action(new Position2d(-50,-63,Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES);
-    Action dropSample = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 2, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER);
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
-    Action bringBack = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON);
-    Action grabIt = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON);
-    Action squeeze = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS);
-    Action safeRaise = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS);
+    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
+    Action meetThebasket = new Action(new Position2d(-50,-63,Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
+    Action dropSample = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 2, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action bringBack = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, 0.8);
+    Action grabIt = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, 0.8);
+    Action squeeze = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action safeRaise = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, 0.8);
 
-    Action deposit = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER);
+    Action deposit = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
 
     //instead add another dropSample and go
 
-    Action collectSampleMid = new Action(new Position2d(-47, -57, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action collectSampleMid = new Action(new Position2d(-47, -57, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
-    Action collectSampleLeft = new Action(new Position2d(-40, -55, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action collectSampleLeft = new Action(new Position2d(-40, -55, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
-    Action park = new Action(new Position2d(-45, -20, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS);
-    Action parkb = new Action(new Position2d(-25, -20, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS);
+    Action park = new Action(new Position2d(-45, -20, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action parkb = new Action(new Position2d(-25, -20, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
 
 
 
@@ -392,6 +393,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
                 horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
             }
 
+            maxSpeed = currentAction.getMaxSpeed();
+
 
             //AUTO ZERO
             if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
@@ -665,9 +668,9 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
 
-            yawOutput = yawOutput * scale;
-            vxOutput = vxOutput * scale;
-            vyOutput = vyOutput * scale;
+            yawOutput = yawOutput * maxSpeed;
+            vxOutput = vxOutput * maxSpeed;
+            vyOutput = vyOutput * maxSpeed;
 
             vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
             hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);

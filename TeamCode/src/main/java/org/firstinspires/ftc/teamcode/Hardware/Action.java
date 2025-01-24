@@ -15,12 +15,15 @@ public class Action {
     targetVerticalIdea verticalTargetAuto;// = targetVerticalIdea.COLLECT_SPECIMIN;
     targetHorizontalIdea horizontalTargetAuto;// = targetHorizontalIdea.ZERO_HS_SLIDES;
 
+    double maxSpeed;
+
     // Constructor to initialize the action with a Pose2d and wait time
-    public Action(Position2d pose, double waitTime, targetVerticalIdea verticalTargetAuto, targetHorizontalIdea targetHorizontalIdeaAuto) {
+    public Action(Position2d pose, double waitTime, targetVerticalIdea verticalTargetAuto, targetHorizontalIdea targetHorizontalIdeaAuto, double maxSpeed) {
         this.pose = pose;
         this.waitTime = waitTime;
         this.verticalTargetAuto = verticalTargetAuto;
         this.horizontalTargetAuto = targetHorizontalIdeaAuto;
+        this.maxSpeed = maxSpeed;
     }
 
     // Getter for Pose2d
@@ -41,6 +44,10 @@ public class Action {
 
         return verticalTargetAuto;
 
+    }
+
+    public double getMaxSpeed(){
+        return maxSpeed;
     }
 
 
