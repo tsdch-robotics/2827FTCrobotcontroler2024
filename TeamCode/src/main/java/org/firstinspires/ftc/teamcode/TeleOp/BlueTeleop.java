@@ -28,16 +28,7 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 
-/*
- * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
- *
- * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- *
- * See the sensor's product page: https://www.sparkfun.com/products/24904
- */
+
 @Config
 @TeleOp(name = "BlueTeleop", group = "Sensor")
 public class BlueTeleop extends LinearOpMode {
@@ -50,7 +41,6 @@ public class BlueTeleop extends LinearOpMode {
 
     targetVerticalIdea verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
     targetHorizontalIdea horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
-
 
     targetVerticalIdea nextVerticalTarget = targetVerticalIdea.STALKER;
     targetHorizontalIdea nextHorizontalTarget = targetHorizontalIdea.READY_HS_POS;
@@ -295,7 +285,7 @@ public class BlueTeleop extends LinearOpMode {
 
             //YELLOW MODE
             if(gamepad1.y && !Ymode && !alreadyPressingY){
-                verticalTarget = targetVerticalIdea.PRE_ZERO;
+                verticalTarget = targetVerticalIdea.STALKER;
 
                 Ymode = true;
                 Xmode = false;
@@ -318,7 +308,7 @@ public class BlueTeleop extends LinearOpMode {
 
                 alreadyPressingX = true;
 
-                verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
+                verticalTarget = targetVerticalIdea.ZERO_COLLECT;
 
             }else if(gamepad1.x && !alreadyPressingX){
                 verticalTarget = nextVerticalTarget;
@@ -326,7 +316,6 @@ public class BlueTeleop extends LinearOpMode {
             }else if (!gamepad1.x){
                 alreadyPressingX = false;
             }
-
 
 
 
@@ -348,22 +337,24 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             //VERTICAL LOGIC FLOW
-
+/*
             if(verticalTarget == targetVerticalIdea.PRE_ZERO) {
                 nextVerticalTarget = targetVerticalIdea.ZERO_VS_SLIDES;
             }else if(verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES) {
                 nextVerticalTarget = targetVerticalIdea.READY_VS_POS;
+*/
 
-            }else if(verticalTarget == targetVerticalIdea.READY_VS_POS) {
-                nextVerticalTarget = targetVerticalIdea.STALKER;
-            }else if(verticalTarget == targetVerticalIdea.STALKER){
+            if(verticalTarget == targetVerticalIdea.STALKER){
                 nextVerticalTarget = targetVerticalIdea.SNATCH_THAT_FISHY;
             }else if(verticalTarget == targetVerticalIdea.SNATCH_THAT_FISHY){
                 nextVerticalTarget = targetVerticalIdea.SAFE_RAISE;
             }else if(verticalTarget == targetVerticalIdea.SAFE_RAISE){
                 nextVerticalTarget = targetVerticalIdea.DEPOSIT_POTATO;
             }else if(verticalTarget == targetVerticalIdea.DEPOSIT_POTATO){
-                nextVerticalTarget = targetVerticalIdea.PRE_ZERO;
+                nextVerticalTarget = targetVerticalIdea.STALKER;
+
+            }else if(verticalTarget == targetVerticalIdea.ZERO_COLLECT) {
+                nextVerticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
             }else if(verticalTarget == targetVerticalIdea.COLLECT_SPECIMIN){
                 nextVerticalTarget = targetVerticalIdea.PRE_SCORE_SPECIMEN;
             }else if(verticalTarget == targetVerticalIdea.PRE_SCORE_SPECIMEN){
@@ -413,7 +404,7 @@ public class BlueTeleop extends LinearOpMode {
             }
 
 
-            currentColor = colorTest.color(intakeColor, Time);
+            currentColor = colorTest.color(intakeColor, getRuntime());
 
             if(gamepad1.left_trigger > 0.1){
                 intake.setPower(-gamepad1.left_trigger);
@@ -677,11 +668,18 @@ public class BlueTeleop extends LinearOpMode {
                 horizontalTarget = targetHorizontalIdea.READY_HS_POS;
             }
 
-            if(vsTouch.isPressed() && verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES){
+            /*if(vsTouch.isPressed() && verticalTarget == targetVerticalIdea.ZERO_VS_SLIDES){
                 verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 verticalTarget = targetVerticalIdea.READY_VS_POS;
+            }*/
+
+            if(vsTouch.isPressed() && verticalTarget == targetVerticalIdea.ZERO_COLLECT){
+                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalTarget = targetVerticalIdea.COLLECT_SPECIMIN;
             }
 
             vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);

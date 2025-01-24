@@ -91,14 +91,17 @@ public class BlueRightTwoSpecimins extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(5,-45,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
-    Action preScore = new Action(new Position2d(5, -36, Math.toRadians(0)), 2, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act1 = new Action(new Position2d(5,-45,Math.toRadians(0)), 0, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
+    //i slowed this down
+    Action preScore = new Action(new Position2d(5, -36, Math.toRadians(0)), 2/*if bad, make 2*/, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.READY_HS_POS, 0.6);
+    //Action preScore2 = new Action(new Position2d(5, -35, Math.toRadians(0)), 2, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.READY_HS_POS, 0.6);
+
     Action score = new Action(new Position2d(5, -36, Math.toRadians(0)), 0.5, targetVerticalIdea.SCORE_SPECIMEN, targetHorizontalIdea.READY_HS_POS, 0.8);//prevoulsy extend
     Action drop = new Action(new Position2d(5, -36, Math.toRadians(0)), .25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, 0.8);//prevoulsy extend
 
-    Action prepareToCollect = new Action(new Position2d(36, -55, Math.toRadians(0)), 3, targetVerticalIdea.COLLECT_SPECIMIN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action prepareToCollect = new Action(new Position2d(36, -55, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.8);
 
-    Action collect = new Action(new Position2d(36, -63, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
+    Action collect = new Action(new Position2d(36, -63, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
     Action grab = new Action(new Position2d(36, -63, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
 
     Action safeRaise = new Action(new Position2d(36, -63, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN, targetHorizontalIdea.READY_HS_POS, 0.8);
@@ -108,6 +111,23 @@ public class BlueRightTwoSpecimins extends LinearOpMode {
 
 
     //act1, prescore, score, drop, park
+
+
+    public static double xSweep = 35;
+    public static double ySweep = -50;
+
+    Action preSweepBlue = new Action(new Position2d(30,-50,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
+
+
+    Action meetTheBlue = new Action(new Position2d(30, -20, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
+
+    Action meetTheBlue2 = new Action(new Position2d(43, -20, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
+
+    Action sweepTheBlue = new Action(new Position2d(40, -55, Math.toRadians(0)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
+
+
+    // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+
 
     Action park = new Action(new Position2d(45, -60, Math.toRadians(0)), 3, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
 
@@ -230,7 +250,13 @@ public class BlueRightTwoSpecimins extends LinearOpMode {
         actions.add(preScore);
         actions.add(score);
         actions.add(drop);
-        actions.add(park);
+
+        actions.add(preSweepBlue);
+        actions.add(meetTheBlue);
+        actions.add(meetTheBlue2);
+        actions.add(sweepTheBlue);
+
+        //actions.add(park);
 
         //actions.add(returnHome);
 

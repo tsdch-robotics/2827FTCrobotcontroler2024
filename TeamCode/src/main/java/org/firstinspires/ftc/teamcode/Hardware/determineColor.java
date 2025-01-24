@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class determineColor {
 
     public String currentColor = "none";
-    public double readSpacing = 0.01;//sec
+    public double readSpacing = 0.1;//sec
     public double lastColorReading;
 
     public double totalRed = 0;
@@ -25,18 +25,18 @@ public class determineColor {
 
     public String color(ColorSensor colorSensor, double time){
 
-
         int colorGreen = colorSensor.green();
         int colorRed = colorSensor.red();
         int colorBlue = colorSensor.blue();
 
-        /*totalRed += colorRed;
+        totalRed += colorRed;
         totalGreen += colorGreen;
         totalBlue += colorBlue;
 
         readings += 1;
 
         if ((time - lastColorReading) > readSpacing) {
+
 
             avgRed = totalRed / readings;
             avgBlue = totalBlue / readings;
@@ -51,7 +51,7 @@ public class determineColor {
                 }
             } else if (avgBlue > 600) {
                 currentColor = "blue";
-            } else {
+            }else {
                 currentColor = "none";
             }
 
@@ -59,11 +59,16 @@ public class determineColor {
             totalGreen = 0;
             totalBlue = 0;
 
+            lastColorReading = time;
+            readings = 0;
+        }else{
+
+            currentColor = Double.toString(totalBlue);
         }
 
-        lastColorReading = time;*/
 
-        if (colorRed > 600) {
+
+        /*if (colorRed > 600) {
             if (colorGreen > 600) {
                 currentColor = "yellow";
             } else {
@@ -74,7 +79,7 @@ public class determineColor {
         } else {
             currentColor = "none";
         }
-
+*/
         return(currentColor);
     }
 
