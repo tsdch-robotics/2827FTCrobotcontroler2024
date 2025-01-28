@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
+import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
 import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
@@ -28,12 +29,16 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 
+import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
+
 
 @Config
 @TeleOp(name = "BlueTeleop", group = "Sensor")
 public class BlueTeleop extends LinearOpMode {
 
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
+
+    GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
 
     //currentDoHicky hearMeOutLetsDoThis = new currentDoHicky(0,0,0,0,0,0,false);//the init params
     currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
@@ -161,6 +166,9 @@ public class BlueTeleop extends LinearOpMode {
     public static double clawClose = 0.22;//previous .25
     public static double clawOpen = 0.5;
 
+    double posX = 0;
+    double posY = 0;
+    double posH = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -248,6 +256,19 @@ public class BlueTeleop extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+            Position2d odoPos = getWheeledLocalization.wheeledLocalization(leftFrontDrive, leftBackDrive, rightBackDrive, posX, posY, posH);
+            posX = odoPos.getThisX();
+            posY = odoPos.getThisY();
+            posH = odoPos.getThisHeading();
+
+            telemetry.addData("posX", posX);
+
+            telemetry.addData("posY", posY);
+
+
+            telemetry.addData("posH", posH);
+
 
             double Time = runtime.time();
 
