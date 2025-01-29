@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
+import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
 import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
@@ -30,6 +31,9 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
+
+import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
+
 
 
 import java.util.List;
@@ -43,6 +47,7 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
+    GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
 
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
@@ -197,8 +202,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     double vsTarget = 0;
     double hsTarget = 0;
 
-    boolean killHorizontal = false;
-    boolean killVertical = false;
+    boolean killHorizontal = true;
+    boolean killVertical = true;
 
     double vsOutput = 0;
     double hsOutput = 0;
@@ -209,6 +214,10 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
     boolean promptedToContinueNow = false;//to speed things up when needed
 
+
+    double posX = 0;
+    double posY = 0;
+    double posH = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -336,6 +345,18 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
         verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
 
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         configureOtos();
 
         // Wait for the start button to be pressed
@@ -361,6 +382,24 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
+
+            Position2d odoPos = getWheeledLocalization.wheeledLocalization(leftFrontDrive/*en1,left*/,
+                    rightBackDrive/*en2,right*/, rightFrontDrive/*enc3, bakc*/, posX, posY, posH);
+            posX = odoPos.getThisX();
+            posY = odoPos.getThisY();
+            posH = odoPos.getThisHeading();
+
+            telemetry.addData("posX", posX);
+
+            telemetry.addData("posY", posY);
+
+            telemetry.addData("posH", posH);
+
+            telemetry.addData("en1", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("en2", rightBackDrive.getCurrentPosition());
+            telemetry.addData("en3", rightFrontDrive.getCurrentPosition());
+
+
 
             double Time = runtime.time();
 
@@ -517,8 +556,11 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             dashboard.sendTelemetryPacket(packet);
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            double xpos = pos.x;
+            /*double xpos = pos.x;
             double ypos = pos.y;
+            */
+            double xpos = posX;
+            double ypos = posY;
             heading = pos.h + yawOrigin;
             //potential problem: taking more than one reading throughout the program
 

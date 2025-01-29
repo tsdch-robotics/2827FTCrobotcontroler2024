@@ -101,7 +101,7 @@ public class BlueTeleop extends LinearOpMode {
     double finalY = 0;
 
 
-    double yawOrigin = -90;
+    double yawOrigin = 0;
     double originY = 0;
     double originX = 0;
 
@@ -149,8 +149,8 @@ public class BlueTeleop extends LinearOpMode {
 
     boolean Bdelay = false;
 
-    public static Boolean killVertical = false;
-    public static Boolean killHorizontal = false;
+    public static Boolean killVertical = true;
+    public static Boolean killHorizontal = true;
 
     boolean alreadyPressingY = false;
     boolean alreadyPressingX = false;
@@ -248,6 +248,19 @@ public class BlueTeleop extends LinearOpMode {
         //ptoR.setPosition(0.5);
 
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
         configureOtos();
 
         // Wait for the start button to be pressed
@@ -266,8 +279,11 @@ public class BlueTeleop extends LinearOpMode {
 
             telemetry.addData("posY", posY);
 
-
             telemetry.addData("posH", posH);
+
+            telemetry.addData("en1", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("en2", rightBackDrive.getCurrentPosition());
+            telemetry.addData("en3", rightFrontDrive.getCurrentPosition());
 
 
             double Time = runtime.time();
@@ -514,11 +530,14 @@ public class BlueTeleop extends LinearOpMode {
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
-            double unOriginedxpos = pos.x;
-            double unOriginedypos = pos.y;
+            //double unOriginedxpos = pos.x;
+            //double unOriginedypos = pos.y;
 
-            double xpos = (unOriginedxpos + originX) * Math.cos(Math.toRadians(yawOrigin)) - (unOriginedypos + originY) * Math.sin(Math.toRadians(yawOrigin));
-            double ypos = (unOriginedxpos + originX) * Math.sin(Math.toRadians(yawOrigin)) + (unOriginedypos + originY) * Math.sin(Math.toRadians(yawOrigin));
+            double unOriginedxpos = posX;
+            double unOriginedypos = posY;
+
+            double xpos = posX;
+            double ypos = posY;
             double heading = pos.h + Math.toRadians(yawOrigin);
             //potential problem: taking more than one reading throughout the program
 

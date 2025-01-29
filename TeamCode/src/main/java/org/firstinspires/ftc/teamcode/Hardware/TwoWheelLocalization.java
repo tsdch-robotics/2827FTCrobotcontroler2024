@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class GetWheeledLocalization {
+public class TwoWheelLocalization {
 
     double L = 6.4;//inches between odo 1 and 2
     double B = 3.5;//actually? 9.125;//dist between midpoint of 1&2 with 3
@@ -51,18 +51,8 @@ public class GetWheeledLocalization {
         double dn3 = curAngle - oldAngle;
 
         double dtheta = inches_per_tick * (dn2-dn1) / L;
-        double dy = inches_per_tick * (dn2-dn1) / 2.0;
-        double dx = inches_per_tick * (dn3 - (dn2-dn1) * B / L);
-
-        double ticksPerInchY = 121.698611;
-
-        double ticksPerRadianY = 37215 / (2*Math.PI);
-
-        double ticksPerRadianX = 45119 / (2*Math.PI);
-
-        //dy = (((dn2 + dn1)/2) - ticksPerRadianY * dtheta) * inches_per_tick;
-        dy = ((dn2) - ticksPerRadianY * dtheta) * inches_per_tick;
-        dx = (dn3 - ticksPerRadianX * dtheta) * inches_per_tick;
+        double dx = inches_per_tick * (dn2-dn1) / 2.0;
+        double dy = inches_per_tick * (dn3 - (dn2-dn1) * B / L);
 
         posH += dtheta /2.0;//with average at this point
         posX += dx * Math.cos(posH) - dy * Math.sin(posH);
