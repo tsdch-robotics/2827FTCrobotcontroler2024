@@ -12,10 +12,10 @@ public class doCoolThingies {
 
     public static double scoreHeight = 3500;
     public static double collectHeight = 2;
-    public static double prescoreSpeciminHeight = 1700;
-    public static double scoreSpeciminHeight = 1900;
-    public static double stalkerHeight = 900;
-    public static double snatchHeight = 600;
+    public static double prescoreSpeciminHeight = 800;
+    public static double scoreSpeciminHeight = 800;
+    public static double stalkerHeight = 300;
+    public static double snatchHeight = 110;
 
     public static double wristTestL = 0.51;//was.5
     public static double wristTestR = 0.41;//was.4
@@ -196,7 +196,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreHeight;//update
-                ultimatePositions.shoulderPos = 0.21;//0.17//makes it go in a bit better
+                ultimatePositions.shoulderPos = 0.21;
                 ultimatePositions.wristLPos = .51;//.5
                 ultimatePositions.wristRPos = .41;//.4
                 //ultimatePositions.clawPos = false;
@@ -209,7 +209,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreHeight;//update
-                ultimatePositions.shoulderPos = 0.22;//0.17
+                ultimatePositions.shoulderPos = 0.21;//0.22 + 0.05;//0.17
                 ultimatePositions.wristLPos = .51;//.5
                 ultimatePositions.wristRPos = .41;//.4
                 //ultimatePositions.clawPos = false;
@@ -221,7 +221,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = prescoreSpeciminHeight;//update
-                ultimatePositions.shoulderPos = .5;//0.7
+                ultimatePositions.shoulderPos = 0.48;//.48
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = true;//and declaring it prevents a user error
@@ -233,7 +233,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreSpeciminHeight;//update
-                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;//.3
+                ultimatePositions.shoulderPos = 0.37;
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 //ultimatePositions.clawPos = false;
@@ -244,7 +244,7 @@ public class doCoolThingies {
             case STALKER:
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
-                ultimatePositions.shoulderPos = 0.87;//0.85
+                ultimatePositions.shoulderPos = 0.95;//0.87 + 0.05;//0.85
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
@@ -254,7 +254,8 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = 0.87;//0.85 - i reduce to .8 for better potential
+                ultimatePositions.shoulderPos = 0.95
+                ;//0.87 + 0.05;//0.85 - i reduce to .8 for better potential
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
@@ -274,8 +275,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = -1000;//it was -500 on friday 1/24
                 ultimatePositions.shoulderPos = 0;
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .57;
+                ultimatePositions.wristRPos = .47;
                 ultimatePositions.clawState = false;
 
                 break;
@@ -283,10 +284,10 @@ public class doCoolThingies {
             case COLLECT_SPECIMIN:
 
                 //ultimatePositions.HSpos = 0;
-                ultimatePositions.VSpos = collectHeight;//update
+                ultimatePositions.VSpos = 0;//update
                 ultimatePositions.shoulderPos = 0;
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .57;
+                ultimatePositions.wristRPos = .47;
                 ultimatePositions.clawState = false;
 
                 break;
@@ -296,8 +297,8 @@ public class doCoolThingies {
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = collectHeight;//update
                 ultimatePositions.shoulderPos = 0;
-                ultimatePositions.wristLPos = wristTestL;
-                ultimatePositions.wristRPos = wristTestR;
+                ultimatePositions.wristLPos = .57;
+                ultimatePositions.wristRPos = .47;
                 ultimatePositions.clawState = false;
 
                 break;
@@ -315,7 +316,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreHeight;//update
-                ultimatePositions.shoulderPos = 0.16;//0.17
+                ultimatePositions.shoulderPos = 0.21;//0.16 + 0.05;//0.17
                 ultimatePositions.wristLPos = .51;//.5
                 ultimatePositions.wristRPos = .41;//.4
                 //ultimatePositions.clawPos = false;
@@ -328,7 +329,7 @@ public class doCoolThingies {
             case PARK:
 
                 ultimatePositions.VSpos = 1;
-                ultimatePositions.shoulderPos = scoreSpeciminShoulderPos;//.3
+                ultimatePositions.shoulderPos = 0.5;//scoreSpeciminShoulderPos + 0.05;//.3
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
 

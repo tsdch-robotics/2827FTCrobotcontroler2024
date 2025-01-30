@@ -149,8 +149,8 @@ public class BlueTeleop extends LinearOpMode {
 
     boolean Bdelay = false;
 
-    public static Boolean killVertical = true;
-    public static Boolean killHorizontal = true;
+    public static Boolean killVertical = false;
+    public static Boolean killHorizontal = false;
 
     boolean alreadyPressingY = false;
     boolean alreadyPressingX = false;
@@ -163,7 +163,7 @@ public class BlueTeleop extends LinearOpMode {
     boolean Bmode= false;
     boolean Amode = false;
 
-    public static double clawClose = 0.22;//previous .25
+    public static double clawClose = 0;//previous .25
     public static double clawOpen = 0.5;
 
     double posX = 0;
@@ -507,7 +507,7 @@ public class BlueTeleop extends LinearOpMode {
 
 
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works

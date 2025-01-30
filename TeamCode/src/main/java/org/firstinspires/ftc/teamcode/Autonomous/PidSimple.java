@@ -27,6 +27,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
+@Disabled
 @TeleOp(name = "PidSimple", group = "Autonomous")
 public class PidSimple extends LinearOpMode {
     // Create an instance of the sensor

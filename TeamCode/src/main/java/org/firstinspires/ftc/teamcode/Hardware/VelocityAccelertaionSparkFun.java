@@ -37,7 +37,7 @@ public class VelocityAccelertaionSparkFun {
     public static double fixedDeltaTime = 0.02;  // Fixed time step (50 Hz)
     //private static double accelUpdateRate = 0.04;
 
-    public VxVyAxAy getvelocity(double time, SparkFunOTOS myOtos){
+    public VxVyAxAy getvelocity(double time, double x2, double y2, double h2){
 
         //now using a fixed refresh rate (50Hz)
         if (time - lastTime >= fixedDeltaTime) {
@@ -45,10 +45,9 @@ public class VelocityAccelertaionSparkFun {
             changeTime = time - lastTime;
             lastTime = time;
 
-            SparkFunOTOS.Pose2D pos2 = myOtos.getPosition();
-            double xpos2 = pos2.x;
-            double ypos2 = pos2.y;
-            double heading2 = pos2.h;
+            double xpos2 = x2;
+            double ypos2 = y2;
+            double heading2 = h2;
 
             //prob convert to other class file
             changeY = ypos2 - lastY;

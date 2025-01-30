@@ -32,19 +32,16 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea
 
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
-import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
-
-
 
 import java.util.List;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "BlueLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
-public class BlueLeftSampleOnlyNormal extends LinearOpMode {
+@Autonomous(name = "AllLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
 
-    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PARK;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
@@ -93,28 +90,32 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     double maxSpeed = 1;
     // Create an instance of the sensor
 
+    public static double cappedSpeed = 1;
+
+    //gohere
+    //gethere
+
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
-    Action meetThebasket = new Action(new Position2d(-50,-63,Math.toRadians(-45)), 2, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, 0.8);
-    Action dropSample = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 2, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
-    Action bringBack = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, 0.8);
-    Action grabIt = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, 0.8);
-    Action squeeze = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, 0.8);
-    Action safeRaise = new Action(new Position2d(-50, -55, Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, 0.8);
+    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action meetThebasket = new Action(new Position2d(-54,-58,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action dropSample = new Action(new Position2d(-54, -58, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+    Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
+    Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
+    Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action safeRaise = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action deposit = new Action(new Position2d(-50, -63, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, 0.8);
+    Action deposit = new Action(new Position2d(-54, -57, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
 
     //instead add another dropSample and go
 
-    Action collectSampleMid = new Action(new Position2d(-47, -57, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action collectSampleMid = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
-    Action collectSampleLeft = new Action(new Position2d(-40, -55, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+    Action collectSampleLeft = new Action(new Position2d(-47, -57, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
-    Action park = new Action(new Position2d(-45, -20, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
-    Action parkb = new Action(new Position2d(-25, -20, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, 0.8);
-
+    Action park = new Action(new Position2d(-45, -18, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action parkb = new Action(new Position2d(-25, -18, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     //Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
@@ -192,7 +193,7 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     boolean AlreadyPausing = false;
 
 
-    public static double clawClose = 0.2;//previous .25
+    public static double clawClose = 0;//previous .25
     public static double clawOpen = 0.5;
 
 
@@ -202,8 +203,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
     double vsTarget = 0;
     double hsTarget = 0;
 
-    boolean killHorizontal = true;
-    boolean killVertical = true;
+    boolean killHorizontal = false;
+    boolean killVertical = false;
 
     double vsOutput = 0;
     double hsOutput = 0;
@@ -245,8 +246,8 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
         actions.add(deposit);
         actions.add(dropSample);
 
-
-        /*actions.add(collectSampleMid);
+//MID
+        actions.add(collectSampleMid);
         actions.add(bringBack);
         actions.add(grabIt);
         actions.add(squeeze);
@@ -256,22 +257,23 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
 
         actions.add(deposit);
-        actions.add(dropSample);*/
+        actions.add(dropSample);
+  //END MID
+
+        actions.add(collectSampleLeft);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
+        actions.add(safeRaise);
+
+        actions.add(deposit);
+        actions.add(dropSample);
 
         actions.add(park);
         actions.add(parkb);
 
 
-
-        /*actions.add(collectSampleLeft);
-        actions.add(bringBack);
-        actions.add(grabIt);
-        actions.add(squeeze);
-
-        actions.add(safeRaise);
-
-        actions.add(deposit);
-        actions.add(dropSample);*/
 
 
         //actions.add(returnHome);
@@ -403,9 +405,10 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
 
             double Time = runtime.time();
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
 
-            double stopSpeed = 0.0001;
+            //double stopSpeed = 0.0001;
+            double stopSpeed = 0.01;
             double noPauseLeft;
 
             Action currentAction = actions.get(actionNumber); // Get the current action
@@ -413,9 +416,9 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 3 & velocities.getVx() < stopSpeed){//prevously, 3 was 1
-                if (Math.abs(finalY - targetY) < 3 & velocities.getVy() < stopSpeed){
-                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.001){
+            if (Math.abs(finalX - targetX) < 2 & velocities.getVx() < stopSpeed || velocities.getVx() < 0.001){//prevously, 3 was 1
+                if ((Math.abs(finalY - targetY) < 2 & velocities.getVy() < stopSpeed) || velocities.getVy() < 0.001){
+                    if ((/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.01) /*|| velocities.getVh() < 0.0001*/){
                         inTargetBox = true;
                         gamepad1.rumble(3);
                     }
@@ -677,29 +680,30 @@ public class BlueLeftSampleOnlyNormal extends LinearOpMode {
             finalY = ypos + originY;
             //see below for the use of originYaw
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
-            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
+            //telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
+            //telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
-            telemetry.addData("X coordinate", targetX);
-            telemetry.addData("Y coordinate", targetY);
-
+            telemetry.addData("Heading radians", normalHeading);
+            telemetry.addLine();
+            telemetry.addData("target x", targetX);
+            telemetry.addData("target Y", targetY);
+            telemetry.addLine();
+            telemetry.addLine("POWER OUTPUTS");
             telemetry.addData("yawOutput", yawOutput);
             telemetry.addData("vxOut", vxOutput);
             telemetry.addData("vyOut", vyOutput);
-            telemetry.addData("axial", axial);
-            telemetry.addData("lateral", lateral);
-            telemetry.addData("Heading radians", normalHeading);
+           // telemetry.addData("axial", axial);
+           // telemetry.addData("lateral", lateral);
+            telemetry.addLine("VELOCITYS");
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
             telemetry.addData("angular velocity radians/second", velocities.getVh());
 
-            telemetry.addData("xacceleration inches/sec2", velocities.getAx());
-            telemetry.addData("yacceleration inches/second2", velocities.getAy());
-            telemetry.addData("angular acceleration radians/second2", velocities.getAh());
+
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???

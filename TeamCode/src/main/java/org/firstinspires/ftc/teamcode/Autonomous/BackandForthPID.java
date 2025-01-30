@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -47,6 +48,7 @@ import java.util.ArrayList;
  * See the sensor's product page: https://www.sparkfun.com/products/24904
  */
 @Config
+@Disabled
 @Autonomous(name = "BackandForthPID", group = "Autonomous")
 public class BackandForthPID extends LinearOpMode {
 
@@ -175,7 +177,7 @@ public class BackandForthPID extends LinearOpMode {
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, 0);
 
 
             double stopSpeed = 0.0001;

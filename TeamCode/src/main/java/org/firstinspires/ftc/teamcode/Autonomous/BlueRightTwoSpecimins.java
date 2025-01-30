@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Config
+@Disabled
 @Autonomous(name = "BlueRightTwoSpecimins", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class BlueRightTwoSpecimins extends LinearOpMode {
 
@@ -357,7 +359,9 @@ public class BlueRightTwoSpecimins extends LinearOpMode {
 
             double Time = runtime.time();
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), myOtos);
+
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, 0);
+
 
             double stopSpeed = 0.0001;
             double noPauseLeft;
