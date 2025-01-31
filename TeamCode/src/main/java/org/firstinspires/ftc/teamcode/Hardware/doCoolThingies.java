@@ -14,7 +14,7 @@ public class doCoolThingies {
     public static double collectHeight = 2;
     public static double prescoreSpeciminHeight = 800;
     public static double scoreSpeciminHeight = 800;
-    public static double stalkerHeight = 300;
+    public static double stalkerHeight = 375;
     public static double snatchHeight = 110;
 
     public static double wristTestL = 0.51;//was.5
