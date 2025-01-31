@@ -165,10 +165,15 @@ public class BlueTeleop extends LinearOpMode {
 
     public static double clawClose = 0;//previous .25
     public static double clawOpen = 0.5;
+    public static double clawLooseClose = 0.1;
+
+    boolean pressClaw = false;
 
     double posX = 0;
     double posY = 0;
     double posH = 0;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -313,9 +318,17 @@ public class BlueTeleop extends LinearOpMode {
             //official controls buttons
 
 
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_bumper && !pressClaw && (claw.getPosition() == clawOpen || claw.getPosition() == clawLooseClose)){
                 claw.setPosition(clawClose);
-            }else if(gamepad1.left_bumper){
+                pressClaw = true;
+            }else if (gamepad1.right_bumper && !pressClaw && claw.getPosition() == clawClose){
+                claw.setPosition(clawLooseClose);
+                pressClaw = true;
+            }else if(!gamepad1.right_bumper){
+                pressClaw = false;
+            }
+
+            if(gamepad1.left_bumper){
                 claw.setPosition(clawOpen);
             }
 

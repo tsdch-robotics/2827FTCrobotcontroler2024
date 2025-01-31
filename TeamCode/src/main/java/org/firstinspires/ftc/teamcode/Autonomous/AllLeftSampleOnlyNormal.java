@@ -41,7 +41,7 @@ import java.util.ArrayList;
 public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
 
-    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PARK;
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();

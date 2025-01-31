@@ -54,6 +54,8 @@ public class doCoolThingies {
         COLLECT_SPECIMIN_AUTO,
         SAFE_RAISE,
         RELEASE,
+        PRE_SCORE_SPECIMEN_AUTO,
+        SCORE_SPECIMEN_AUTO,
 
         //all zeroing will be automatic
 
@@ -229,11 +231,37 @@ public class doCoolThingies {
 
                 break;
 
+
+            case PRE_SCORE_SPECIMEN_AUTO:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = prescoreSpeciminHeight - 100;//update
+                ultimatePositions.shoulderPos = 0.55;//.48
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.clawState = true;//and declaring it prevents a user error
+                //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                break;
+
             case SCORE_SPECIMEN:
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = scoreSpeciminHeight;//update
-                ultimatePositions.shoulderPos = 0.37;
+                ultimatePositions.shoulderPos = 0.3;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                //ultimatePositions.clawPos = false;
+                //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                break;
+
+
+            case SCORE_SPECIMEN_AUTO:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = scoreSpeciminHeight -100;//update
+                ultimatePositions.shoulderPos = 0.3;
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 //ultimatePositions.clawPos = false;
