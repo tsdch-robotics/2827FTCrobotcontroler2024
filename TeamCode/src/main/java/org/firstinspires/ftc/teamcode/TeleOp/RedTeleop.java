@@ -33,8 +33,8 @@ import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
 
 
 @Config
-@TeleOp(name = "BlueTeleop", group = "Sensor")
-public class BlueTeleop extends LinearOpMode {
+@TeleOp(name = "RedTeleop", group = "Sensor")
+public class RedTeleop extends LinearOpMode {
 
     doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
@@ -111,7 +111,6 @@ public class BlueTeleop extends LinearOpMode {
 
     private CRServo flick = null;
 
-    double flickPower = 0;
 
 
     double finalX = 0;
@@ -173,9 +172,6 @@ public class BlueTeleop extends LinearOpMode {
     boolean alreadyPressingX = false;
     boolean alreadyPressingA= false;
     boolean alreadyPressingB = false;
-    boolean alreadyPressingBack = false;
-
-    boolean cancelColor = false;
 
 
     boolean Ymode = false;
@@ -192,8 +188,6 @@ public class BlueTeleop extends LinearOpMode {
     double posX = 0;
     double posY = 0;
     double posH = 0;
-
-    double scale = 1;
 
 
 
@@ -392,7 +386,7 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             //HANG MODE
-            if(gamepad2.a && !Amode && !alreadyPressingA){
+            if(gamepad1.a && !Amode && !alreadyPressingA){
 
                 Amode = true;
                 Ymode = false;
@@ -402,23 +396,13 @@ public class BlueTeleop extends LinearOpMode {
 
                 verticalTarget = targetVerticalIdea.READY_TO_HANG1;
 
-            }else if(gamepad2.a && !alreadyPressingA){
+            }else if(gamepad1.a && !alreadyPressingA){
                 verticalTarget = nextVerticalTarget;
                 alreadyPressingA = true;
-            }else if (!gamepad2.a){
+            }else if (!gamepad1.a){
                 alreadyPressingA = false;
             }
 
-
-            if(gamepad1.back & !alreadyPressingBack & !cancelColor){
-                alreadyPressingBack = true;
-                cancelColor = true;
-            }else if(gamepad1.back & !alreadyPressingBack & cancelColor){
-                alreadyPressingBack = true;
-                cancelColor = false;
-            }else if (!gamepad1.back){
-                alreadyPressingBack = false;
-            }
 
 
 
@@ -522,51 +506,41 @@ public class BlueTeleop extends LinearOpMode {
 
 
             telemetry.addData("currentColor is", currentColor);
-            double colorChangeDelayServo = 0.9 + 0.25;
+            double colorChangeDelayServo = 0.9;
 
-            if(!cancelColor){
-                if(currentColor  == "yellow" || currentColor == "blue" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                    horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
-                }
-
-
-                if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
-                    waitUntil = getRuntime() + colorChangeDelayServo;
-                }
-                if(getRuntime() < waitUntil){
-                    flickPower = -1;
-                    telemetry.addData("Servo power", -1);
-                }else{
-                    flickPower = 0;
-                    //flick.setPower(-gamepad1.right_trigger);
-                }
+            if(currentColor  == "yellow" || currentColor == "red" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
+                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
             }
 
-            if(gamepad1.left_trigger > 0.1 & gamepad1.right_trigger < 0.1){//jui left
-                intake.setPower(-gamepad1.left_trigger);
-                flickPower = 1;
 
-            }else if(gamepad1.right_trigger > 0.1 & gamepad1.left_trigger < 0.1){//just right
+            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
+                waitUntil = getRuntime() + colorChangeDelayServo;
+            }
+            if(getRuntime() < waitUntil){
+                flick.setPower(-1);
+                telemetry.addData("Servo power", -1);
+            }else{
+                //flick.setPower(0);
+                //flick.setPower(-gamepad1.right_trigger);
+            }
+
+            if(gamepad1.left_trigger > 0.1){
+                intake.setPower(-gamepad1.left_trigger);
+                flick.setPower(1);
+
+            }else if (gamepad1.right_trigger > 0.1){
                 intake.setPower(gamepad1.right_trigger);
-            }else if (gamepad1.right_trigger > 0.1 & gamepad1.left_trigger > 0.1){
-                intake.setPower(gamepad1.right_trigger);
-                flickPower = -gamepad1.right_trigger;
+                flick.setPower(0);
             }else{
                 intake.setPower(0);
-                if(cancelColor){
-                    flickPower = 0;
-                }
+
             }
-
-            flick.setPower(flickPower);
-
-
 
 
             //HANG
             if(verticalPositions.getHookThat()){
                 //hookL.setPosition(hookLhook);
-               // hookR.setPosition(hookRhook);
+                // hookR.setPosition(hookRhook);
             }
 
             if(verticalPositions.getPTO()){
@@ -661,16 +635,6 @@ public class BlueTeleop extends LinearOpMode {
                 yaw     = 0;
             }
 
-            /*if(gamepad1.a & !pressingA1){
-                scale = 0.5;
-            }*/
-
-            if(gamepad1.a){
-                scale = 0.5;
-            }else{
-                scale = 1;
-            }
-
 
             telemetry.addData("axial", axial);
 
@@ -697,10 +661,10 @@ public class BlueTeleop extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            leftFrontDrive.setPower(leftFrontPower * scale);
-            rightFrontDrive.setPower(rightFrontPower * scale);
-            leftBackDrive.setPower(leftBackPower * scale);
-            rightBackDrive.setPower(rightBackPower * scale);
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             double hspos = -horizontalSlides.getCurrentPosition();
             double vspos = verticalSlides.getCurrentPosition();

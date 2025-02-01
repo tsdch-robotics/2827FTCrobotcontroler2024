@@ -12,8 +12,10 @@ public class currentDoHicky {
     double intakeSpeed; //for autonomous only
     double flickSpeed;//likewise
     boolean clawState;
+    boolean PTO;
+    boolean hookThat;
 
-    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos, double intakeSpeed, double flickSpeed, boolean clawState) {
+    public currentDoHicky(double HSpos, double VSpos,double intakeLiftPos, double shoulderPos, double wristLPos, double wristRPos, double intakeSpeed, double flickSpeed, boolean clawState, boolean PTO, boolean hookThat) {
         this.HSpos = HSpos;
         this.VSpos = VSpos;
         this.intakeLiftPos = intakeLiftPos;
@@ -23,6 +25,8 @@ public class currentDoHicky {
         this.intakeSpeed = intakeSpeed;
         this.flickSpeed = flickSpeed;
         this.clawState = clawState;
+        this.hookThat = hookThat;
+        this.PTO = PTO;
     }
 
 
@@ -59,5 +63,15 @@ public class currentDoHicky {
     public boolean getClawState() {
         return clawState;
     }
+
+    public boolean getPTO(){
+
+        return PTO;
+    }
+    public boolean getHookThat(){
+
+        return hookThat;
+    }
+
 
 }

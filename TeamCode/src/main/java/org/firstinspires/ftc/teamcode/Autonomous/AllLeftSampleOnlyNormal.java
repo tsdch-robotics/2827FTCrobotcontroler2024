@@ -41,7 +41,7 @@ import java.util.ArrayList;
 public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
 
-    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
@@ -100,7 +100,7 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action meetThebasket = new Action(new Position2d(-54,-58,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action dropSample = new Action(new Position2d(-54, -58, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
     Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
     Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
     Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
@@ -197,8 +197,8 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     public static double clawOpen = 0.5;
 
 
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false);
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false, false, false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false, false, false);
 
     double vsTarget = 0;
     double hsTarget = 0;
@@ -259,7 +259,7 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
         actions.add(deposit);
         actions.add(dropSample);
   //END MID
-
+/*
         actions.add(collectSampleLeft);
         actions.add(bringBack);
         actions.add(grabIt);
@@ -268,7 +268,7 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
         actions.add(safeRaise);
 
         actions.add(deposit);
-        actions.add(dropSample);
+        actions.add(dropSample);*/
 
         actions.add(park);
         actions.add(parkb);

@@ -7,15 +7,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Config
 public class doCoolThingies {
 
-    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, 0, false);//change this to your ideal init pos
+    currentDoHicky ultimatePositions = new currentDoHicky(0,0,0,0,0,0,0, 0, false, false, false);//change this to your ideal init pos
 
 
     public static double scoreHeight = 3500;
     public static double collectHeight = 2;
-    public static double prescoreSpeciminHeight = 800;
+    public static double prescoreSpeciminHeight = 700;
     public static double scoreSpeciminHeight = 800;
-    public static double stalkerHeight = 375;
-    public static double snatchHeight = 110;
+    public static double stalkerHeight = 600;
+    public static double snatchHeight = 350;
 
     public static double wristTestL = 0.51;//was.5
     public static double wristTestR = 0.41;//was.4
@@ -34,6 +34,12 @@ public class doCoolThingies {
 
     public static double scoreSpeciminShoulderPos = 0.41;
 
+    public static double rHang1 = 2000;
+    public static double rHang2 = 1900;
+
+    public static double accendPull = 300;
+
+    public static double intakeRest = 75;
 
     public enum targetVerticalIdea{
         PARK,
@@ -56,6 +62,11 @@ public class doCoolThingies {
         RELEASE,
         PRE_SCORE_SPECIMEN_AUTO,
         SCORE_SPECIMEN_AUTO,
+        READY_TO_HANG1,
+        READY_TO_HANG2,
+        ENGAGE_PTO,
+        ACCEND,
+        ENGANGE_SUPPORT,
 
         //all zeroing will be automatic
 
@@ -90,7 +101,7 @@ public class doCoolThingies {
             case READY_HS_POS:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
-                ultimatePositions.HSpos = 1;
+                ultimatePositions.HSpos = intakeRest;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
                 ultimatePositions.flickSpeed = 0;
 
@@ -99,7 +110,7 @@ public class doCoolThingies {
             case READY_HS_POS_FLICK_STILL_ON:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
-                ultimatePositions.HSpos = 1;
+                ultimatePositions.HSpos = intakeRest;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
 
 
@@ -272,7 +283,7 @@ public class doCoolThingies {
             case STALKER:
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
-                ultimatePositions.shoulderPos = 0.95;//0.87 + 0.05;//0.85
+                ultimatePositions.shoulderPos = 0.935;//0.87 + 0.05;//0.85
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
@@ -282,7 +293,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = 0.95
+                ultimatePositions.shoulderPos = 0.935
                 ;//0.87 + 0.05;//0.85 - i reduce to .8 for better potential
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
@@ -364,7 +375,68 @@ public class doCoolThingies {
                 break;
 
 
+            case READY_TO_HANG1:
 
+                ultimatePositions.VSpos = rHang1;
+                ultimatePositions.shoulderPos = 0.6;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+
+                break;
+
+            case READY_TO_HANG2:
+
+                ultimatePositions.VSpos = rHang2;
+                ultimatePositions.shoulderPos = 0.6;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+
+                break;
+
+
+            case ENGAGE_PTO:
+
+                ultimatePositions.VSpos = rHang2;
+                ultimatePositions.shoulderPos = 0.6;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.PTO = true;
+
+                break;
+
+            case ACCEND:
+
+                ultimatePositions.VSpos = accendPull;
+                ultimatePositions.shoulderPos = 0.6;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.PTO = true;
+
+                break;
+
+
+            case ENGANGE_SUPPORT:
+
+                ultimatePositions.VSpos = accendPull;
+                ultimatePositions.shoulderPos = 0.6;
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.PTO = true;
+                ultimatePositions.hookThat = true;
+
+                break;
+
+            case INIT:
+
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = prescoreSpeciminHeight;//update
+                ultimatePositions.shoulderPos = 0.5;//.48
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.clawState = true;//and declaring it prevents a user error
+                //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                break;
 
 
         }

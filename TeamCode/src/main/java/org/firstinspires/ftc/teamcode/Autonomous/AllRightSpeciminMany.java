@@ -41,7 +41,7 @@ import java.util.ArrayList;
 public class AllRightSpeciminMany extends LinearOpMode {
 
 
-    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.PRE_SCORE_SPECIMEN;
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
 
     GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
@@ -216,8 +216,8 @@ public class AllRightSpeciminMany extends LinearOpMode {
     public static double clawOpen = 0.5;
 
 
-    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false);
-    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false);
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false, false, false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false, false, false);
 
     double vsTarget = 0;
     double hsTarget = 0;
