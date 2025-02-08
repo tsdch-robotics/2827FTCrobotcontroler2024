@@ -570,12 +570,12 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             if(verticalPositions.getPTO()){
-                if (gamepad1.right_bumper){
+                if (gamepad2.right_bumper){
                     ptoR.setPosition(engageR);
                 }else{
                     ptoR.setPosition(disEngageR);
                 }
-                if (gamepad1.left_bumper){
+                if (gamepad2.left_bumper){
                     ptoL.setPosition(engageL);
                 }else{
                     ptoL.setPosition(disEngageL);
@@ -583,8 +583,8 @@ public class BlueTeleop extends LinearOpMode {
 
                 driveHange = true;
             }else{
-                ptoL.setPosition(disEngageL);
-                ptoR.setPosition(disEngageR);
+                //ptoL.setPosition(disEngageL);
+                //ptoR.setPosition(disEngageR);
                 driveHange = false;
             }
 

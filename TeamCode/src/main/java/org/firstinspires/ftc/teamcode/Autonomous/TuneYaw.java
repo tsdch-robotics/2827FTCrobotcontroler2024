@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "AllRightSpeciminMany", group = "Autonomous", preselectTeleOp = "BlueTeleop")
-public class AllRightSpeciminMany extends LinearOpMode {
+@Autonomous(name = "TuneYaw", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class TuneYaw extends LinearOpMode {
 
 
     targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
@@ -97,51 +97,28 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), .1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    //i slowed this down
-    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 2/*if bad, make 2*/, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
-    Action preScore2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 2/*if bad, make 2*/, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
-
-    Action score = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-
-    Action drop = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action drop2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-
-    Action prepareToCollect = new Action(new Position2d(36, -57, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action collect = new Action(new Position2d(36, -65, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, 0.25);
-    Action grab = new Action(new Position2d(36, -65, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-
-    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), 3, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-
-    //act1, prescore, score, drop, park
-
-
-    public static double xSweep = 35;
-    public static double ySweep = -50;
-
-    Action preSweepBlue = new Action(new Position2d(30,-50,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-
-    Action meetTheBlue = new Action(new Position2d(30, -18, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action sweepTheBlue = new Action(new Position2d(40, -45, Math.toRadians(0)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-
-    // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
-
-
-    Action park = new Action(new Position2d(45, -55, Math.toRadians(0)), 0, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action spin1 = new Action(new Position2d(-50,-50,Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action spin2 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     int numberOfActs = 11;
+
+
+/*
+    public Action makeFigure8 (double figureX, double figureY){
+
+        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+
+        figureActions.add(fig1, fig2, fig3, fig4, fig5, fig6)
+        return
+    }*/
+
+
+
+    Action figure8 = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
 
 
     // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
@@ -176,8 +153,8 @@ public class AllRightSpeciminMany extends LinearOpMode {
     //ORIGIN OF BEGINNING
 
     double yawOrigin = 0;
-    double originY = -64;// -61;
-    double originX = 7;//place on right side of tile
+    double originY = -50;// -61;
+    double originX = -50;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -241,36 +218,14 @@ public class AllRightSpeciminMany extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-
-        /*actions.add(act1);
-        actions.add(act1);
-        for (int i = 0; i < 20; i++) {
-            actions.add(act1);
-            actions.add(act2);
-        }*/
+        actions.add(spin1);
+        actions.add(spin2);
+        for (int i = 0; i < 100; i++) {
+            actions.add(spin1);
+            actions.add(spin2);
+        }
 
         int takeNoteOFTHIS = numberOfActs;
-
-        actions.add(act1);
-        actions.add(preScore);
-        actions.add(score);
-        actions.add(drop);
-        actions.add(prepareToCollect);
-        actions.add(collect);
-        actions.add(grab);
-        actions.add(safeRaise);
-        actions.add(act2);
-        actions.add(preScore2);
-        actions.add(score2);
-        actions.add(drop2);
-
-        actions.add(preSweepBlue);
-        actions.add(meetTheBlue);
-        actions.add(meetTheBlue2);
-        actions.add(sweepTheBlue);
-        actions.add(park);
-
-
 
 
         //actions.add(returnHome);

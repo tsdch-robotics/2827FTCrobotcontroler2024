@@ -4,72 +4,125 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.Action;
 import org.firstinspires.ftc.teamcode.Hardware.ComputePid;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Hardware.GetWheeledLocalization;
 import org.firstinspires.ftc.teamcode.Hardware.Position2d;
 import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
 import org.firstinspires.ftc.teamcode.Hardware.VxVyAxAy;
+import org.firstinspires.ftc.teamcode.Hardware.currentDoHicky;
+import org.firstinspires.ftc.teamcode.Hardware.determineColor;
 import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies;
-import org.opencv.core.Mat;
 
-import org.firstinspires.ftc.teamcode.Hardware.Action;
-import org.firstinspires.ftc.teamcode.Hardware.VelocityAccelertaionSparkFun;
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetVerticalIdea;
 
-
+import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalIdea;
 
 
 import java.util.List;
 import java.util.ArrayList;
 
-
-/*
- * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
- *
- * The OpMode assumes that the sensor is configured with a name of "sensor_otos".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- *
- * See the sensor's product page: https://www.sparkfun.com/products/24904
- */
 @Config
-@Disabled
-@Autonomous(name = "BackandForthPID", group = "Autonomous")
+@Autonomous(name = "BackandForthPID", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class BackandForthPID extends LinearOpMode {
+
+
+    targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
+    targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
+
+    GetWheeledLocalization getWheeledLocalization = new GetWheeledLocalization();
+
+    doCoolThingies doCoolThingies = new doCoolThingies();//rename?
 
     VelocityAccelertaionSparkFun vectorSystem = new VelocityAccelertaionSparkFun();
 
+    ColorSensor intakeColor;
+
+    String currentColor = "none";
+    TouchSensor hsTouch;
+    TouchSensor vsTouch;
+
+    private DcMotor horizontalSlides = null;
+    private DcMotor verticalSlides = null;
+
+    private DcMotor intake = null;
+
+
+    private Servo ptoL = null;
+    private Servo ptoR = null;
+    private Servo hookL = null;
+    private Servo hookR = null;
+
+    private Servo armL = null;
+    private Servo armR = null;
+
+    private Servo wristL = null;
+    private Servo wristR = null;
+    private Servo claw = null;
+
+
+    private Servo liftL = null;
+    private Servo liftR = null;
+
+    private CRServo flick = null;
+
+
+    public static double scale = 0.8; //I think this is a speed scaler?
+
     public boolean inTargetBox = false;
+
     public int actionNumber = 0;
 
+    double maxSpeed = 1;
     // Create an instance of the sensor
 
+    public static double cappedSpeed = 1;
+
+    //gohere
+    //gethere
+
     SparkFunOTOS myOtos;
+    //use mr hicks robt squaring specimin advice
+    Action act1 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act2 = new Action(new Position2d(-50,-35,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-   //Action act1 = new Action(new Pose2d(-7,-61,Math.toRadians(0)), 0 /*, function1*/);
-    /*Action act2 = new Action(new Pose2d(-5, -40, Math.toRadians(0)), 3);
-    Action act3 = new Action(new Pose2d(-5, -35, Math.toRadians(0)), 3);
-    Action act4 = new Action(new Pose2d(-10, -45, Math.toRadians(-90)), .2);
-    Action act5 = new Action(new Pose2d(-50, -40, Math.toRadians(-90)), 0);
-    Action act6 = new Action(new Pose2d(-50, -40, Math.toRadians(0)), 1);*/
 
-    Action act1 = new Action(new Position2d(-50, -50, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
-    Action act2 = new Action(new Position2d(-50, 35, Math.toRadians(0)), 4, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
+    int numberOfActs = 11;
+
+
+/*
+    public Action makeFigure8 (double figureX, double figureY){
+
+        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+
+        figureActions.add(fig1, fig2, fig3, fig4, fig5, fig6)
+        return
+    }*/
+
+
+
+    Action figure8 = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
+
+
+    // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
+    // Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 2);
 
     List<Action> actions = new ArrayList<>();
 
@@ -84,7 +137,7 @@ public class BackandForthPID extends LinearOpMode {
     List<Position2d> pauses = new ArrayList<>();
 
 
-    public static double scale = 0.8; // Example of FTC dashboard variable
+    public static double testttt = 1; // Example of FTC dashboard variable
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -95,10 +148,15 @@ public class BackandForthPID extends LinearOpMode {
 
     double finalX = 0;
     double finalY = 0;
-    double originY = -50;// -61;
-    double originX = -50;//-7;
 
-    Action returnHome = new Action(new Position2d(originX, originY, Math.toRadians(0)), 1, doCoolThingies.targetVerticalIdea.SQUEEZE_THE_CATCH, doCoolThingies.targetHorizontalIdea.READY_HS_POS, 0.8);
+
+    //ORIGIN OF BEGINNING
+
+    double yawOrigin = 0;
+    double originY = -50;// -61;
+    double originX = -50;//place on right side of tile
+
+    //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
 
     double normalHeading = 0;
@@ -125,33 +183,64 @@ public class BackandForthPID extends LinearOpMode {
 
     ComputePid PID = new ComputePid();
 
+
     double endTime = 0;
     boolean AlreadyPausing = false;
+
+
+    public static double clawClose = 0;//previous .25
+    public static double clawOpen = 0.5;
+
+
+    currentDoHicky horizontalPositions = new currentDoHicky(0,0,0,0,0,0,0,0,false, false, false);
+    currentDoHicky verticalPositions = new currentDoHicky(0,0,0,0,0,0,0,0, false, false, false);
+
+    double vsTarget = 0;
+    double hsTarget = 0;
+
+    boolean killHorizontal = false;
+    boolean killVertical = false;
+
+    double vsOutput = 0;
+    double hsOutput = 0;
+
+
+    boolean noMoreVSzero = false;
+    boolean noMoreHSzero = false;
+
+    boolean promptedToContinueNow = false;//to speed things up when needed
+
+
+    double posX = 0;
+    double posY = 0;
+    double posH = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         actions.add(act1);
-        actions.add(act1);
+        actions.add(act2);
         for (int i = 0; i < 100; i++) {
             actions.add(act1);
             actions.add(act2);
         }
 
-        /*actions.add(act1);
-        actions.add(act2);
-        actions.add(act3);
-        actions.add(act4);
-        actions.add(act5);
-        actions.add(act6);
-        actions.add(returnHome);*/
+        int takeNoteOFTHIS = numberOfActs;
+
+
+        //actions.add(returnHome);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
+// Get a reference to the sensor
+        determineColor colorTest = new determineColor();
 
-        // Get a reference to the sensor
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        intakeColor = hardwareMap.get(ColorSensor.class, "intakeColor");
+
+        hsTouch = hardwareMap.get(TouchSensor.class, "hsTouch");
+        vsTouch = hardwareMap.get(TouchSensor.class, "vsTouch");
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
@@ -159,28 +248,119 @@ public class BackandForthPID extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
 
 
+        horizontalSlides = hardwareMap.get(DcMotor.class, "HS");
+        verticalSlides = hardwareMap.get(DcMotor.class, "VS");
 
+        verticalSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+
+        ptoL = hardwareMap.get(Servo.class, "ptoL");
+        ptoR = hardwareMap.get(Servo.class, "ptoR");
+        hookL = hardwareMap.get(Servo.class, "hookL");
+        hookR = hardwareMap.get(Servo.class, "hookR");
+
+        flick = hardwareMap.get(CRServo.class, "flick");//Continuous rotation servo
+
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
+
+        wristL = hardwareMap.get(Servo.class, "wristL");
+        wristR = hardwareMap.get(Servo.class, "wristR");
+
+        claw = hardwareMap.get(Servo.class, "claw");
+
+        armL.setDirection(Servo.Direction.REVERSE);
+        armR.setDirection(Servo.Direction.FORWARD);
+
+        wristL.setDirection(Servo.Direction.REVERSE);
+        wristR.setDirection(Servo.Direction.FORWARD);
+
+        liftL = hardwareMap.get(Servo.class, "liftL");
+        liftR = hardwareMap.get(Servo.class, "liftR");
+
+        liftL.setDirection(Servo.Direction.REVERSE);
+        liftR.setDirection(Servo.Direction.FORWARD);
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);//important
+        verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//(we can still take the reading though)
+
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         configureOtos();
 
         // Wait for the start button to be pressed
+
+
+
+        //so that it can hold in init
+        verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+
+        armL.setPosition(verticalPositions.getshoulderPos());
+        armR.setPosition(verticalPositions.getshoulderPos());
+        wristL.setPosition(verticalPositions.getwristLPos());
+        wristR.setPosition(verticalPositions.getwristRPos());
+        if(!verticalPositions.getClawState()){//false
+            claw.setPosition(clawOpen);
+        }else{
+            claw.setPosition(clawClose);
+        }
+
         waitForStart();
         resetRuntime();
-
 
 
         // Loop until the OpMode ends
         while (opModeIsActive()) {
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, 0);
+            Position2d odoPos = getWheeledLocalization.wheeledLocalization(leftFrontDrive/*en1,left*/,
+                    rightBackDrive/*en2,right*/, rightFrontDrive/*enc3, bakc*/, posX, posY, posH);
+            posX = odoPos.getThisX();
+            posY = odoPos.getThisY();
+            posH = odoPos.getThisHeading();
+
+            telemetry.addData("posX", posX);
+
+            telemetry.addData("posY", posY);
+
+            telemetry.addData("posH", posH);
+
+            telemetry.addData("en1", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("en2", rightBackDrive.getCurrentPosition());
+            telemetry.addData("en3", rightFrontDrive.getCurrentPosition());
 
 
-            double stopSpeed = 0.0001;
+
+            double Time = runtime.time();
+
+            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
+
+            //double stopSpeed = 0.0001;
+            double stopSpeed = 0.01;
             double noPauseLeft;
 
             Action currentAction = actions.get(actionNumber); // Get the current action
@@ -188,14 +368,107 @@ public class BackandForthPID extends LinearOpMode {
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
             //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 1 & velocities.getVx() < stopSpeed){
-                if (Math.abs(finalY - targetY) < 1 & velocities.getVy() < stopSpeed){
-                    if (/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.001){
+            if (Math.abs(finalX - targetX) < 2 & velocities.getVx() < stopSpeed || velocities.getVx() < 0.001){//prevously, 3 was 1
+                if ((Math.abs(finalY - targetY) < 2 & velocities.getVy() < stopSpeed) || velocities.getVy() < 0.001){
+                    if ((/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.01) /*|| velocities.getVh() < 0.0001*/){
                         inTargetBox = true;
                         gamepad1.rumble(3);
                     }
                 }
             }
+
+
+            //GETTING VERTICAL AND HORIZONTAL
+            if(!noMoreVSzero){
+                verticalTargetAuto = currentAction.getVerticalTargetAuto();
+            }
+
+            if(!noMoreHSzero){
+                horizontalTargetAuto = currentAction.getHorizontalTargetAuto();
+            }
+
+            maxSpeed = currentAction.getMaxSpeed();
+
+
+            //AUTO ZERO
+            if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
+                verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+                noMoreVSzero = true;
+            }else if (verticalTargetAuto != targetVerticalIdea.ZERO_VS_SLIDES){
+                noMoreVSzero = false;
+            }else{
+                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+            }
+
+            if(horizontalTargetAuto == targetHorizontalIdea.ZERO_HS_SLIDES && hsTouch.isPressed()){
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                horizontalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON;
+                noMoreHSzero = true;
+            }else if (horizontalTargetAuto != targetHorizontalIdea.ZERO_HS_SLIDES){
+                noMoreHSzero = false;
+            }else{
+                horizontalTargetAuto = targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON;
+            }
+
+
+            //SET POSITIONS ACCORDINGLY
+            verticalPositions = doCoolThingies.magicalVerticalMacro(verticalTargetAuto);
+            horizontalPositions = doCoolThingies.magicalHorizontalMacro(horizontalTargetAuto, 1);
+
+
+            hsTarget = horizontalPositions.getHSpos();
+
+            if(!killHorizontal){
+                liftL.setPosition(horizontalPositions.getintakeLiftPos());
+                liftR.setPosition(horizontalPositions.getintakeLiftPos());
+                intake.setPower(horizontalPositions.getIntakeSpeed());
+                flick.setPower(horizontalPositions.getFlickSpeed());
+            }
+
+            vsTarget = verticalPositions.getVSpos();
+
+            if(!killVertical){
+                armL.setPosition(verticalPositions.getshoulderPos());
+                armR.setPosition(verticalPositions.getshoulderPos());
+                wristL.setPosition(verticalPositions.getwristLPos());
+                wristR.setPosition(verticalPositions.getwristRPos());
+                if(!verticalPositions.getClawState()){//false
+                    claw.setPosition(clawOpen);
+                }else{
+                    claw.setPosition(clawClose);
+                }
+            }
+
+
+            //COLOR SENSING AUTOMATION
+            currentColor = colorTest.color(intakeColor, Time);
+
+            telemetry.addData("currentColor is", currentColor);
+            double colorChangeDelayServo = 0.9;
+
+            if(currentColor  == "yellow" || currentColor == "blue" && horizontalTargetAuto == targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE){
+                promptedToContinueNow = true;
+            }
+
+            /*if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
+                waitUntil = getRuntime() + colorChangeDelayServo;
+            }
+            if(getRuntime() < waitUntil){
+                flick.setPower(-1);
+                telemetry.addData("Servo power", -1);
+            }else{
+                //flick.setPower(0);
+                flick.setPower(-gamepad1.right_trigger);
+            }*/
+
+
+
+            //CONTINUE DRIVETRAIN AUTO
             //next we must complete the pause
 
             //once in targetBox, it starts the pause
@@ -204,10 +477,12 @@ public class BackandForthPID extends LinearOpMode {
                 AlreadyPausing = true;
             }
 
-            if (inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime){
+            //GO ONTO THE NEXT ACTION PROCESS
+            if ((inTargetBox & actionNumber < (actions.size() -1) & getRuntime() > endTime)/* || promptedToContinueNow*/){
                 AlreadyPausing = false;
                 actionNumber += 1;
                 inTargetBox = false;
+                promptedToContinueNow = false;
             }
 
 
@@ -236,9 +511,12 @@ public class BackandForthPID extends LinearOpMode {
             dashboard.sendTelemetryPacket(packet);
 
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            double xpos = pos.x;
+            /*double xpos = pos.x;
             double ypos = pos.y;
-            heading = pos.h;
+            */
+            double xpos = posX;
+            double ypos = posY;
+            heading = pos.h + yawOrigin;
             //potential problem: taking more than one reading throughout the program
 
             normalHeading = heading;
@@ -316,7 +594,20 @@ public class BackandForthPID extends LinearOpMode {
                 rightBackDrive.setPower(0);
             }
 
+            //MORE SLIDES STUFFS
+            double hspos = -horizontalSlides.getCurrentPosition();
+            double vspos = verticalSlides.getCurrentPosition();
 
+            if(!killVertical){
+                verticalSlides.setPower(vsOutput);
+            }else{
+                verticalSlides.setPower(0);
+            }
+            if(!killHorizontal){
+                horizontalSlides.setPower(-hsOutput);//bc was negativde when usi9g the gamepad input
+            }else{
+                horizontalSlides.setPower(0);
+            }
 
            /* pos = myOtos.getPosition();
             double deltaX = pos.x - oldx;
@@ -339,39 +630,48 @@ public class BackandForthPID extends LinearOpMode {
             // finalY = finalY + deltaY;
             finalX = xpos + originX;
             finalY = ypos + originY;
+            //see below for the use of originYaw
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
-            telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
+            //telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
+            //telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
             telemetry.addData("Y coordinate", finalY);
+            telemetry.addData("Heading radians", normalHeading);
+            telemetry.addLine();
+            telemetry.addData("target x", targetX);
+            telemetry.addData("target Y", targetY);
+            telemetry.addLine();
+            telemetry.addLine("POWER OUTPUTS");
             telemetry.addData("yawOutput", yawOutput);
             telemetry.addData("vxOut", vxOutput);
             telemetry.addData("vyOut", vyOutput);
-            telemetry.addData("axial", axial);
-            telemetry.addData("lateral", lateral);
-            telemetry.addData("Heading radians", normalHeading);
+            // telemetry.addData("axial", axial);
+            // telemetry.addData("lateral", lateral);
+            telemetry.addLine("VELOCITYS");
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
             telemetry.addData("angular velocity radians/second", velocities.getVh());
 
-            telemetry.addData("xacceleration inches/sec2", velocities.getAx());
-            telemetry.addData("yacceleration inches/second2", velocities.getAy());
-            telemetry.addData("angular acceleration radians/second2", velocities.getAh());
+
             telemetry.update();
 
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 
-            yawOutput = yawOutput * scale;
-            vxOutput = vxOutput * scale;
-            vyOutput = vyOutput * scale;
+
+            yawOutput = yawOutput * maxSpeed;
+            vxOutput = vxOutput * maxSpeed;
+            vyOutput = vyOutput * maxSpeed;
+
+            vsOutput = PID.vsPID(vspos, getRuntime(), vsTarget);
+            hsOutput = PID.hsPID(hspos, getRuntime(), hsTarget);
 
         }
     }

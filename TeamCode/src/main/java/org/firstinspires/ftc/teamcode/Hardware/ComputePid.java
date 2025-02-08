@@ -10,7 +10,7 @@ import com.sun.tools.javac.tree.DCTree;
 @Config
 public class ComputePid {
 
-    public static double yawKp = 0.7, yawKi = 0.01, yawKd = 0.001;  // PID gains
+    public static double yawKp = 0.8, yawKi = 0.05, yawKd = 0.001;  // PID gains
     public static double vxKp = 0.1, vxKi = 0, vxKd = 0;
     public static double vyKp = 0.1, vyKi = 0, vyKd = 0;
 
@@ -136,8 +136,6 @@ public class ComputePid {
 
 
     public double calculateYaw(double x, double y, double h){
-
-
 
 
 

@@ -233,7 +233,7 @@ public class doCoolThingies {
             case PRE_SCORE_SPECIMEN:
 
                 //ultimatePositions.HSpos = 0;
-                ultimatePositions.VSpos = prescoreSpeciminHeight;//update
+                ultimatePositions.VSpos = prescoreSpeciminHeight - 100;//update
                 ultimatePositions.shoulderPos = 0.48;//.48
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;

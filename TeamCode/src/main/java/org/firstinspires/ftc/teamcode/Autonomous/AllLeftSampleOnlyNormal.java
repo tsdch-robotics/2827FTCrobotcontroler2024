@@ -121,9 +121,24 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     //Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
 
-
-
     int numberOfActs = 11;
+
+
+/*
+    public Action makeFigure8 (double figureX, double figureY){
+
+        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+
+        figureActions.add(fig1, fig2, fig3, fig4, fig5, fig6)
+        return
+    }*/
+
+
+
+    Action figure8 = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
 
 
     // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
