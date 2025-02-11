@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import org.firstinspires.ftc.teamcode.Hardware.KalmanThatVelo;
 
 @Config
 public class VelocityAccelertaionSparkFun {
@@ -9,33 +10,43 @@ public class VelocityAccelertaionSparkFun {
 
     public static double maxPower = 1;
 
-    double changeTime = 0;
+    public double changeTime = 0;
 
-    double lastTime = 0;
+    public double lastTime = 0;
 
-    double changeY = 0;
-    double lastY = 0;
+    public double changeY = 0;
+    public double lastY = 0;
 
-    double changeX = 0;
-    double lastX = 0;
+    public double changeX = 0;
+    public double lastX = 0;
 
-    double changeH =0;
-    double lastH = 0;
+    public double changeH =0;
+    public double lastH = 0;
 
-    double dydt = 0;
-    double dxdt = 0;
-    double dhdt = 0;
+    public double dydt = 0;
+    public double dxdt = 0;
+    public double dhdt = 0;
 
-    double daydt = 0; //acceleration
-    double daxdt = 0;
-    double dahdt = 0;
+    public double daydt = 0; //acceleration
+    public double daxdt = 0;
+    public double dahdt = 0;
 
-    double lastDydt = 0;
-    double lastDxdt = 0;
-    double lastDhdt = 0;
+    public double lastDydt = 0;
+    public double lastDxdt = 0;
+    public double lastDhdt = 0;
 
     public static double fixedDeltaTime = 0.02;  // Fixed time step (50 Hz)
     //private static double accelUpdateRate = 0.04;
+//no longer spark fun
+
+    private KalmanThatVelo kalmanFilterX = new KalmanThatVelo(0);
+    private KalmanThatVelo kalmanFilterY = new KalmanThatVelo(0);
+    private KalmanThatVelo kalmanFilterH = new KalmanThatVelo(0);
+
+
+    private KalmanThatAcc kalmanFilterAX = new KalmanThatAcc(0);
+    private KalmanThatAcc kalmanFilterAY = new KalmanThatAcc(0);
+    private KalmanThatAcc kalmanFilterAH = new KalmanThatAcc(0);
 
     public VxVyAxAy getvelocity(double time, double x2, double y2, double h2){
 
@@ -63,10 +74,18 @@ public class VelocityAccelertaionSparkFun {
             dxdt = changeX/changeTime;
             dhdt = changeH/changeTime;
 
-            daydt = (dydt-lastDydt)/changeTime;
+            //Kalman filter here
+            dxdt = kalmanFilterX.update(dxdt);
+            dydt = kalmanFilterY.update(dydt);
+            dhdt = kalmanFilterH.update(dhdt);
+
+            daydt = (dydt-lastDydt)/changeTime;//acceleration?
             daxdt = (dxdt-lastDxdt)/changeTime;
             dahdt = (dhdt-lastDhdt)/changeTime;
 
+            daxdt = kalmanFilterAX.update(daxdt);
+            daydt = kalmanFilterAY.update(daydt);
+            dahdt = kalmanFilterAH.update(dahdt);
 
             lastDydt = dydt;
             lastDxdt = dxdt;

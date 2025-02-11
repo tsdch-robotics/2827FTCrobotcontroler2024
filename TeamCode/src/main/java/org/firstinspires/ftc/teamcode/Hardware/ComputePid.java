@@ -10,12 +10,17 @@ import com.sun.tools.javac.tree.DCTree;
 @Config
 public class ComputePid {
 
-    public static double yawKp = 0.8, yawKi = 0.05, yawKd = 0.001;  // PID gains
+    /*public static */double yawKp = 0.8, yawKi = 0.05, yawKd = 0.001;  // PID gains
     public static double vxKp = 0.1, vxKi = 0, vxKd = 0;
+
+    //double vyKp = vxKp;
+    //double vyKi = vxKi;
+    //double vyKd = vxKd;
+
     public static double vyKp = 0.1, vyKi = 0, vyKd = 0;
 
-    public static double hsKp = 0.003, hsKi = 0.0, hsKd = 0.0;  // PID gains
-    public static double vsKp = 0.003, vsKi = 0.0, vsKd = 0.0;  // PID gains
+    /*public static */double hsKp = 0.003, hsKi = 0.0, hsKd = 0.0;  // PID gains
+    /*public static */double vsKp = 0.003, vsKi = 0.0, vsKd = 0.0;  // PID gains
 
 
     public double hsPreviousError = 0;
@@ -39,10 +44,10 @@ public class ComputePid {
     public double vyIntegralSum = 0;
     public double vyPreviousTime = 0; // Time from previous iteration
 
-    public static double maxPower = 1;
+    /*public static */double maxPower = 1;
 
-    public static double Kf = 0.5;  // Feedforward constant, tune this value
-    public static double mass = 13.6078;  // Robot mass (in kg), set to your robot's mass
+    /*public static */double Kf = 0.5;  // Feedforward constant, tune this value
+    /*public static*/ double mass = 13.6078;  // Robot mass (in kg), set to your robot's mass
 
     //takes postion, heading, wheel data
 
@@ -96,8 +101,11 @@ public class ComputePid {
     }
 
     public double vyPID(double currentY, double currentTime, double target){
+
+
         // Calculate the error
         double error = target - currentY;
+
 
         // Calculate the time difference
         double deltaTime = currentTime - vyPreviousTime;
@@ -114,7 +122,14 @@ public class ComputePid {
         double derivativeTerm = vyKd * (error - vyPreviousError) / deltaTime;
 
         // Combine terms to get the final output
-        double output = proportionalTerm + integralTerm + derivativeTerm;
+        double output = /*inverseK * */(proportionalTerm + integralTerm + derivativeTerm);
+
+
+        /*hypoVelo = Math.sqrt((vInst ** 2) + 2 * maxAcc * error);//hypo velo is the velo upon arrival
+
+        if (hypoVelo >= 0.01){
+
+        }*/
 
         // Store current error and time for next iteration
         vyPreviousError = error;
@@ -128,6 +143,9 @@ public class ComputePid {
         if (output < -maxPower){
             output = -maxPower;
         }
+
+
+
 
 
         // Return the output (e.g., motor power or other control signal)

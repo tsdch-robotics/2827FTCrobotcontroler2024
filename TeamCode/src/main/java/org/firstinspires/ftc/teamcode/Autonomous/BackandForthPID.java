@@ -98,11 +98,10 @@ public class BackandForthPID extends LinearOpMode {
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
     Action act1 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action act2 = new Action(new Position2d(-50,-35,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act2 = new Action(new Position2d(-50,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     int numberOfActs = 11;
-
 
 /*
     public Action makeFigure8 (double figureX, double figureY){
@@ -198,8 +197,8 @@ public class BackandForthPID extends LinearOpMode {
     double vsTarget = 0;
     double hsTarget = 0;
 
-    boolean killHorizontal = false;
-    boolean killVertical = false;
+    boolean killHorizontal = true;
+    boolean killVertical = true;
 
     double vsOutput = 0;
     double hsOutput = 0;
@@ -632,9 +631,27 @@ public class BackandForthPID extends LinearOpMode {
             finalY = ypos + originY;
             //see below for the use of originYaw
 
-            //telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+
+
+            double maxDecc = -50;//inches/sec**2
+
+            double errorY = targetY - finalY;
+
+            double signOfError = errorY/(Math.abs(errorY));
+
+            double directionOfMotion = velocities.getVy()/(Math.abs(velocities.getVy()));//sign of the velocity
+
+            double arrivalVelo = Math.sqrt(Math.abs((Math.pow((velocities.getVy()), 2)) + 2 * (maxDecc * directionOfMotion)/*so that its opposite*/ * errorY));//velo is the velo upon arrival
+
+            double hypoVelo = signOfError * Math.sqrt(Math.abs(2 * maxDecc * errorY));//hypothetically, the should be current velo
+
+            //telemetry.addData("Run Time:", Time);
+            telemetry.addData("SIGN OF ERROR:", signOfError);
+            telemetry.addData("arrivalVelo:", arrivalVelo);
+            telemetry.addData("hypoVeloY:", hypoVelo);
+            telemetry.addData("Yerror",errorY);
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             //telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             //telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);

@@ -195,6 +195,7 @@ public class BlueTeleop extends LinearOpMode {
 
     double scale = 1;
 
+    double maxAcceleration = 0;
 
 
     @Override
@@ -589,7 +590,6 @@ public class BlueTeleop extends LinearOpMode {
             }
 
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
@@ -757,7 +757,20 @@ public class BlueTeleop extends LinearOpMode {
             finalX = xpos;// + originX;
             finalY = ypos;// + originY;
 
+
+            VxVyAxAy velocities = vectorSystem.getvelocity(Time, finalX, finalY, posH);
+
+
+            double maxDecc = -50;//inches/sec**2
+
+            double errorY = targetY - finalY;
+            double hypoVelo = Math.sqrt((Math.pow((velocities.getVy()), 2)) + 2 * maxDecc * errorY);//hypo velo is the velo upon arrival
+
+            maxAcceleration = Math.max(velocities.getAx(), maxAcceleration);
+
             telemetry.addData("Run Time:", Time);
+            //telemetry.addData("hypoVeloY:", hypoVelo);
+            //telemetry.addData("maxAx:", maxAcceleration);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
@@ -770,7 +783,6 @@ public class BlueTeleop extends LinearOpMode {
             telemetry.addData("axial", axial);
             telemetry.addData("lateral", lateral);
             telemetry.addData("Heading radians", normalHeading);
-
 
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
