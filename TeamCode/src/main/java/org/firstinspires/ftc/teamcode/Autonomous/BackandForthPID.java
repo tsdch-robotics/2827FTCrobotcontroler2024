@@ -641,13 +641,32 @@ public class BackandForthPID extends LinearOpMode {
 
             double directionOfMotion = velocities.getVy()/(Math.abs(velocities.getVy()));//sign of the velocity
 
-            double arrivalVelo = Math.sqrt(Math.abs((Math.pow((velocities.getVy()), 2)) + 2 * (maxDecc * directionOfMotion)/*so that its opposite*/ * errorY));//velo is the velo upon arrival
+            double signArrivalTheory =  Math.signum((Math.pow((velocities.getVy()), 2)) + 2 * -Math.abs((maxDecc * errorY)));//because hypothetical acceleration always oposes velo
+            double arrivalVeloTheory/*scaler, always +*/ = Math.sqrt(Math.abs((Math.pow((velocities.getVy()), 2)) +
 
-            double hypoVelo = signOfError * Math.sqrt(Math.abs(2 * maxDecc * errorY));//hypothetically, the should be current velo
+                    2 * -Math.abs((maxDecc * errorY)
+
+            ) + 0.0001))/*so it shows*/;//velo is the velo upon arrival
+
+            //if robot is heading towards the target (not away) then arrivalVeloTheory becomes potentially relavent
+            //if arival velo theory value is in the same sign as velo current, then it is relavent all the more, otherwqise = 0 (possible to stop)
+            if (Math.signum(velocities.getVy()) == Math.signum(errorY)){
+                if(signArrivalTheory == 1){//+
+                    telemetry.addData("OH SHOOT", arrivalVeloTheory);
+                }else{
+                    telemetry.addData("We are chilling 0", arrivalVeloTheory);
+                }
+            }else{
+                telemetry.addData("Irrrevlevent, we already overshot", arrivalVeloTheory);
+            }
+
+
+            double hypoVelo = signOfError * Math.sqrt(Math.abs(2 * maxDecc * errorY)) + 0.0001/*so it shows*/;//hypothetically, the should be current velo
+
 
             //telemetry.addData("Run Time:", Time);
             telemetry.addData("SIGN OF ERROR:", signOfError);
-            telemetry.addData("arrivalVelo:", arrivalVelo);
+            telemetry.addData("arrivalVelo:", arrivalVeloTheory);
             telemetry.addData("hypoVeloY:", hypoVelo);
             telemetry.addData("Yerror",errorY);
             //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -679,8 +698,10 @@ public class BackandForthPID extends LinearOpMode {
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
             yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
-            vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
-            vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
+            double vxOutput1 = PID.vxPID(finalX, getRuntime(), targetX);
+            vxOutput = (PID.vxPIDVeloConcious(finalX, velocities.getVx(), getRuntime(), targetX) + vxOutput1) / 2;
+            double vyOutput1 = PID.vyPID(finalY, getRuntime(), targetY);
+            vyOutput = (PID.vyPIDVeloConcious(finalY, velocities.getVy(), getRuntime(), targetY) + vyOutput1) / 2;
 
 
             yawOutput = yawOutput * maxSpeed;

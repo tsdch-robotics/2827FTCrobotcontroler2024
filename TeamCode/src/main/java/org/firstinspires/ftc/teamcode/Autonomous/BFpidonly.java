@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "AllLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
-public class AllLeftSampleOnlyNormal extends LinearOpMode {
+@Autonomous(name = "BFpidonly", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class BFpidonly extends LinearOpMode {
 
 
     targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
@@ -97,32 +97,11 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    Action meetThebasket = new Action(new Position2d(-54,-58,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    Action dropSample = new Action(new Position2d(-54, -58, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
-    Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
-    Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
-    Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action safeRaise = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action deposit = new Action(new Position2d(-54, -57, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
-
-    //instead add another dropSample and go
-
-    Action collectSampleMid = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
-
-    Action collectSampleLeft = new Action(new Position2d(-47, -57, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
-
-    Action park = new Action(new Position2d(-45, -18, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action parkb = new Action(new Position2d(-25, -18, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-
-    //Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
+    Action act1 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act2 = new Action(new Position2d(-50,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     int numberOfActs = 11;
-
 
 /*
     public Action makeFigure8 (double figureX, double figureY){
@@ -173,8 +152,8 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     //ORIGIN OF BEGINNING
 
     double yawOrigin = 0;
-    double originY = -64;// -61;
-    double originX = -14;//place on right side of tile
+    double originY = -50;// -61;
+    double originX = -50;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -218,8 +197,8 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     double vsTarget = 0;
     double hsTarget = 0;
 
-    boolean killHorizontal = false;
-    boolean killVertical = false;
+    boolean killHorizontal = true;
+    boolean killVertical = true;
 
     double vsOutput = 0;
     double hsOutput = 0;
@@ -238,57 +217,14 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-
-        /*actions.add(act1);
         actions.add(act1);
-        for (int i = 0; i < 20; i++) {
+        actions.add(act2);
+        for (int i = 0; i < 100; i++) {
             actions.add(act1);
             actions.add(act2);
-        }*/
+        }
 
         int takeNoteOFTHIS = numberOfActs;
-
-        actions.add(act1);
-        actions.add(meetThebasket);
-        actions.add(dropSample);
-        actions.add(collectSampleRight);
-        actions.add(bringBack);
-        actions.add(grabIt);
-        actions.add(squeeze);
-
-        actions.add(safeRaise);
-
-        actions.add(deposit);
-        actions.add(dropSample);
-
-//MID
-        actions.add(collectSampleMid);
-        actions.add(bringBack);
-        actions.add(grabIt);
-        actions.add(squeeze);
-
-
-        actions.add(safeRaise);
-
-
-        actions.add(deposit);
-        actions.add(dropSample);
-  //END MID
-/*
-        actions.add(collectSampleLeft);
-        actions.add(bringBack);
-        actions.add(grabIt);
-        actions.add(squeeze);
-
-        actions.add(safeRaise);
-
-        actions.add(deposit);
-        actions.add(dropSample);*/
-
-        actions.add(park);
-        actions.add(parkb);
-
-
 
 
         //actions.add(returnHome);
@@ -695,9 +631,46 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
             finalY = ypos + originY;
             //see below for the use of originYaw
 
-            //telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+
+
+            double maxDecc = -50;//inches/sec**2
+
+            double errorY = targetY - finalY;
+
+            double signOfError = errorY/(Math.abs(errorY));
+
+            double directionOfMotion = velocities.getVy()/(Math.abs(velocities.getVy()));//sign of the velocity
+
+            double signArrivalTheory =  Math.signum((Math.pow((velocities.getVy()), 2)) + 2 * -Math.abs((maxDecc * errorY)));//because hypothetical acceleration always oposes velo
+            double arrivalVeloTheory/*scaler, always +*/ = Math.sqrt(Math.abs((Math.pow((velocities.getVy()), 2)) +
+
+                    2 * -Math.abs((maxDecc * errorY)
+
+                    ) + 0.0001))/*so it shows*/;//velo is the velo upon arrival
+
+            //if robot is heading towards the target (not away) then arrivalVeloTheory becomes potentially relavent
+            //if arival velo theory value is in the same sign as velo current, then it is relavent all the more, otherwqise = 0 (possible to stop)
+            if (Math.signum(velocities.getVy()) == Math.signum(errorY)){
+                if(signArrivalTheory == 1){//+
+                    telemetry.addData("OH SHOOT", arrivalVeloTheory);
+                }else{
+                    telemetry.addData("We are chilling 0", arrivalVeloTheory);
+                }
+            }else{
+                telemetry.addData("Irrrevlevent, we already overshot", arrivalVeloTheory);
+            }
+
+
+            double hypoVelo = signOfError * Math.sqrt(Math.abs(2 * maxDecc * errorY)) + 0.0001/*so it shows*/;//hypothetically, the should be current velo
+
+
+            //telemetry.addData("Run Time:", Time);
+            telemetry.addData("SIGN OF ERROR:", signOfError);
+            telemetry.addData("arrivalVelo:", arrivalVeloTheory);
+            telemetry.addData("hypoVeloY:", hypoVelo);
+            telemetry.addData("Yerror",errorY);
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             //telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
             //telemetry.addLine("Press X (square) on Gamepad to calibrate the IMU");
             telemetry.addData("X coordinate", finalX);
@@ -711,8 +684,8 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
             telemetry.addData("yawOutput", yawOutput);
             telemetry.addData("vxOut", vxOutput);
             telemetry.addData("vyOut", vyOutput);
-           // telemetry.addData("axial", axial);
-           // telemetry.addData("lateral", lateral);
+            // telemetry.addData("axial", axial);
+            // telemetry.addData("lateral", lateral);
             telemetry.addLine("VELOCITYS");
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
@@ -725,11 +698,9 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
             yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
-
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
-            //vxOutput = PID.vxPIDVeloConcious(finalX, velocities.getVx(), getRuntime(), targetX);
+
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
-            //vyOutput = PID.vyPIDVeloConcious(finalY, velocities.getVy(), getRuntime(), targetY);
 
 
             yawOutput = yawOutput * maxSpeed;
