@@ -97,8 +97,8 @@ public class BackandForthPID extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action act2 = new Action(new Position2d(-50,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act1 = new Action(new Position2d(-50,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act2 = new Action(new Position2d(-15,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     int numberOfActs = 11;
@@ -698,10 +698,10 @@ public class BackandForthPID extends LinearOpMode {
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
             yawOutput = PID.YawPID(/*pos.h*/pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
-            double vxOutput1 = PID.vxPID(finalX, getRuntime(), targetX);
-            vxOutput = (PID.vxPIDVeloConcious(finalX, velocities.getVx(), getRuntime(), targetX) + vxOutput1) / 2;
-            double vyOutput1 = PID.vyPID(finalY, getRuntime(), targetY);
-            vyOutput = (PID.vyPIDVeloConcious(finalY, velocities.getVy(), getRuntime(), targetY) + vyOutput1) / 2;
+            //double vxOutput1 = PID.vxPID(finalX, getRuntime(), targetX);6
+            vxOutput = PID.vxPIDVeloConcious(finalX, velocities.getVx(), getRuntime(), targetX);
+            //double vyOutput1 = PID.vyPID(finalY, getRuntime(), targetY);
+            vyOutput = PID.vyPIDVeloConcious(finalY, velocities.getVy(), getRuntime(), targetY) ;
 
 
             yawOutput = yawOutput * maxSpeed;

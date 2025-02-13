@@ -119,8 +119,9 @@ public class BlueTeleop extends LinearOpMode {
 
 
     double yawOrigin = 0;
-    double originY = 0;
-    double originX = 0;
+    double originY = -50;
+    double originX = -50;
+
 
     double normalHeading = 0;
     double currentDriveX = 0;
@@ -191,7 +192,7 @@ public class BlueTeleop extends LinearOpMode {
 
     double posX = 0;
     double posY = 0;
-    double posH = 0;
+    double posH = yawOrigin;//this is the origin
 
     double scale = 1;
 
@@ -801,7 +802,8 @@ public class BlueTeleop extends LinearOpMode {
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            //yawOutput = PID.YawPID(pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(heading, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 

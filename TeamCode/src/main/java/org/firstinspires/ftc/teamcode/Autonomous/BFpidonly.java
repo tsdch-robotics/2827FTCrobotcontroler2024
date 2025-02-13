@@ -98,7 +98,7 @@ public class BFpidonly extends LinearOpMode {
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
     Action act1 = new Action(new Position2d(-50,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action act2 = new Action(new Position2d(-50,-15,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act2 = new Action(new Position2d(-15,-50,Math.toRadians(0)), 4, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     int numberOfActs = 11;

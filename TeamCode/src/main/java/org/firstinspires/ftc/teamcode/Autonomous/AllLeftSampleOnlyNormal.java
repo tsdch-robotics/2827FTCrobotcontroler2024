@@ -36,10 +36,14 @@ import org.firstinspires.ftc.teamcode.Hardware.doCoolThingies.targetHorizontalId
 import java.util.List;
 import java.util.ArrayList;
 
+import org.firstinspires.ftc.teamcode.Autonomous.AreWeThereYet;
+
 @Config
 @Autonomous(name = "AllLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
+
+    AreWeThereYet AreWeThereYet = new AreWeThereYet();
 
     targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
@@ -100,7 +104,14 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), 2, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action meetThebasket = new Action(new Position2d(-54,-58,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action dropSample = new Action(new Position2d(-54, -58, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
+
+    List<Action> collectRight = makeFigure8(-45, -56, 0);
+
+
+    //Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -56, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
+
+
+
     Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
     Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
     Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
@@ -124,15 +135,46 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
     int numberOfActs = 11;
 
 
-/*
-    public Action makeFigure8 (double figureX, double figureY){
 
-        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(0)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+    double pivLink = 30;//inches
+
+    public List<Action> makeFigure8 (double figureX, double figureY, double figureA){
+
+        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(figureA)), -1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+        double fig2Ang = -20;
+        double fig2Xbase = figureX + pivLink * Math.sin(-fig2Ang);
+        double fig2Ybase = figureY + pivLink * Math.cos(-fig2Ang);
+
+        Action fig2 = new Action(new Position2d(fig2Xbase - 1, fig2Ybase + 1, Math.toRadians(figureA + fig2Ang)),
+                -1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+        Action fig3 = new Action(new Position2d(fig2Xbase + 2, fig2Xbase + 2, Math.toRadians(figureA + fig2Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+        double fig4Ang = 20;
+        double fig4Xbase = figureX + pivLink * Math.sin(fig4Ang);
+        double fig4Ybase = figureY + pivLink * Math.cos(fig4Ang);
+
+        Action fig4 = new Action(new Position2d(fig4Xbase + 2, fig4Xbase + 2, Math.toRadians(figureA + fig4Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
 
-        figureActions.add(fig1, fig2, fig3, fig4, fig5, fig6)
-        return
-    }*/
+        Action fig5 = new Action(new Position2d(fig4Xbase -4, fig4Xbase + 6, Math.toRadians(figureA + fig4Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
+        List<Action> figureActions = new ArrayList<>();
+
+        figureActions.add(fig1);
+        figureActions.add(fig2);
+        figureActions.add(fig3);
+        figureActions.add(fig4);
+        figureActions.add(fig5);
+
+        return(figureActions);
+
+    }
 
 
 
@@ -174,7 +216,7 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
     double yawOrigin = 0;
     double originY = -64;// -61;
-    double originX = -14;//place on right side of tile
+    double originX = -37.5;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -251,7 +293,13 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
         actions.add(act1);
         actions.add(meetThebasket);
         actions.add(dropSample);
-        actions.add(collectSampleRight);
+
+
+        //actions.add(collectSampleRight);
+
+        actions.addAll(collectRight);//add all!
+
+
         actions.add(bringBack);
         actions.add(grabIt);
         actions.add(squeeze);
@@ -422,23 +470,18 @@ public class AllLeftSampleOnlyNormal extends LinearOpMode {
 
             VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
 
-            //double stopSpeed = 0.0001;
-            double stopSpeed = 0.01;
-            double noPauseLeft;
 
             Action currentAction = actions.get(actionNumber); // Get the current action
             Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
-            //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 2 & velocities.getVx() < stopSpeed || velocities.getVx() < 0.001){//prevously, 3 was 1
-                if ((Math.abs(finalY - targetY) < 2 & velocities.getVy() < stopSpeed) || velocities.getVy() < 0.001){
-                    if ((/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.01) /*|| velocities.getVh() < 0.0001*/){
-                        inTargetBox = true;
-                        gamepad1.rumble(3);
-                    }
-                }
-            }
+            //ARE WE THERE YET?
+            double errorX = finalX - targetX;
+            double errorY = finalY - targetY;
+            double errorH = posH - yawTarget;
+
+
+            inTargetBox = AreWeThereYet.weThere(errorX, errorY, errorH, velocities.getVx(), velocities.getVy(), velocities.getVh(), currentAction.getWaitTime());//the wait time is useed to determine continuity
 
 
             //GETTING VERTICAL AND HORIZONTAL

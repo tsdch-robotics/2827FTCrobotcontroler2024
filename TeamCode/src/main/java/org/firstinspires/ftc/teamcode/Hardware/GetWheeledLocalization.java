@@ -64,6 +64,7 @@ public class GetWheeledLocalization {
         dy = ((dn2) - ticksPerRadianY * dtheta) * inches_per_tick;
         dx = (dn3 - ticksPerRadianX * dtheta) * inches_per_tick;
 
+
         posH += dtheta /2.0;//with average at this point
         posX += dx * Math.cos(posH) - dy * Math.sin(posH);
         posY += dx * Math.sin(posH) + dy * Math.cos(posH);
