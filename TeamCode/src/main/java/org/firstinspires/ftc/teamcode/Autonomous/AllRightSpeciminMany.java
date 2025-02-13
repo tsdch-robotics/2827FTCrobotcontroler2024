@@ -40,6 +40,8 @@ import java.util.ArrayList;
 @Autonomous(name = "AllRightSpeciminMany", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class AllRightSpeciminMany extends LinearOpMode {
 
+    AreWeThereYet AreWeThereYet = new AreWeThereYet();
+
 
     targetVerticalIdea verticalTargetAuto = targetVerticalIdea.INIT;
     targetHorizontalIdea horizontalTargetAuto = targetHorizontalIdea.ZERO_HS_SLIDES;
@@ -97,10 +99,10 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), .1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), -6, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     //i slowed this down
-    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 2/*if bad, make 2*/, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
-    Action preScore2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 2/*if bad, make 2*/, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, 0.5);
+    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
+    Action preScore2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
     Action score = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
     Action score2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
@@ -108,13 +110,17 @@ public class AllRightSpeciminMany extends LinearOpMode {
     Action drop = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
     Action drop2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
 
+
+    Action prepareToCollect0 = new Action(new Position2d(5, -40, Math.toRadians(50)), -2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
+    Action prepareToCollect01 = new Action(new Position2d(36, -57, Math.toRadians(50)), -5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
     Action prepareToCollect = new Action(new Position2d(36, -57, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action collect = new Action(new Position2d(36, -65, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, 0.25);
-    Action grab = new Action(new Position2d(36, -65, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action collect = new Action(new Position2d(36, -64, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action grab = new Action(new Position2d(36, -64, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
     Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
 
     Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), 3, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
@@ -238,6 +244,9 @@ public class AllRightSpeciminMany extends LinearOpMode {
     double posY = 0;
     double posH = 0;
 
+    boolean bigBoolean = false;
+    double bigBooleanRadius = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -255,6 +264,11 @@ public class AllRightSpeciminMany extends LinearOpMode {
         actions.add(preScore);
         actions.add(score);
         actions.add(drop);
+
+        actions.add(prepareToCollect0);
+
+        actions.add(prepareToCollect01);
+
         actions.add(prepareToCollect);
         actions.add(collect);
         actions.add(grab);
@@ -375,6 +389,8 @@ public class AllRightSpeciminMany extends LinearOpMode {
             claw.setPosition(clawClose);
         }
 
+        telemetry.addData("ACTION NUMBER", actionNumber);
+
         waitForStart();
         resetRuntime();
 
@@ -398,6 +414,8 @@ public class AllRightSpeciminMany extends LinearOpMode {
             telemetry.addData("en2", rightBackDrive.getCurrentPosition());
             telemetry.addData("en3", rightFrontDrive.getCurrentPosition());
 
+            telemetry.addData("ACTION NUMBER", actionNumber);
+
 
 
             double Time = runtime.time();
@@ -412,15 +430,14 @@ public class AllRightSpeciminMany extends LinearOpMode {
             Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
-            //chekcs to see if we are in target box and if speed is 0
-            if (Math.abs(finalX - targetX) < 2 & velocities.getVx() < stopSpeed || velocities.getVx() < 0.001){//prevously, 3 was 1
-                if ((Math.abs(finalY - targetY) < 2 & velocities.getVy() < stopSpeed) || velocities.getVy() < 0.001){
-                    if ((/*Math.abs(heading - yawTarget) < 0.0872665 & */velocities.getVh() < 0.01) /*|| velocities.getVh() < 0.0001*/){
-                        inTargetBox = true;
-                        gamepad1.rumble(3);
-                    }
-                }
-            }
+
+            //ARE WE THERE YET?
+            double errorX = finalX - targetX;
+            double errorY = finalY - targetY;
+            double errorH = posH - yawTarget;
+
+
+            inTargetBox = AreWeThereYet.weThere(errorX, errorY, errorH, velocities.getVx(), velocities.getVy(), velocities.getVh(), currentAction.getWaitTime());//the wait time is useed to determine continuity
 
 
             //GETTING VERTICAL AND HORIZONTAL
@@ -520,6 +537,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
             if(inTargetBox & !AlreadyPausing){
                 endTime = getRuntime() + waitTime;
                 AlreadyPausing = true;
+                bigBoolean = true;
             }
 
             //GO ONTO THE NEXT ACTION PROCESS
@@ -528,6 +546,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
                 actionNumber += 1;
                 inTargetBox = false;
                 promptedToContinueNow = false;
+                bigBoolean = false;
             }
 
 
@@ -543,13 +562,22 @@ public class AllRightSpeciminMany extends LinearOpMode {
             double[] xcordHead = {TelemX - 3, TelemX + 3, TelemX + 15 * Math.cos(normalHeading), TelemX + 15 * Math.cos(normalHeading)};
             double[] ycordHead = {TelemY, TelemY, TelemY + 15 * Math.sin(normalHeading), TelemY + 15 * Math.sin(normalHeading)};
 
+            if(bigBoolean){
+                bigBooleanRadius = 20;
+            }else{
+                bigBooleanRadius = 0;
+            }
+
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay()
                     .setFill("cyan")
                     .fillCircle(TelemX, TelemY, 6)
                     .fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 5)
                     .setFill("red")
-                    .fillCircle(-targetX, -targetY, 5);
+                    .fillCircle(-targetX, -targetY, 5)
+                    .setFill("purple")
+                    .fillCircle(0, 0, bigBooleanRadius);
+
             //.setFill("green")//to show power outputs
             //.fillCircle(TelemX + 15 * Math.cos(adjH), TelemY + 15 * Math.sin(adjH), 2);
 
@@ -592,6 +620,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
 
             lateral = /*+*/(-vxOutput) * Math.cos(normalHeading) + (-vyOutput) * Math.sin(normalHeading);//rotate counter clockwise or clockwise???//x
+            lateral = lateral * 1.5;
             axial = -(-vxOutput) * Math.sin(normalHeading) + /*+*/(-vyOutput) * Math.cos(normalHeading);//y
 
             double yaw = yawOutput;

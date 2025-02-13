@@ -283,7 +283,7 @@ public class doCoolThingies {
             case STALKER:
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
-                ultimatePositions.shoulderPos = 0.935;//0.87 + 0.05;//0.85
+                ultimatePositions.shoulderPos = 0.95;//.935
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
@@ -293,7 +293,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = 0.935
+                ultimatePositions.shoulderPos = 0.95
                 ;//0.87 + 0.05;//0.85 - i reduce to .8 for better potential
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
