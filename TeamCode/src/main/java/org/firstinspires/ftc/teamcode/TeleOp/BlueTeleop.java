@@ -172,7 +172,7 @@ public class BlueTeleop extends LinearOpMode {
 
     boolean alreadyPressingY = false;
     boolean alreadyPressingX = false;
-    boolean alreadyPressingA= false;
+    boolean alreadyPressingX2= false;
     boolean alreadyPressingB = false;
     boolean alreadyPressingBack = false;
 
@@ -182,7 +182,7 @@ public class BlueTeleop extends LinearOpMode {
     boolean Ymode = false;
     boolean Xmode = false;
     boolean Bmode= false;
-    boolean Amode = false;
+    boolean X2mode = false;
 
     public static double clawClose = 0;//previous .25
     public static double clawOpen = 0.5;
@@ -363,7 +363,7 @@ public class BlueTeleop extends LinearOpMode {
 
                 Ymode = true;
                 Xmode = false;
-                Amode = false;
+                X2mode = false;
 
                 alreadyPressingY = true;
             }else if(gamepad1.y && !alreadyPressingY){
@@ -380,7 +380,7 @@ public class BlueTeleop extends LinearOpMode {
 
                 Xmode = true;
                 Ymode = false;
-                Amode = false;
+                X2mode = false;
 
                 alreadyPressingX = true;
 
@@ -394,21 +394,23 @@ public class BlueTeleop extends LinearOpMode {
             }
 
             //HANG MODE
-            if(gamepad2.a && !Amode && !alreadyPressingA){
+            if(gamepad2.x && !X2mode && !alreadyPressingX2){
 
-                Amode = true;
+                X2mode = true;
                 Ymode = false;
                 Xmode = false;
 
-                alreadyPressingA = true;
+                alreadyPressingX2 = true;
 
                 verticalTarget = targetVerticalIdea.READY_TO_HANG1;
+                gamepad2.rumble(30000);
 
-            }else if(gamepad2.a && !alreadyPressingA){
+
+            }else if(gamepad2.x && !alreadyPressingX2){
                 verticalTarget = nextVerticalTarget;
-                alreadyPressingA = true;
-            }else if (!gamepad2.a){
-                alreadyPressingA = false;
+                alreadyPressingX2 = true;
+            }else if (!gamepad2.x){
+                alreadyPressingX2 = false;
             }
 
 
@@ -574,11 +576,13 @@ public class BlueTeleop extends LinearOpMode {
             if(verticalPositions.getPTO()){
                 if (gamepad2.right_bumper){
                     ptoR.setPosition(engageR);
+                    gamepad2.stopRumble();
                 }else{
                     ptoR.setPosition(disEngageR);
                 }
                 if (gamepad2.left_bumper){
                     ptoL.setPosition(engageL);
+                    gamepad2.stopRumble();
                 }else{
                     ptoL.setPosition(disEngageL);
                 }
@@ -653,9 +657,18 @@ public class BlueTeleop extends LinearOpMode {
 
 
             if(!driveHange){
-                axial   = gamepad1.left_stick_y;//drive  // Note: pushing stick forward gives negative value
-                lateral =  -gamepad1.left_stick_x;//strafe
-                yaw     =  -gamepad1.right_stick_x;
+
+                if(Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0){
+                    axial   = gamepad1.left_stick_y;//drive  // Note: pushing stick forward gives negative value
+                    lateral =  -gamepad1.left_stick_x;//strafe
+                    yaw     =  -gamepad1.right_stick_x;
+                }else{
+                    axial   = gamepad2.left_stick_y;//drive  // Note: pushing stick forward gives negative value
+                    lateral =  -gamepad2.left_stick_x;//strafe
+                    yaw     =  -gamepad2.right_stick_x;
+                }
+
+
             }else{
                 axial = -vsOutput;
                 lateral = 0;

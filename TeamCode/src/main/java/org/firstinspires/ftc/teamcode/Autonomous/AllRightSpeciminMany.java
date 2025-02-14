@@ -101,7 +101,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
     //use mr hicks robt squaring specimin advice
     Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), -6, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     //i slowed this down
-    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
+    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
     Action preScore2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
     Action score = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
@@ -117,12 +117,12 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
     Action prepareToCollect = new Action(new Position2d(36, -57, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action collect = new Action(new Position2d(36, -64, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action grab = new Action(new Position2d(36, -64, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action collect = new Action(new Position2d(34, -64, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action grab = new Action(new Position2d(34, -64, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
     Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), 3, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), 2, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
 
     //act1, prescore, score, drop, park
@@ -131,14 +131,14 @@ public class AllRightSpeciminMany extends LinearOpMode {
     public static double xSweep = 35;
     public static double ySweep = -50;
 
-    Action preSweepBlue = new Action(new Position2d(30,-50,Math.toRadians(0)), 1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action preSweepBlue = new Action(new Position2d(30,-50,Math.toRadians(0)), -1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
 
-    Action meetTheBlue = new Action(new Position2d(30, -18, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action meetTheBlue = new Action(new Position2d(30, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action sweepTheBlue = new Action(new Position2d(40, -45, Math.toRadians(0)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action sweepTheBlue = new Action(new Position2d(40, -45, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
