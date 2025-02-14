@@ -131,15 +131,14 @@ public class AllRightSpeciminMany extends LinearOpMode {
     public static double xSweep = 35;
     public static double ySweep = -50;
 
-    Action preSweepBlue = new Action(new Position2d(30,-50,Math.toRadians(0)), -1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action preSweepBlue = new Action(new Position2d(20,-55,Math.toRadians(-40)), -1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
 
-    Action meetTheBlue = new Action(new Position2d(30, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action meetTheBlue = new Action(new Position2d(30, -50, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
 
-    Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    //Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action sweepTheBlue = new Action(new Position2d(40, -45, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
+    Action sweepTheBlue = new Action(new Position2d(30, -50, Math.toRadians(-145)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
 
     // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
 
@@ -280,7 +279,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
         actions.add(preSweepBlue);
         actions.add(meetTheBlue);
-        actions.add(meetTheBlue2);
+        //actions.add(meetTheBlue2);
         actions.add(sweepTheBlue);
         actions.add(park);
 
