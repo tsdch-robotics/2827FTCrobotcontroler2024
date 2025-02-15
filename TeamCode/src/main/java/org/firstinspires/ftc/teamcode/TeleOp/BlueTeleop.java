@@ -569,8 +569,8 @@ public class BlueTeleop extends LinearOpMode {
 
             //HANG
             if(verticalPositions.getHookThat()){
-                //hookL.setPosition(hookLhook);
-               // hookR.setPosition(hookRhook);
+                hookL.setPosition(hookLhook);
+               hookR.setPosition(hookRhook);
             }
 
             if(verticalPositions.getPTO()){

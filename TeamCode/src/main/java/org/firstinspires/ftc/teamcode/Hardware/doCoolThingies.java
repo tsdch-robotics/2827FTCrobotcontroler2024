@@ -24,7 +24,7 @@ public class doCoolThingies {
 
     public static double full_HS = 1800;
 
-    public static double intakeLOW = 0.16;
+    public static double intakeLOW = 0.18;
 
     public static double intakeHigh = 0;
 
@@ -34,8 +34,8 @@ public class doCoolThingies {
 
     public static double scoreSpeciminShoulderPos = 0.41;
 
-    public static double rHang1 = 2000;
-    public static double rHang2 = 1900;
+    public static double rHang1 = 1900;
+    public static double rHang2 = 1700;
 
     public static double accendPull = 300;
 
@@ -94,7 +94,7 @@ public class doCoolThingies {
             case ZERO_HS_SLIDES:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
-                ultimatePositions.HSpos = -100;//so the power ends up being full//-100
+                ultimatePositions.HSpos = -1000;//so the power ends up being full//-100
 
                 break;
 
@@ -283,7 +283,7 @@ public class doCoolThingies {
             case STALKER:
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = stalkerHeight;//update//900
-                ultimatePositions.shoulderPos = 0.91;//.935
+                ultimatePositions.shoulderPos = 0.93;//.935
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
@@ -293,7 +293,7 @@ public class doCoolThingies {
 
                 //ultimatePositions.HSpos = 0;
                 ultimatePositions.VSpos = snatchHeight;//update
-                ultimatePositions.shoulderPos = 0.91
+                ultimatePositions.shoulderPos = 0.93
                 ;//0.87 + 0.05;//0.85 - i reduce to .8 for better potential
                 ultimatePositions.wristLPos = .51;
                 ultimatePositions.wristRPos = .41;

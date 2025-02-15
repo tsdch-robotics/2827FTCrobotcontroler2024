@@ -7,8 +7,8 @@ public class AreWeThereYet {
 
 
     double test = 1;
-    public static double stopSpeed = 0.01;
-    public static double deadStall = 0.005;
+    public static double stopSpeed = 5;
+    public static double deadStall = 2;
 
     boolean inTargetBox;
 
@@ -59,7 +59,7 @@ public class AreWeThereYet {
 
 
         if(continuous){
-            if (xe < Math.abs(currentWait) & ye < Math.abs(currentWait)/* & ae < Math.abs(5 * currentWait)*/){//2inch would becom 10 degrees
+            if (xe < Math.abs(currentWait) & ye < Math.abs(currentWait) /*& ae < Math.abs(1.5 * currentWait + 20)*/){//2inch would becom 10 degrees
                 //current wait = a distance in this case
                 inTargetBox = true;
             }else{

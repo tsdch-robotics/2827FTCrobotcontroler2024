@@ -101,28 +101,37 @@ public class AllRightSpeciminMany extends LinearOpMode {
     //use mr hicks robt squaring specimin advice
     Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), -6, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     //i slowed this down
-    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
-    Action preScore2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.5, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
+    Action preScore2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action preScore3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
 
     Action score = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action score2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action score3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+
 
     Action drop = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action drop2 = new Action(new Position2d(-5, -32, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action drop2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action drop3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
 
 
-    Action prepareToCollect0 = new Action(new Position2d(5, -40, Math.toRadians(50)), -2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    //Action prepareToCollect0 = new Action(new Position2d(5, -40, Math.toRadians(50)), -2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action prepareToCollect01 = new Action(new Position2d(36, -57, Math.toRadians(50)), -5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action prepareToCollect01 = new Action(new Position2d(34, -57, Math.toRadians(50)), -5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action prepareToCollect = new Action(new Position2d(36, -57, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action prepareToCollect = new Action(new Position2d(34, -57, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action collect = new Action(new Position2d(34, -64, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action grab = new Action(new Position2d(34, -64, Math.toRadians(0)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
-    Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), 1, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action prePrepareToCollectLast = new Action(new Position2d(34, -40, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
-    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), 2, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+
+    Action collect = new Action(new Position2d(33, -64, Math.toRadians(0)), 0.5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action grab = new Action(new Position2d(33, -64, Math.toRadians(0)), 0.01, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
+    Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), -3, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
+    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), -6, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
 
     //act1, prescore, score, drop, park
@@ -131,16 +140,22 @@ public class AllRightSpeciminMany extends LinearOpMode {
     public static double xSweep = 35;
     public static double ySweep = -50;
 
-    Action preSweepBlue = new Action(new Position2d(20,-55,Math.toRadians(-40)), -1, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action preSweepBlue = new Action(new Position2d(20,-50,Math.toRadians(-30)), -4, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
 
 
-    Action meetTheBlue = new Action(new Position2d(30, -50, Math.toRadians(0)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+    Action meetTheBlue = new Action(new Position2d(30, -50, Math.toRadians(-30)), -3, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
 
-    //Action meetTheBlue2 = new Action(new Position2d(43, -18, Math.toRadians(0)), -1, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action sweepTheBlue = new Action(new Position2d(30, -50, Math.toRadians(-145)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+    Action sweepTheBlue = new Action(new Position2d(30, -50, Math.toRadians(-100)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
 
     // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
+
+
+    Action preSweepBlueMid = new Action(new Position2d(35,-48,Math.toRadians(-30)), -4, targetVerticalIdea.ZERO_VS_SLIDES, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+
+    Action meetTheBlueMid = new Action(new Position2d(35, -50, Math.toRadians(-30)), -3, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+    Action sweepTheBlueMid = new Action(new Position2d(35, -50, Math.toRadians(-100)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
 
 
     Action park = new Action(new Position2d(45, -55, Math.toRadians(0)), 0, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
@@ -264,7 +279,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
         actions.add(score);
         actions.add(drop);
 
-        actions.add(prepareToCollect0);
+        //actions.add(prepareToCollect0);
 
         actions.add(prepareToCollect01);
 
@@ -279,8 +294,26 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
         actions.add(preSweepBlue);
         actions.add(meetTheBlue);
-        //actions.add(meetTheBlue2);
         actions.add(sweepTheBlue);
+
+/*
+        actions.add(preSweepBlueMid);
+        actions.add(meetTheBlueMid);
+        actions.add(sweepTheBlueMid);*/
+
+
+
+        actions.add(prePrepareToCollectLast);
+        actions.add(prepareToCollect);
+        actions.add(collect);
+        actions.add(grab);
+        actions.add(safeRaise);
+        actions.add(act2);
+        actions.add(preScore3);
+        actions.add(score3);
+        actions.add(drop3);
+
+
         actions.add(park);
 
 
@@ -429,6 +462,10 @@ public class AllRightSpeciminMany extends LinearOpMode {
             Position2d targetPose = currentAction.getPose(); // Get the Pose2d from the current action
             double waitTime = currentAction.getWaitTime(); // Get the wait time from the current action
 
+            targetX = targetPose.getThisX();
+            targetY = targetPose.getThisY();
+            yawTarget = Math.toDegrees(targetPose.getThisHeading());
+            telemetry.addData("yawTarget", yawTarget);
 
             //ARE WE THERE YET?
             double errorX = finalX - targetX;
@@ -548,11 +585,18 @@ public class AllRightSpeciminMany extends LinearOpMode {
                 bigBoolean = false;
             }
 
+/*//moveed up so it changes in time!!
 
             targetX = targetPose.getThisX();
             targetY = targetPose.getThisY();
             yawTarget = Math.toDegrees(targetPose.getThisHeading());
             telemetry.addData("yawTarget", yawTarget);
+
+            errorX = finalX - targetX;
+            errorY = finalY - targetY;
+            errorH = posH - yawTarget;
+*/
+
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
