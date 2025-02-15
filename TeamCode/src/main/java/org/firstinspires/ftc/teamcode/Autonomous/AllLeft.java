@@ -118,7 +118,7 @@ public class AllLeft extends LinearOpMode {
 
     //instead add another dropSample and go
 
-    Action collectSampleMid = new Action(new Position2d(-47, -54, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+    Action collectSampleMid = new Action(new Position2d(-47, -55, Math.toRadians(20)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
     Action collectSampleLeft = new Action(new Position2d(-47, -57, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
