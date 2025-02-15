@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "AllRightSpeciminMany", group = "Autonomous", preselectTeleOp = "BlueTeleop")
-public class AllRightSpeciminMany extends LinearOpMode {
+@Autonomous(name = "AllLeft", group = "Autonomous", preselectTeleOp = "BlueTeleop")
+public class AllLeft extends LinearOpMode {
 
     AreWeThereYet AreWeThereYet = new AreWeThereYet();
 
@@ -99,71 +99,89 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
-    Action act1 = new Action(new Position2d(0,-45,Math.toRadians(0)), -6, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    //i slowed this down
-    Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
-    Action preScore2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action preScore3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), -3, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action meetThebasket = new Action(new Position2d(-54,-60,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action dropSample = new Action(new Position2d(-54, -60, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
+
+    //List<Action> collectRight = makeFigure8(-45, -56, 0);
 
 
-    Action score = new Action(new Position2d(0, -31, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -54, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
 
 
-    Action drop = new Action(new Position2d(0, -31, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action drop2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action drop3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
+    Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
+    Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action safeRaise = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+
+    Action deposit = new Action(new Position2d(-54, -57, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
+
+    //instead add another dropSample and go
+
+    Action collectSampleMid = new Action(new Position2d(-47, -54, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+    Action collectSampleLeft = new Action(new Position2d(-47, -57, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+    Action park = new Action(new Position2d(-45, -18, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action parkb = new Action(new Position2d(-25, -18, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
-    //Action prepareToCollect0 = new Action(new Position2d(5, -40, Math.toRadians(50)), -2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action prepareToCollect01 = new Action(new Position2d(34, -57, Math.toRadians(50)), -5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action prepareToCollect = new Action(new Position2d(34, -57, Math.toRadians(0)), 1, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-
-    Action prePrepareToCollectLast = new Action(new Position2d(34, -40, Math.toRadians(0)), 2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-
-    Action collect = new Action(new Position2d(33, -64, Math.toRadians(0)), 0.5, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action grab = new Action(new Position2d(33, -64, Math.toRadians(0)), 0.01, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action safeRaise = new Action(new Position2d(36, -55, Math.toRadians(0)), -3, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-
-    Action act2 = new Action(new Position2d(-6,-50,Math.toRadians(0)), -6, targetVerticalIdea.READY_SAFE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-
-    //act1, prescore, score, drop, park
-
-
-    public static double xSweep = 35;
-    public static double ySweep = -50;
-
-    Action prepreSweepBlue = new Action(new Position2d(20,-49,Math.toRadians(0)), -8, targetVerticalIdea.READY_SAFE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-    Action preSweepBlue = new Action(new Position2d(20,-49,Math.toRadians(-25)), -4, targetVerticalIdea.READY_SAFE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-
-    Action meetTheBlue = new Action(new Position2d(30, -49, Math.toRadians(-25)), .25, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
-
-    Action sweepTheBlue = new Action(new Position2d(30, -49, Math.toRadians(-100)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
-
-    // from other side Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -57, Math.toRadians(0)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.8);
-
-
-    Action preSweepBlueMid = new Action(new Position2d(35,-48,Math.toRadians(-30)), -4, targetVerticalIdea.READY_SAFE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-
-    Action meetTheBlueMid = new Action(new Position2d(35, -50, Math.toRadians(-30)), -3, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
-
-    Action sweepTheBlueMid = new Action(new Position2d(35, -50, Math.toRadians(-100)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
-
-
-
-    Action park = new Action(new Position2d(45, -55, Math.toRadians(0)), 0, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    //Action act8 = new Action(new Position2d(-45, -45, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE);
 
 
     int numberOfActs = 11;
+
+
+
+    double pivLink = 30;//inches
+
+    public List<Action> makeFigure8 (double figureX, double figureY, double figureA){
+
+        Action fig1 = new Action(new Position2d(figureX, figureY, Math.toRadians(figureA)), -1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP, cappedSpeed);
+
+        double fig2Ang = -20;
+        double fig2Xbase = figureX + pivLink * Math.sin(-fig2Ang);
+        double fig2Ybase = figureY + pivLink * Math.cos(-fig2Ang);
+
+        Action fig2 = new Action(new Position2d(fig2Xbase - 1, fig2Ybase + 1, Math.toRadians(figureA + fig2Ang)),
+                -1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+        Action fig3 = new Action(new Position2d(fig2Xbase + 2, fig2Xbase + 2, Math.toRadians(figureA + fig2Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+        double fig4Ang = 20;
+        double fig4Xbase = figureX + pivLink * Math.sin(fig4Ang);
+        double fig4Ybase = figureY + pivLink * Math.cos(fig4Ang);
+
+        Action fig4 = new Action(new Position2d(fig4Xbase + 2, fig4Xbase + 2, Math.toRadians(figureA + fig4Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
+        Action fig5 = new Action(new Position2d(fig4Xbase -4, fig4Xbase + 6, Math.toRadians(figureA + fig4Ang)),
+                1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
+        List<Action> figureActions = new ArrayList<>();
+
+        figureActions.add(fig1);
+        figureActions.add(fig2);
+        figureActions.add(fig3);
+        figureActions.add(fig4);
+        figureActions.add(fig5);
+
+        return(figureActions);
+
+    }
+
+
+
+    Action figure8 = new Action(new Position2d(-47, -53, Math.toRadians(15)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+
+
+
+
+    // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
+    // Action act2 = new Action(new Pose2d(-50, 35, Math.toRadians(0)), 2);
 
 
     // Action act1 = new Action(new Pose2d(-50, -50, Math.toRadians(0)), 2);
@@ -199,7 +217,7 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
     double yawOrigin = 0;
     double originY = -64;// -61;
-    double originX = 7;//place on right side of tile
+    double originX = -37.5;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
 
@@ -276,48 +294,50 @@ public class AllRightSpeciminMany extends LinearOpMode {
 
         int takeNoteOFTHIS = numberOfActs;
 
+
         actions.add(act1);
-        actions.add(preScore);
-        actions.add(score);
-        actions.add(drop);
+        actions.add(meetThebasket);
+        actions.add(dropSample);
 
-        //actions.add(prepareToCollect0);
 
-        actions.add(prepareToCollect01);
+        actions.add(collectSampleRight);
 
-        actions.add(prepareToCollect);
-        actions.add(collect);
-        actions.add(grab);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
         actions.add(safeRaise);
-        actions.add(act2);
-        actions.add(preScore2);
-        actions.add(score2);
-        actions.add(drop2);
 
-        actions.add(prepreSweepBlue);
-        actions.add(preSweepBlue);
-        actions.add(meetTheBlue);
-        actions.add(sweepTheBlue);
+        actions.add(meetThebasket);
+        actions.add(dropSample);
 
+//MID
+        actions.add(collectSampleMid);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
+
+
+        actions.add(safeRaise);
+
+
+        actions.add(deposit);
+        actions.add(dropSample);
+        //END MID
 /*
-        actions.add(preSweepBlueMid);
-        actions.add(meetTheBlueMid);
-        actions.add(sweepTheBlueMid);*/
+        actions.add(collectSampleLeft);
+        actions.add(bringBack);
+        actions.add(grabIt);
+        actions.add(squeeze);
 
-
-
-        actions.add(prePrepareToCollectLast);
-        actions.add(prepareToCollect);
-        actions.add(collect);
-        actions.add(grab);
         actions.add(safeRaise);
-        actions.add(act2);
-        actions.add(preScore3);
-        actions.add(score3);
-        actions.add(drop3);
 
+        actions.add(deposit);
+        actions.add(dropSample);*/
 
         actions.add(park);
+        actions.add(parkb);
+
 
 
 

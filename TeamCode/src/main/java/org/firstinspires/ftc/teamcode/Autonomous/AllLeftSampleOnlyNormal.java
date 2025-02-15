@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.firstinspires.ftc.teamcode.Autonomous.AreWeThereYet;
-
+@Disabled
 @Config
 @Autonomous(name = "AllLeftSampleOnlyNormal", group = "Autonomous", preselectTeleOp = "BlueTeleop")
 public class AllLeftSampleOnlyNormal extends LinearOpMode {

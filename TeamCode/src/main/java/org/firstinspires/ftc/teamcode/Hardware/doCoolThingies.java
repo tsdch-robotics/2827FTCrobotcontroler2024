@@ -26,7 +26,10 @@ public class doCoolThingies {
 
     public static double intakeLOW = 0.18;
 
-    public static double intakeHigh = 0;
+    public static double intakeLOWauto = 0.16;
+
+
+    public static double intakeHigh = 0.03;
 
     public static int hoverAcrosPos = 1200;
 
@@ -67,6 +70,7 @@ public class doCoolThingies {
         ENGAGE_PTO,
         ACCEND,
         ENGANGE_SUPPORT,
+        READY_SAFE,
 
         //all zeroing will be automatic
 
@@ -101,7 +105,7 @@ public class doCoolThingies {
             case READY_HS_POS:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
-                ultimatePositions.HSpos = intakeRest;
+                ultimatePositions.HSpos = 0;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
                 ultimatePositions.flickSpeed = 0;
 
@@ -110,7 +114,7 @@ public class doCoolThingies {
             case READY_HS_POS_FLICK_STILL_ON:
 
                 ultimatePositions.intakeLiftPos = intakeHigh;
-                ultimatePositions.HSpos = intakeRest;
+                ultimatePositions.HSpos = 0;
                 ultimatePositions.intakeSpeed = 0;//put elsewhere?
 
 
@@ -435,6 +439,13 @@ public class doCoolThingies {
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = true;//and declaring it prevents a user error
                 //basically if a position isn't declared in this scope, it will allow the drvier to specifically control that feature
+
+                break;
+
+
+            case READY_SAFE:
+
+                ultimatePositions.VSpos = 100;//update
 
                 break;
 
