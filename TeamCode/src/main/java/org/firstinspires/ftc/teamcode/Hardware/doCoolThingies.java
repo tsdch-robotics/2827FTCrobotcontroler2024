@@ -71,6 +71,7 @@ public class doCoolThingies {
         ACCEND,
         ENGANGE_SUPPORT,
         READY_SAFE,
+        STALKER_ZER,
 
         //all zeroing will be automatic
 
@@ -292,6 +293,16 @@ public class doCoolThingies {
                 ultimatePositions.wristRPos = .41;
                 ultimatePositions.clawState = false;
                 break;
+
+            case STALKER_ZER:
+                //ultimatePositions.HSpos = 0;
+                ultimatePositions.VSpos = -200;//update//900
+                ultimatePositions.shoulderPos = 0.6;//.935
+                ultimatePositions.wristLPos = .51;
+                ultimatePositions.wristRPos = .41;
+                ultimatePositions.clawState = false;
+                break;
+
 
             case SNATCH_THAT_FISHY:
 

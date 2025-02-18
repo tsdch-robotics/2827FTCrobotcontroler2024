@@ -103,17 +103,17 @@ public class AllRightSpeciminMany extends LinearOpMode {
     //i slowed this down
     Action preScore = new Action(new Position2d(0, -32, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//0.5
     Action preScore2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
-    Action preScore3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
+    Action preScore3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.05, targetVerticalIdea.PRE_SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
     Action score = new Action(new Position2d(0, -31, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action score3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.25, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action score2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.5, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action score3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.5, targetVerticalIdea.SCORE_SPECIMEN_AUTO, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
 
 
     Action drop = new Action(new Position2d(0, -31, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
     Action drop2 = new Action(new Position2d(-5, -34, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
-    Action drop3 = new Action(new Position2d(-14, -38, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
+    Action drop3 = new Action(new Position2d(-14, -36, Math.toRadians(0)), 0.25, targetVerticalIdea.RELEASE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);//prevoulsy extend
 
 
     //Action prepareToCollect0 = new Action(new Position2d(5, -40, Math.toRadians(50)), -2, targetVerticalIdea.COLLECT_SPECIMIN, targetHorizontalIdea.READY_HS_POS, cappedSpeed);

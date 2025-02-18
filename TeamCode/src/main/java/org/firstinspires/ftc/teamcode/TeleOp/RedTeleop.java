@@ -111,6 +111,7 @@ public class RedTeleop extends LinearOpMode {
 
     private CRServo flick = null;
 
+    double flickPower = 0;
 
 
     double finalX = 0;
@@ -118,8 +119,9 @@ public class RedTeleop extends LinearOpMode {
 
 
     double yawOrigin = 0;
-    double originY = 0;
-    double originX = 0;
+    double originY = -50;
+    double originX = -50;
+
 
     double normalHeading = 0;
     double currentDriveX = 0;
@@ -170,14 +172,17 @@ public class RedTeleop extends LinearOpMode {
 
     boolean alreadyPressingY = false;
     boolean alreadyPressingX = false;
-    boolean alreadyPressingA= false;
+    boolean alreadyPressingX2= false;
     boolean alreadyPressingB = false;
+    boolean alreadyPressingBack = false;
+
+    boolean cancelColor = false;
 
 
     boolean Ymode = false;
     boolean Xmode = false;
     boolean Bmode= false;
-    boolean Amode = false;
+    boolean X2mode = false;
 
     public static double clawClose = 0;//previous .25
     public static double clawOpen = 0.5;
@@ -187,8 +192,11 @@ public class RedTeleop extends LinearOpMode {
 
     double posX = 0;
     double posY = 0;
-    double posH = 0;
+    double posH = yawOrigin;//this is the origin
 
+    double scale = 1;
+
+    double maxAcceleration = 0;
 
 
     @Override
@@ -355,7 +363,7 @@ public class RedTeleop extends LinearOpMode {
 
                 Ymode = true;
                 Xmode = false;
-                Amode = false;
+                X2mode = false;
 
                 alreadyPressingY = true;
             }else if(gamepad1.y && !alreadyPressingY){
@@ -372,7 +380,7 @@ public class RedTeleop extends LinearOpMode {
 
                 Xmode = true;
                 Ymode = false;
-                Amode = false;
+                X2mode = false;
 
                 alreadyPressingX = true;
 
@@ -386,23 +394,35 @@ public class RedTeleop extends LinearOpMode {
             }
 
             //HANG MODE
-            if(gamepad1.a && !Amode && !alreadyPressingA){
+            if(gamepad2.x && !X2mode && !alreadyPressingX2){
 
-                Amode = true;
+                X2mode = true;
                 Ymode = false;
                 Xmode = false;
 
-                alreadyPressingA = true;
+                alreadyPressingX2 = true;
 
                 verticalTarget = targetVerticalIdea.READY_TO_HANG1;
+                gamepad2.rumble(30000);
 
-            }else if(gamepad1.a && !alreadyPressingA){
+
+            }else if(gamepad2.x && !alreadyPressingX2){
                 verticalTarget = nextVerticalTarget;
-                alreadyPressingA = true;
-            }else if (!gamepad1.a){
-                alreadyPressingA = false;
+                alreadyPressingX2 = true;
+            }else if (!gamepad2.x){
+                alreadyPressingX2 = false;
             }
 
+
+            if(gamepad1.back & !alreadyPressingBack & !cancelColor){
+                alreadyPressingBack = true;
+                cancelColor = true;
+            }else if(gamepad1.back & !alreadyPressingBack & cancelColor){
+                alreadyPressingBack = true;
+                cancelColor = false;
+            }else if (!gamepad1.back){
+                alreadyPressingBack = false;
+            }
 
 
 
@@ -506,64 +526,75 @@ public class RedTeleop extends LinearOpMode {
 
 
             telemetry.addData("currentColor is", currentColor);
-            double colorChangeDelayServo = 0.9;
+            double colorChangeDelayServo = 0.9 + 0.25;
 
-            if(currentColor  == "yellow" || currentColor == "red" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
-                horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+            if(!cancelColor){
+                if(currentColor  == "yellow" || currentColor == "red" && horizontalTarget == targetHorizontalIdea.FULL_EXTENT_DROP){
+                    horizontalTarget = targetHorizontalIdea.ZERO_HS_SLIDES;
+                }
+
+
+                if(currentColor == "blue" || currentColor  == "yellow" || currentColor == "red"){
+                    waitUntil = getRuntime() + colorChangeDelayServo;
+                }
+                if(getRuntime() < waitUntil){
+                    flickPower = -1;
+                    telemetry.addData("Servo power", -1);
+                }else{
+                    flickPower = 0;
+                    //flick.setPower(-gamepad1.right_trigger);
+                }
             }
 
-
-            if(currentColor == "red" || currentColor  == "yellow" || currentColor == "blue"){
-                waitUntil = getRuntime() + colorChangeDelayServo;
-            }
-            if(getRuntime() < waitUntil){
-                flick.setPower(-1);
-                telemetry.addData("Servo power", -1);
-            }else{
-                //flick.setPower(0);
-                //flick.setPower(-gamepad1.right_trigger);
-            }
-
-            if(gamepad1.left_trigger > 0.1){
+            if(gamepad1.left_trigger > 0.1 & gamepad1.right_trigger < 0.1){//jui left
                 intake.setPower(-gamepad1.left_trigger);
-                flick.setPower(1);
+                flickPower = 1;
 
-            }else if (gamepad1.right_trigger > 0.1){
+            }else if(gamepad1.right_trigger > 0.1 & gamepad1.left_trigger < 0.1){//just right
                 intake.setPower(gamepad1.right_trigger);
-                flick.setPower(0);
+            }else if (gamepad1.right_trigger > 0.1 & gamepad1.left_trigger > 0.1){
+                intake.setPower(gamepad1.right_trigger);
+                flickPower = -gamepad1.right_trigger;
             }else{
                 intake.setPower(0);
-
+                if(cancelColor){
+                    flickPower = 0;
+                }
             }
+
+            flick.setPower(flickPower);
+
+
 
 
             //HANG
             if(verticalPositions.getHookThat()){
-                //hookL.setPosition(hookLhook);
-                // hookR.setPosition(hookRhook);
+                hookL.setPosition(hookLhook);
+                hookR.setPosition(hookRhook);
             }
 
             if(verticalPositions.getPTO()){
-                if (gamepad1.right_bumper){
+                if (gamepad2.right_bumper){
                     ptoR.setPosition(engageR);
+                    gamepad2.stopRumble();
                 }else{
                     ptoR.setPosition(disEngageR);
                 }
-                if (gamepad1.left_bumper){
+                if (gamepad2.left_bumper){
                     ptoL.setPosition(engageL);
+                    gamepad2.stopRumble();
                 }else{
                     ptoL.setPosition(disEngageL);
                 }
 
                 driveHange = true;
             }else{
-                ptoL.setPosition(disEngageL);
-                ptoR.setPosition(disEngageR);
+                //ptoL.setPosition(disEngageL);
+                //ptoR.setPosition(disEngageR);
                 driveHange = false;
             }
 
 
-            VxVyAxAy velocities = vectorSystem.getvelocity(getRuntime(), finalX, finalY, posH);
 
             double TelemX = -finalX;
             double TelemY = -finalY;//bc for some reason this works
@@ -626,13 +657,32 @@ public class RedTeleop extends LinearOpMode {
 
 
             if(!driveHange){
-                axial   = gamepad1.left_stick_y;//drive  // Note: pushing stick forward gives negative value
-                lateral =  -gamepad1.left_stick_x;//strafe
-                yaw     =  -gamepad1.right_stick_x;
+
+                if(Math.abs(gamepad1.left_stick_x) > 0 || Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.right_stick_x) > 0){
+                    axial   = gamepad1.left_stick_y;//drive  // Note: pushing stick forward gives negative value
+                    lateral =  -gamepad1.left_stick_x;//strafe
+                    yaw     =  -gamepad1.right_stick_x;
+                }else{
+                    axial   = gamepad2.left_stick_y;//drive  // Note: pushing stick forward gives negative value
+                    lateral =  -gamepad2.left_stick_x;//strafe
+                    yaw     =  -gamepad2.right_stick_x;
+                }
+
+
             }else{
                 axial = -vsOutput;
                 lateral = 0;
                 yaw     = 0;
+            }
+
+            /*if(gamepad1.a & !pressingA1){
+                scale = 0.5;
+            }*/
+
+            if(gamepad1.a){
+                scale = 0.5;
+            }else{
+                scale = 1;
             }
 
 
@@ -661,10 +711,10 @@ public class RedTeleop extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower * scale);
+            rightFrontDrive.setPower(rightFrontPower * scale);
+            leftBackDrive.setPower(leftBackPower * scale);
+            rightBackDrive.setPower(rightBackPower * scale);
 
             double hspos = -horizontalSlides.getCurrentPosition();
             double vspos = verticalSlides.getCurrentPosition();
@@ -721,7 +771,20 @@ public class RedTeleop extends LinearOpMode {
             finalX = xpos;// + originX;
             finalY = ypos;// + originY;
 
+
+            VxVyAxAy velocities = vectorSystem.getvelocity(Time, finalX, finalY, posH);
+
+
+            double maxDecc = -50;//inches/sec**2
+
+            double errorY = targetY - finalY;
+            double hypoVelo = Math.sqrt((Math.pow((velocities.getVy()), 2)) + 2 * maxDecc * errorY);//hypo velo is the velo upon arrival
+
+            maxAcceleration = Math.max(velocities.getAx(), maxAcceleration);
+
             telemetry.addData("Run Time:", Time);
+            //telemetry.addData("hypoVeloY:", hypoVelo);
+            //telemetry.addData("maxAx:", maxAcceleration);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addLine("Press Y (triangle) on Gamepad to reset tracking");
@@ -734,7 +797,6 @@ public class RedTeleop extends LinearOpMode {
             telemetry.addData("axial", axial);
             telemetry.addData("lateral", lateral);
             telemetry.addData("Heading radians", normalHeading);
-
 
             telemetry.addData("xspeed inches/sec", velocities.getVx());
             telemetry.addData("yspeed inches/second", velocities.getVy());
@@ -753,7 +815,8 @@ public class RedTeleop extends LinearOpMode {
             localXTarget = targetX * Math.cos(normalHeading) - targetY * Math.sin(normalHeading);//rotate counter clockwise or clockwise???
             localYTarget = -targetX * Math.sin(normalHeading) + targetY * Math.cos(normalHeading);//currently, clockwise
 
-            yawOutput = PID.YawPID(pos.h, getRuntime(), Math.toRadians(yawTarget));
+            //yawOutput = PID.YawPID(pos.h + yawOrigin, getRuntime(), Math.toRadians(yawTarget));
+            yawOutput = PID.YawPID(heading, getRuntime(), Math.toRadians(yawTarget));
             vxOutput = PID.vxPID(finalX, getRuntime(), targetX);
             vyOutput = PID.vyPID(finalY, getRuntime(), targetY);
 

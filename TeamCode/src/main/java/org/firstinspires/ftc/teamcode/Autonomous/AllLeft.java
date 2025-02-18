@@ -100,29 +100,28 @@ public class AllLeft extends LinearOpMode {
     SparkFunOTOS myOtos;
     //use mr hicks robt squaring specimin advice
     Action act1 = new Action(new Position2d(-50,-57,Math.toRadians(-45)), -3, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    Action meetThebasket = new Action(new Position2d(-54,-60,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
-    Action dropSample = new Action(new Position2d(-54, -60, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
+    Action meetThebasket = new Action(new Position2d(-54.5,-60.5,Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action dropSample = new Action(new Position2d(-54.5, -60.5, Math.toRadians(-45)), 1, targetVerticalIdea.RELEASE, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
 
     //List<Action> collectRight = makeFigure8(-45, -56, 0);
 
+    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -54, Math.toRadians(3)), 1, targetVerticalIdea.STALKER_ZER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
 
-    Action collectSampleRight = new Action(new Position2d(/*do not mess*/-45, -54, Math.toRadians(5)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, 0.7);
-
-
-    Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 2, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
-    Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
-    Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+//all these were 1 second
+    Action bringBack = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 0.5, targetVerticalIdea.STALKER/*add the drop it aspect*/, targetHorizontalIdea.ZERO_HS_SLIDES_FLICK_ON, cappedSpeed);
+    Action grabIt = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 0.5, targetVerticalIdea.SNATCH_THAT_FISHY, targetHorizontalIdea.READY_HS_POS_FLICK_STILL_ON, cappedSpeed);
+    Action squeeze = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 0.25, targetVerticalIdea.SQUEEZE_THE_CATCH, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action safeRaise = new Action(new Position2d(-54, -55, Math.toRadians(-45)), 1, targetVerticalIdea.SAFE_RAISE, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
     Action deposit = new Action(new Position2d(-54, -57, Math.toRadians(-45)), 1, targetVerticalIdea.DEPOSIT_POTATO_AUTO, targetHorizontalIdea.HOVER_ACROSS_BARIER, cappedSpeed);
 
     //instead add another dropSample and go
 
-    Action collectSampleMid = new Action(new Position2d(-47, -55, Math.toRadians(20)), 1, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+    Action collectSampleMid = new Action(new Position2d(-47, -55, Math.toRadians(10)), 1, targetVerticalIdea.STALKER_ZER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
-    Action collectSampleLeft = new Action(new Position2d(-47, -57, Math.toRadians(30)), 2, targetVerticalIdea.STALKER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
+    Action collectSampleLeft = new Action(new Position2d(-43, -50, Math.toRadians(30)), 1, targetVerticalIdea.STALKER_ZER, targetHorizontalIdea.FULL_EXTENT_DROP_WITH_INTAKE, cappedSpeed);
 
-    Action park = new Action(new Position2d(-45, -18, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
+    Action park = new Action(new Position2d(-45, -40, Math.toRadians(-45)), 1, targetVerticalIdea.PARK, targetHorizontalIdea.ZERO_HS_SLIDES, cappedSpeed);
     Action parkb = new Action(new Position2d(-25, -18, Math.toRadians(-90)), 2, targetVerticalIdea.PARK, targetHorizontalIdea.READY_HS_POS, cappedSpeed);
 
 
@@ -216,7 +215,7 @@ public class AllLeft extends LinearOpMode {
     //ORIGIN OF BEGINNING
 
     double yawOrigin = 0;
-    double originY = -64;// -61;
+    double originY = -63.25;// -61;
     double originX = -37.5;//place on right side of tile
 
     //Action returnHome = new Action(new Pose2d(originX, originY, Math.toRadians(0)), 1);
@@ -321,10 +320,10 @@ public class AllLeft extends LinearOpMode {
         actions.add(safeRaise);
 
 
-        actions.add(deposit);
+        actions.add(meetThebasket);
         actions.add(dropSample);
         //END MID
-/*
+
         actions.add(collectSampleLeft);
         actions.add(bringBack);
         actions.add(grabIt);
@@ -332,13 +331,9 @@ public class AllLeft extends LinearOpMode {
 
         actions.add(safeRaise);
 
-        actions.add(deposit);
-        actions.add(dropSample);*/
-
+        actions.add(meetThebasket);
+        actions.add(dropSample);
         actions.add(park);
-        actions.add(parkb);
-
-
 
 
 
@@ -512,16 +507,16 @@ public class AllLeft extends LinearOpMode {
 
 
             //AUTO ZERO
-            if(verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES && vsTouch.isPressed()){
+            if((verticalTargetAuto == targetVerticalIdea.ZERO_VS_SLIDES || verticalTargetAuto == targetVerticalIdea.STALKER_ZER) && vsTouch.isPressed()){
                 verticalSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 verticalSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 verticalSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+                verticalTargetAuto = targetVerticalIdea.STALKER;
                 noMoreVSzero = true;
-            }else if (verticalTargetAuto != targetVerticalIdea.ZERO_VS_SLIDES){
+            }else if (verticalTargetAuto != targetVerticalIdea.STALKER_ZER){
                 noMoreVSzero = false;
             }else{
-                verticalTargetAuto = targetVerticalIdea.READY_VS_POS;
+                verticalTargetAuto = targetVerticalIdea.STALKER;
             }
 
             if(horizontalTargetAuto == targetHorizontalIdea.ZERO_HS_SLIDES && hsTouch.isPressed()){
